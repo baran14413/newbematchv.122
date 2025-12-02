@@ -36,7 +36,7 @@ export default function DiscoverPage() {
   return (
     <div className="flex flex-col h-full bg-gray-50 dark:bg-black overflow-hidden">
       <div className="flex-1 flex flex-col items-center justify-center p-4 relative">
-        <div className="w-full max-w-sm h-[600px] relative flex items-center justify-center">
+        <div className="w-full max-w-sm h-[70vh] max-h-[600px] relative flex items-center justify-center mb-24">
             <AnimatePresence onExitComplete={() => setIsAnimating(false)}>
                 {stack.map((profile, index) => {
                 const isTop = index === stack.length - 1;
@@ -45,7 +45,7 @@ export default function DiscoverPage() {
                     key={profile.id}
                     drag={isTop}
                     dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
-                    dragElastic={1}
+                    dragElastic={0.7}
                     onDragEnd={onDragEnd}
                     initial={{ scale: 1 - (stack.length - 1 - index) * 0.05, y: (stack.length - 1 - index) * -10, opacity: 1 }}
                     animate={{ scale: 1 - (stack.length - 1 - index) * 0.05, y: (stack.length - 1 - index) * -10, opacity: 1 }}
@@ -81,7 +81,7 @@ export default function DiscoverPage() {
             )}
         </div>
         
-        <div className="absolute bottom-8 flex justify-center items-center gap-4">
+        <div className="absolute bottom-6 flex justify-center items-center gap-4">
             <Button variant="outline" size="icon" className="w-16 h-16 rounded-full bg-white shadow-lg border-gray-200" onClick={() => handleSwipe('left')}>
             <X className="w-8 h-8 text-red-500" />
             </Button>

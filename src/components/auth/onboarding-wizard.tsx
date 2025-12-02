@@ -5,6 +5,7 @@ import StepName from '@/components/auth/steps/step-name';
 import StepGoals from '@/components/auth/steps/step-goals';
 import StepInterests from '@/components/auth/steps/step-interests';
 import StepLocation from '@/components/auth/steps/step-location';
+import StepPhotos from '@/components/auth/steps/step-photos';
 import StepCredentials from '@/components/auth/steps/step-credentials';
 import WizardControls from '@/components/auth/wizard-controls';
 import { Card, CardContent } from '../ui/card';
@@ -15,6 +16,7 @@ const steps = [
   { component: StepGoals, title: 'What brings you here?' },
   { component: StepInterests, title: 'What are your interests?' },
   { component: StepLocation, title: 'Where are you located?' },
+  { component: StepPhotos, title: 'Add your best photos' },
   { component: StepCredentials, title: 'Create your account' },
 ];
 
@@ -34,7 +36,7 @@ export default function OnboardingWizard({ onSwitchView }: OnboardingWizardProps
         <div className="p-6">
             <StepIndicator currentStep={currentStep} totalSteps={steps.length} />
         </div>
-        <div className="relative h-96 overflow-hidden">
+        <div className="relative h-[450px] overflow-hidden">
            <AnimatePresence mode="wait">
              <motion.div
                 key={currentStep}

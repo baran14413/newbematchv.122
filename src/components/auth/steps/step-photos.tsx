@@ -1,0 +1,94 @@
+'use client';
+import React, { useRef } from 'react';
+import { useOnboardingContext } from '@/context/onboarding-context';
+import { Plus, X, Camera } from 'lucide-react';
+import Image from 'next/image';
+import { Button } from '@/components/ui/button';
+
+const MAX_PHOTOS = 6;
+
+export default function StepPhotos() {
+  const { formData, updateFormData, setStepValid } = useOnboardingContext();
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && formData.photos.length < MAX_PHOTOS) {
+      const file = e.target.files[0];
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        const newPhotos = [...formData.photos, reader.result as string];
+        updateFormData({ photos: newPhotos });
+        setStepValid(newPhotos.length > 0);
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
+  const handleRemovePhoto = (index: number) => {
+    const newPhotos = formData.photos.filter((_, i) => i !== index);
+    updateFormData({ photos: newPhotos });
+    setStepValid(newPhotos.length > 0);
+  };
+
+  const triggerFileInput = () => {
+    fileInputRef.current?.click();
+  };
+
+  return (
+    <div className="space-y-4">
+      <p className="text-center text-muted-foreground text-sm">
+        Add at least one photo to continue. You can add up to {MAX_PHOTOS}.
+      </p>
+      <div className="grid grid-cols-3 gap-3">
+        {Array.from({ length: MAX_PHOTOS }).map((_, index) => {
+          const photo = formData.photos[index];
+          if (photo) {
+            return (
+              <div key={index} className="relative aspect-square">
+                <Image
+                  src={photo}
+                  alt={`Upload preview ${index + 1}`}
+                  fill
+                  className="object-cover rounded-lg border-2 border-gray-200"
+                />
+                <Button
+                  size="icon"
+                  variant="destructive"
+                  className="absolute -top-2 -right-2 w-6 h-6 rounded-full"
+                  onClick={() => handleRemovePhoto(index)}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            );
+          }
+          if (index === formData.photos.length) {
+            return (
+              <button
+                key={index}
+                onClick={triggerFileInput}
+                className="aspect-square flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-primary/50 text-primary hover:bg-primary/5 transition-colors"
+              >
+                <Plus className="w-8 h-8" />
+                <span className="text-xs font-semibold">Add Photo</span>
+              </button>
+            );
+          }
+          return (
+            <div
+              key={index}
+              className="aspect-square flex items-center justify-center rounded-lg bg-gray-100 border-2 border-dashed border-gray-200"
+            />
+          );
+        })}
+      </div>
+      <input
+        type="file"
+        ref={fileInputRef}
+        onChange={handleFileChange}
+        className="hidden"
+        accept="image/png, image/jpeg"
+      />
+    </div>
+  );
+}
