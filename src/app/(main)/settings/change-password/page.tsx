@@ -4,8 +4,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Eye, EyeOff } from 'lucide-react';
+import { Eye, EyeOff, ArrowLeft } from 'lucide-react';
 import PasswordStrength from '@/components/auth/password-strength';
+import Link from 'next/link';
 
 export default function ChangePasswordPage() {
     const [showCurrent, setShowCurrent] = useState(false);
@@ -15,9 +16,16 @@ export default function ChangePasswordPage() {
 
     return (
         <div className="h-full overflow-y-auto bg-gray-50 dark:bg-black">
-            <header className="p-4 py-6 md:p-8">
-                <h1 className="text-3xl font-bold text-primary">Şifre Değiştir</h1>
-                <p className="text-muted-foreground">Güvenliğin için yeni bir şifre belirle.</p>
+            <header className="p-4 py-6 md:p-8 flex items-center gap-4">
+                <Link href="/settings" passHref>
+                     <Button variant="ghost" size="icon">
+                        <ArrowLeft className="w-6 h-6" />
+                    </Button>
+                </Link>
+                <div>
+                    <h1 className="text-3xl font-bold text-primary">Şifre Değiştir</h1>
+                    <p className="text-muted-foreground">Güvenliğin için yeni bir şifre belirle.</p>
+                </div>
             </header>
 
             <div className="md:p-8 md:pt-0 space-y-8">

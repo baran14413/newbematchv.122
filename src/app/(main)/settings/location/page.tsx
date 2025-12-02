@@ -2,8 +2,9 @@
 import { useState } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { MapPin } from "lucide-react";
+import { MapPin, ArrowLeft } from "lucide-react";
 import { useToast } from '@/hooks/use-toast';
+import Link from 'next/link';
 
 export default function LocationPage() {
     const [currentLocation, setCurrentLocation] = useState("İstanbul, TR");
@@ -19,9 +20,16 @@ export default function LocationPage() {
 
     return (
         <div className="h-full overflow-y-auto bg-gray-50 dark:bg-black">
-            <header className="p-4 py-6 md:p-8">
-                <h1 className="text-3xl font-bold text-primary">Konum</h1>
-                <p className="text-muted-foreground">Eşleşme önerileri için konumunu yönet.</p>
+            <header className="p-4 py-6 md:p-8 flex items-center gap-4">
+                <Link href="/settings" passHref>
+                     <Button variant="ghost" size="icon">
+                        <ArrowLeft className="w-6 h-6" />
+                    </Button>
+                </Link>
+                <div>
+                    <h1 className="text-3xl font-bold text-primary">Konum</h1>
+                    <p className="text-muted-foreground">Eşleşme önerileri için konumunu yönet.</p>
+                </div>
             </header>
 
             <div className="md:p-8 md:pt-0 space-y-8">

@@ -4,6 +4,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Label } from "@/components/ui/label";
 import { Slider } from "@/components/ui/slider";
 import { Button } from '@/components/ui/button';
+import { ArrowLeft } from 'lucide-react';
+import Link from 'next/link';
 
 export default function PreferencesPage() {
     const [distance, setDistance] = useState(25);
@@ -11,9 +13,16 @@ export default function PreferencesPage() {
 
     return (
         <div className="h-full overflow-y-auto bg-gray-50 dark:bg-black">
-            <header className="p-4 py-6 md:p-8">
-                <h1 className="text-3xl font-bold text-primary">Tercihler</h1>
-                <p className="text-muted-foreground">Keşfet sayfasında kimleri görmek istediğini ayarla.</p>
+            <header className="p-4 py-6 md:p-8 flex items-center gap-4">
+                <Link href="/settings" passHref>
+                     <Button variant="ghost" size="icon">
+                        <ArrowLeft className="w-6 h-6" />
+                    </Button>
+                </Link>
+                <div>
+                    <h1 className="text-3xl font-bold text-primary">Tercihler</h1>
+                    <p className="text-muted-foreground">Keşfet sayfasında kimleri görmek istediğini ayarla.</p>
+                </div>
             </header>
 
             <div className="md:p-8 md:pt-0 space-y-8">

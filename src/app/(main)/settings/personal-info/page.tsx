@@ -1,7 +1,8 @@
 'use client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { Smartphone, Monitor, MapPin } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Smartphone, Monitor, MapPin, ArrowLeft } from "lucide-react";
+import Link from 'next/link';
 
 const InfoItem = ({ label, value }: { label: string, value: string }) => (
     <div className="flex justify-between items-center py-3">
@@ -31,9 +32,16 @@ export default function PersonalInfoPage() {
 
     return (
         <div className="h-full overflow-y-auto bg-gray-50 dark:bg-black">
-            <header className="p-4 py-6 md:p-8">
-                <h1 className="text-3xl font-bold text-primary">Kişisel Bilgiler</h1>
-                <p className="text-muted-foreground">Bu bilgiler profilinde görünür ve düzenlenemez.</p>
+            <header className="p-4 py-6 md:p-8 flex items-center gap-4">
+                <Link href="/settings" passHref>
+                    <Button variant="ghost" size="icon">
+                        <ArrowLeft className="w-6 h-6" />
+                    </Button>
+                </Link>
+                <div>
+                    <h1 className="text-3xl font-bold text-primary">Kişisel Bilgiler</h1>
+                    <p className="text-muted-foreground">Bu bilgiler profilinde görünür ve düzenlenemez.</p>
+                </div>
             </header>
 
             <div className="md:p-8 md:pt-0 space-y-8">
