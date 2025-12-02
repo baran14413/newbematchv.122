@@ -1,15 +1,9 @@
 'use client';
-import { Flame, MessagesSquare, UserCircle, Settings, Menu } from 'lucide-react';
+import { Flame, MessagesSquare, UserCircle } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from './ui/button';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu"
 
 const navLinks = [
     { href: '/discover', icon: Flame, label: 'Keşfet' },
@@ -36,11 +30,6 @@ export default function MainHeader() {
                         </Button>
                     )
                 })}
-                <Link href="/settings" passHref>
-                    <Button variant="ghost" size="icon" aria-label="Ayarlar">
-                        <Settings className={cn("w-6 h-6", pathname === '/settings' ? "text-primary" : "text-muted-foreground")} />
-                    </Button>
-                </Link>
             </div>
         </header>
     )

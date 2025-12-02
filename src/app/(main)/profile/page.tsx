@@ -16,30 +16,40 @@ export default function ProfilePage() {
     <div className="h-full overflow-y-auto p-4 md:p-6 bg-gray-50 dark:bg-black">
       <div className="max-w-2xl mx-auto space-y-8">
         {/* Header */}
-        <div className="flex flex-col items-center space-y-4">
-            <div className="relative">
-                <Progress
-                value={profileCompletion}
-                className="absolute -inset-2 w-[148px] h-[148px] [&>div]:bg-primary"
-                style={
-                    {
-                    clipPath: 'circle(50% at 50% 50%)',
-                    transform: 'rotate(-90deg)',
-                    '--tw-shadow': '0 0 15px hsl(var(--primary) / 0.5)',
-                    filter: 'drop-shadow(var(--tw-shadow))',
-                    } as React.CSSProperties
-                }
-                />
-                <Avatar className="w-36 h-36 border-4 border-background">
-                <AvatarImage src={userProfile.avatarUrl} alt={userProfile.name} />
-                <AvatarFallback>{userProfile.name.charAt(0)}</AvatarFallback>
-                </Avatar>
+        <div className="flex items-start justify-between">
+            <div className="flex-1" />
+            <div className="flex flex-col items-center space-y-4 flex-1">
+                <div className="relative">
+                    <Progress
+                    value={profileCompletion}
+                    className="absolute -inset-2 w-[148px] h-[148px] [&>div]:bg-primary"
+                    style={
+                        {
+                        clipPath: 'circle(50% at 50% 50%)',
+                        transform: 'rotate(-90deg)',
+                        '--tw-shadow': '0 0 15px hsl(var(--primary) / 0.5)',
+                        filter: 'drop-shadow(var(--tw-shadow))',
+                        } as React.CSSProperties
+                    }
+                    />
+                    <Avatar className="w-36 h-36 border-4 border-background">
+                    <AvatarImage src={userProfile.avatarUrl} alt={userProfile.name} />
+                    <AvatarFallback>{userProfile.name.charAt(0)}</AvatarFallback>
+                    </Avatar>
+                </div>
+                <div className="text-center">
+                    <h1 className="text-3xl font-bold">{userProfile.name}, {userProfile.age}</h1>
+                    <Button variant="outline" className="mt-4 rounded-full border-primary/50 text-primary hover:bg-primary/5 hover:text-primary">
+                    Profili Düzenle
+                    </Button>
+                </div>
             </div>
-            <div className="text-center">
-                <h1 className="text-3xl font-bold">{userProfile.name}, {userProfile.age}</h1>
-                <Button variant="outline" className="mt-4 rounded-full border-primary/50 text-primary hover:bg-primary/5 hover:text-primary">
-                Profili Düzenle
-                </Button>
+             <div className="flex-1 flex justify-end">
+                <Link href="/settings" passHref>
+                    <Button variant="ghost" size="icon" aria-label="Ayarlar">
+                        <Settings className="w-6 h-6 text-muted-foreground" />
+                    </Button>
+                </Link>
             </div>
         </div>
 
