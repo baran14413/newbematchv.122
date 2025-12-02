@@ -5,8 +5,6 @@ import type { Conversation, UserProfile } from "@/lib/data";
 import { Button } from "../ui/button";
 import { Send } from "lucide-react";
 import AiIcebreaker from "./ai-icebreaker";
-import { currentUser } from "@/lib/data";
-
 
 export default function ChatArea({ conversation, matchProfile }: { conversation: Conversation; matchProfile: UserProfile }) {
 
@@ -52,7 +50,7 @@ export default function ChatArea({ conversation, matchProfile }: { conversation:
       <footer className="p-4 border-t border-border">
         <div className="relative">
           <Textarea
-            placeholder="Send a message..."
+            placeholder="Bir mesaj gönder..."
             className="pr-24 min-h-[50px]"
           />
           <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-2">

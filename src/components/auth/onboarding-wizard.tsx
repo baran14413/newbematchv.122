@@ -12,12 +12,12 @@ import { Card, CardContent } from '../ui/card';
 import { AnimatePresence, motion } from 'framer-motion';
 
 const steps = [
-  { component: StepName, title: "What's Your Name?" },
-  { component: StepGoals, title: 'What brings you here?' },
-  { component: StepInterests, title: 'What are your interests?' },
-  { component: StepLocation, title: 'Where are you located?' },
-  { component: StepPhotos, title: 'Add your best photos' },
-  { component: StepCredentials, title: 'Create your account' },
+  { component: StepName, title: "Adınız nedir?" },
+  { component: StepGoals, title: 'Burada ne arıyorsunuz?' },
+  { component: StepInterests, title: 'İlgi alanların neler?' },
+  { component: StepLocation, title: 'Nerede yaşıyorsun?' },
+  { component: StepPhotos, title: 'En iyi fotoğraflarını ekle' },
+  { component: StepCredentials, title: 'Hesabını oluştur' },
 ];
 
 type AuthView = 'login' | 'register';
@@ -56,9 +56,9 @@ export default function OnboardingWizard({ onSwitchView }: OnboardingWizardProps
         <div className="p-6 bg-gray-50 border-t">
           <WizardControls totalSteps={steps.length} />
             <p className="text-sm text-muted-foreground text-center mt-4">
-                Already have an account?{' '}
+                Zaten bir hesabın var mı?{' '}
                 <button onClick={() => onSwitchView('login')} className="font-semibold text-primary hover:underline">
-                    Log In
+                    Giriş Yap
                 </button>
             </p>
         </div>

@@ -15,21 +15,21 @@ export default function AiIcebreaker({ matchProfile }: { matchProfile: UserProfi
 
   const handleGenerate = () => {
     startTransition(async () => {
-      const profileString = `Name: ${matchProfile.name}, Age: ${matchProfile.age}, Bio: ${matchProfile.bio}, Prompts: ${matchProfile.prompts.map(p => `${p.question} ${p.answer}`).join(', ')}`;
+      const profileString = `İsim: ${matchProfile.name}, Yaş: ${matchProfile.age}, Biyo: ${matchProfile.bio}, İstemler: ${matchProfile.prompts.map(p => `${p.question} ${p.answer}`).join(', ')}`;
 
       try {
         const result = await generateAiIcebreaker({ matchProfile: profileString });
         if (result.icebreaker) {
           setIcebreaker(result.icebreaker);
         } else {
-            throw new Error("Couldn't generate an icebreaker.");
+            throw new Error("Buzkıran oluşturulamadı.");
         }
       } catch (error) {
         console.error(error);
         toast({
           variant: 'destructive',
-          title: 'Error',
-          description: 'Failed to generate an AI icebreaker. Please try again.',
+          title: 'Hata',
+          description: 'Yapay zeka buzkıranı oluşturulamadı. Lütfen tekrar deneyin.',
         });
       }
     });
@@ -40,15 +40,15 @@ export default function AiIcebreaker({ matchProfile }: { matchProfile: UserProfi
       <PopoverTrigger asChild>
         <Button variant="ghost" size="icon" className="w-9 h-9 text-primary hover:text-primary">
           {isPending ? <Loader2 className="w-5 h-5 animate-spin" /> : <Bot className="w-5 h-5" />}
-          <span className="sr-only">Generate AI Icebreaker</span>
+          <span className="sr-only">Yapay Zeka Buzkıran Oluştur</span>
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-80">
         <div className="grid gap-4">
           <div className="space-y-2">
-            <h4 className="font-medium leading-none">AI Icebreaker</h4>
+            <h4 className="font-medium leading-none">Yapay Zeka Buzkıran</h4>
             <p className="text-sm text-muted-foreground">
-              Let AI help you start the conversation.
+              Sohbeti başlatmak için yapay zekadan yardım al.
             </p>
           </div>
           {icebreaker && (
@@ -60,10 +60,10 @@ export default function AiIcebreaker({ matchProfile }: { matchProfile: UserProfi
             {isPending ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Generating...
+                Oluşturuluyor...
               </>
             ) : (
-              'Generate new idea'
+              'Yeni fikir üret'
             )}
           </Button>
         </div>

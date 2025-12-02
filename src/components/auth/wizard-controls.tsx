@@ -13,8 +13,8 @@ export default function WizardControls({ totalSteps }: WizardControlsProps) {
   const router = useRouter();
 
   const handleFinish = () => {
-    // Here you would typically submit the form data
-    console.log('Submitting form...');
+    // Burada genellikle form verilerini gönderirsiniz
+    console.log('Form gönderiliyor...');
     router.push('/discover');
   };
 
@@ -29,16 +29,16 @@ export default function WizardControls({ totalSteps }: WizardControlsProps) {
         className="text-muted-foreground"
       >
         <ArrowLeft className="mr-2 h-4 w-4" />
-        Back
+        Geri
       </Button>
 
       {isLastStep ? (
         <Button onClick={handleFinish} disabled={!isStepValid} className="font-bold text-lg py-6 rounded-xl">
-          Create Account
+          Hesap Oluştur
         </Button>
       ) : (
         <Button onClick={nextStep} disabled={!isStepValid}>
-          Next
+          İleri
           <ArrowRight className="ml-2 h-4 w-4" />
         </Button>
       )}

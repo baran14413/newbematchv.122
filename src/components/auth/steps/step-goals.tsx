@@ -5,9 +5,9 @@ import { Heart, Coffee, MessageSquare } from 'lucide-react';
 import { cn } from '@/lib/utils';
 
 const goals = [
-  { id: 'long-term', label: 'Long-term partner', icon: Heart },
-  { id: 'casual', label: 'Something casual', icon: Coffee },
-  { id: 'chat', label: 'New friends to chat', icon: MessageSquare },
+  { id: 'long-term', label: 'Uzun süreli ilişki', icon: Heart },
+  { id: 'casual', label: 'Sıradan bir şeyler', icon: Coffee },
+  { id: 'chat', label: 'Sohbet etmek için yeni arkadaşlar', icon: MessageSquare },
 ];
 
 export default function StepGoals() {

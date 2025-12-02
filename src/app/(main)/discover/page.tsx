@@ -19,13 +19,13 @@ export default function DiscoverPage() {
   const handleSwipe = (direction: 'left' | 'right' | 'up') => {
     if (isAnimating) return;
     setIsAnimating(true);
-    // Here you would handle the swipe logic (like, dislike, superlike)
-    console.log(`Swiped ${direction}`);
+    // Burada kaydırma mantığını yönetirsiniz (beğenme, beğenmeme, süper beğenme)
+    console.log(`Kaydırıldı: ${direction}`);
     popCard();
   };
 
   const onDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
-    const { offset, velocity } = info;
+    const { offset } = info;
     const threshold = 100;
 
     if (Math.abs(offset.x) > threshold) {
@@ -36,7 +36,7 @@ export default function DiscoverPage() {
   return (
     <div className="flex flex-col h-full bg-gray-50 dark:bg-black overflow-hidden">
       <div className="flex-1 flex flex-col items-center justify-center p-4 relative">
-        <div className="w-full max-w-sm h-[70vh] max-h-[600px] relative flex items-center justify-center mb-24">
+        <div className="w-full max-w-sm h-[60vh] max-h-[500px] relative flex items-center justify-center">
             <AnimatePresence onExitComplete={() => setIsAnimating(false)}>
                 {stack.map((profile, index) => {
                 const isTop = index === stack.length - 1;
@@ -66,7 +66,7 @@ export default function DiscoverPage() {
                             <h2 className="text-3xl font-bold text-white">
                             {profile.name}, {profile.age}
                             </h2>
-                            <p className="text-white/80 text-lg">Software Engineer</p>
+                            <p className="text-white/80 text-lg">Yazılım Mühendisi</p>
                         </div>
                         </CardContent>
                     </Card>
@@ -76,20 +76,20 @@ export default function DiscoverPage() {
             </AnimatePresence>
             {stack.length === 0 && (
                 <div className="text-center text-muted-foreground">
-                    <p>No more profiles to show.</p>
+                    <p>Gösterilecek başka profil yok.</p>
                 </div>
             )}
         </div>
         
-        <div className="absolute bottom-6 flex justify-center items-center gap-4">
+        <div className="flex justify-center items-center gap-4 mt-8">
             <Button variant="outline" size="icon" className="w-16 h-16 rounded-full bg-white shadow-lg border-gray-200" onClick={() => handleSwipe('left')}>
             <X className="w-8 h-8 text-red-500" />
             </Button>
             <Button variant="outline" size="icon" className="w-12 h-12 rounded-full bg-white shadow-lg border-gray-200" onClick={() => handleSwipe('up')}>
-            <Star className="w-6 h-6 text-blue-500" />
+            <Star className="w-6 h-6 text-blue-500" fill="currentColor" />
             </Button>
             <Button variant="outline" size="icon" className="w-16 h-16 rounded-full bg-white shadow-lg border-gray-200" onClick={() => handleSwipe('right')}>
-            <Heart className="w-8 h-8 text-primary" />
+            <Heart className="w-8 h-8 text-primary" fill="currentColor"/>
             </Button>
         </div>
       </div>

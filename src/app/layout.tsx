@@ -5,7 +5,7 @@ import { OnboardingProvider } from '@/context/onboarding-context';
 
 export const metadata: Metadata = {
   title: 'BeMatch',
-  description: 'Find your perfect match.',
+  description: 'Mükemmel eşini bul.',
 };
 
 export default function RootLayout({
@@ -14,7 +14,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang="en" className="light">
+    <html lang="tr" className="light">
       <head>
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />

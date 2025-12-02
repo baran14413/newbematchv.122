@@ -43,20 +43,20 @@ export const currentUser = {
   id: 0,
   name: "You",
   personalityTraits: [
-    { trait: 'Adventurous', userScore: 80, viewerScore: 60 },
-    { trait: 'Creative', userScore: 90, viewerScore: 75 },
-    { trait: 'Introverted', userScore: 40, viewerScore: 50 },
-    { trait: 'Spontaneous', userScore: 70, viewerScore: 85 },
-    { trait: 'Humorous', userScore: 85, viewerScore: 90 },
+    { trait: 'Maceracı', userScore: 80, viewerScore: 60 },
+    { trait: 'Yaratıcı', userScore: 90, viewerScore: 75 },
+    { trait: 'İçedönük', userScore: 40, viewerScore: 50 },
+    { trait: 'Spontan', userScore: 70, viewerScore: 85 },
+    { trait: 'Mizahi', userScore: 85, viewerScore: 90 },
   ]
 };
 
 export const profiles: UserProfile[] = [
   {
     id: 1,
-    name: 'Sarah',
+    name: 'Selin',
     age: 28,
-    bio: 'Art director with a love for surrealist paintings and rainy days. Probably thinking about pasta. 🍝',
+    bio: 'Sanat yönetmeni. Sürrealist tablolara ve yağmurlu günlere bayılırım. Muhtemelen şu an makarnayı düşünüyorum. 🍝',
     avatarUrl: placeholderImages.find(p => p.id === 'user-1-avatar')?.imageUrl ?? '',
     imageUrls: [
       placeholderImages.find(p => p.id === 'user-1-p1')?.imageUrl ?? '',
@@ -65,55 +65,55 @@ export const profiles: UserProfile[] = [
     videoUrl: 'https://storage.googleapis.com/gtv-videos-bucket/sample/ForBiggerFun.mp4',
     voiceNoteUrl: '/placeholder-audio.mp3',
     prompts: [
-      { question: 'The key to my heart is...', answer: 'A perfectly curated Spotify playlist.' },
-      { question: 'I get way too competitive about...', answer: 'Mario Kart. Don\'t even try me.' },
+      { question: 'Kalbimin anahtarı...', answer: 'Mükemmel hazırlanmış bir Spotify çalma listesidir.' },
+      { question: 'Şu konuda çok hırslanırım...', answer: 'Mario Kart. Bana bulaşma bile.' },
     ],
     personalityTraits: [
-        { trait: 'Adventurous', userScore: 60, viewerScore: 80 },
-        { trait: 'Creative', userScore: 75, viewerScore: 90 },
-        { trait: 'Introverted', userScore: 50, viewerScore: 40 },
-        { trait: 'Spontaneous', userScore: 85, viewerScore: 70 },
-        { trait: 'Humorous', userScore: 90, viewerScore: 85 },
+        { trait: 'Maceracı', userScore: 60, viewerScore: 80 },
+        { trait: 'Yaratıcı', userScore: 75, viewerScore: 90 },
+        { trait: 'İçedönük', userScore: 50, viewerScore: 40 },
+        { trait: 'Spontan', userScore: 85, viewerScore: 70 },
+        { trait: 'Mizahi', userScore: 90, viewerScore: 85 },
     ],
-    zodiac: 'Aries',
+    zodiac: 'Koç',
   },
   {
     id: 2,
     name: 'Alex',
     age: 31,
-    bio: 'Software engineer by day, aspiring chef by night. Looking for someone to be my sous chef for life.',
+    bio: 'Gündüzleri yazılım mühendisi, geceleri hevesli bir şef. Hayat boyu sous şefim olacak birini arıyorum.',
     avatarUrl: placeholderImages.find(p => p.id === 'user-2-avatar')?.imageUrl ?? '',
     imageUrls: [
         placeholderImages.find(p => p.id === 'user-2-p1')?.imageUrl ?? '',
         placeholderImages.find(p => p.id === 'user-2-p2')?.imageUrl ?? '',
     ],
     prompts: [
-      { question: 'A life goal of mine is...', answer: 'To visit every continent.' },
-      { question: 'I\'m looking for...', answer: 'Someone who doesn\'t take themselves too seriously.' },
+      { question: 'Hayattaki bir hedefim...', answer: 'Her kıtayı ziyaret etmek.' },
+      { question: 'Aradığım kişi...', answer: 'Kendini çok ciddiye almayan biri.' },
     ],
     personalityTraits: [
-        { trait: 'Adventurous', userScore: 90, viewerScore: 80 },
-        { trait: 'Creative', userScore: 50, viewerScore: 90 },
-        { trait: 'Introverted', userScore: 30, viewerScore: 40 },
-        { trait: 'Spontaneous', userScore: 60, viewerScore: 70 },
-        { trait: 'Humorous', userScore: 75, viewerScore: 85 },
+        { trait: 'Maceracı', userScore: 90, viewerScore: 80 },
+        { trait: 'Yaratıcı', userScore: 50, viewerScore: 90 },
+        { trait: 'İçedönük', userScore: 30, viewerScore: 40 },
+        { trait: 'Spontan', userScore: 60, viewerScore: 70 },
+        { trait: 'Mizahi', userScore: 75, viewerScore: 85 },
     ],
-    zodiac: 'Libra',
+    zodiac: 'Terazi',
   },
     {
     id: 3,
     name: 'Chloe',
     age: 26,
-    bio: 'Beach bum, dog mom, and professional sunset watcher. Let\'s find the best tacos in town.',
+    bio: 'Plaj tutkunu, köpek annesi ve profesyonel gün batımı izleyicisi. Şehirdeki en iyi tacoları bulalım.',
     avatarUrl: placeholderImages.find(p => p.id === 'user-3-avatar')?.imageUrl ?? '',
     imageUrls: [
         placeholderImages.find(p => p.id === 'user-3-p1')?.imageUrl ?? '',
     ],
     prompts: [
-      { question: 'You should leave a comment if...', answer: 'You know a good hiking spot.' },
+      { question: 'Yorum bırakmalısın eğer...', answer: 'İyi bir yürüyüş rotası biliyorsan.' },
     ],
     personalityTraits: [],
-    zodiac: 'Pisces',
+    zodiac: 'Balık',
   },
 ];
 
@@ -121,15 +121,15 @@ export const conversations: Conversation[] = [
   {
     id: 1,
     userId: 1,
-    userName: 'Sarah',
+    userName: 'Selin',
     avatarUrl: placeholderImages.find(p => p.id === 'user-1-avatar')?.imageUrl ?? '',
-    lastMessage: 'Haha, that\'s a bold claim! You\'re on!',
-    timestamp: '10m ago',
+    lastMessage: 'Haha, bu cesur bir iddia! Meydan okumanı kabul ediyorum!',
+    timestamp: '10dk önce',
     unreadCount: 1,
     messages: [
-      { id: 1, text: 'I get way too competitive about Mario Kart. Don\'t even try me.', sender: 'them', timestamp: '1h ago' },
-      { id: 2, text: 'Is that a challenge? I happen to be a Rainbow Road master.', sender: 'me', timestamp: '30m ago' },
-      { id: 3, text: 'Haha, that\'s a bold claim! You\'re on!', sender: 'them', timestamp: '10m ago' },
+      { id: 1, text: 'Şu konuda çok hırslanırım: Mario Kart. Bana bulaşma bile.', sender: 'them', timestamp: '1 saat önce' },
+      { id: 2, text: 'Bu bir meydan okuma mı? Ben bir Rainbow Road ustasıyımdır da.', sender: 'me', timestamp: '30dk önce' },
+      { id: 3, text: 'Haha, bu cesur bir iddia! Meydan okumanı kabul ediyorum!', sender: 'them', timestamp: '10dk önce' },
     ],
   },
   {
@@ -137,11 +137,11 @@ export const conversations: Conversation[] = [
     userId: 2,
     userName: 'Alex',
     avatarUrl: placeholderImages.find(p => p.id === 'user-2-avatar')?.imageUrl ?? '',
-    lastMessage: 'You had me at sous chef.',
-    timestamp: '1h ago',
+    lastMessage: 'Sous şef lafıyla beni tavladın.',
+    timestamp: '1 saat önce',
     unreadCount: 0,
     messages: [
-      { id: 1, text: 'You had me at sous chef.', sender: 'me', timestamp: '1h ago' },
+      { id: 1, text: 'Sous şef lafıyla beni tavladın.', sender: 'me', timestamp: '1 saat önce' },
     ],
   },
 ];
@@ -154,6 +154,6 @@ export const newMatches: Pick<UserProfile, 'id' | 'name' | 'avatarUrl'>[] = [
 ]
 
 export const zodiacSigns = [
-  "Aries", "Taurus", "Gemini", "Cancer", "Leo", "Virgo",
-  "Libra", "Scorpio", "Sagittarius", "Capricorn", "Aquarius", "Pisces"
+  "Koç", "Boğa", "İkizler", "Yengeç", "Aslan", "Başak",
+  "Terazi", "Akrep", "Yay", "Oğlak", "Kova", "Balık"
 ];

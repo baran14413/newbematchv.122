@@ -1,7 +1,7 @@
 'use client';
 import React, { useRef } from 'react';
 import { useOnboardingContext } from '@/context/onboarding-context';
-import { Plus, X, Camera } from 'lucide-react';
+import { Plus, X } from 'lucide-react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 
@@ -18,7 +18,7 @@ export default function StepPhotos() {
       reader.onloadend = () => {
         const newPhotos = [...formData.photos, reader.result as string];
         updateFormData({ photos: newPhotos });
-        setStepValid(newPhotos.length > 0);
+        setStepValid(newPhotos.length >= 1); // En az 1 fotoğraf gerekli
       };
       reader.readAsDataURL(file);
     }
@@ -27,7 +27,7 @@ export default function StepPhotos() {
   const handleRemovePhoto = (index: number) => {
     const newPhotos = formData.photos.filter((_, i) => i !== index);
     updateFormData({ photos: newPhotos });
-    setStepValid(newPhotos.length > 0);
+    setStepValid(newPhotos.length >= 1);
   };
 
   const triggerFileInput = () => {
@@ -37,7 +37,7 @@ export default function StepPhotos() {
   return (
     <div className="space-y-4">
       <p className="text-center text-muted-foreground text-sm">
-        Add at least one photo to continue. You can add up to {MAX_PHOTOS}.
+        Devam etmek için en az 1 fotoğraf ekle. En fazla {MAX_PHOTOS} fotoğraf ekleyebilirsin.
       </p>
       <div className="grid grid-cols-3 gap-3">
         {Array.from({ length: MAX_PHOTOS }).map((_, index) => {
@@ -47,7 +47,7 @@ export default function StepPhotos() {
               <div key={index} className="relative aspect-square">
                 <Image
                   src={photo}
-                  alt={`Upload preview ${index + 1}`}
+                  alt={`Yükleme önizlemesi ${index + 1}`}
                   fill
                   className="object-cover rounded-lg border-2 border-gray-200"
                 />
@@ -70,7 +70,7 @@ export default function StepPhotos() {
                 className="aspect-square flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-primary/50 text-primary hover:bg-primary/5 transition-colors"
               >
                 <Plus className="w-8 h-8" />
-                <span className="text-xs font-semibold">Add Photo</span>
+                <span className="text-xs font-semibold">Fotoğraf Ekle</span>
               </button>
             );
           }

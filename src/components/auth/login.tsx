@@ -32,17 +32,17 @@ export default function Login({ onSwitchView }: LoginProps) {
         </div>
         <CardTitle className="text-4xl font-extrabold text-primary tracking-tight">BeMatch</CardTitle>
         <CardDescription className="text-muted-foreground">
-          Sign in to find your perfect match.
+          Mükemmel eşini bulmak için giriş yap.
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="space-y-2">
-          <Label htmlFor="email">Email</Label>
-          <Input id="email" type="email" placeholder="your@email.com" />
+          <Label htmlFor="email">E-posta</Label>
+          <Input id="email" type="email" placeholder="eposta@adresiniz.com" />
         </div>
         <div className="space-y-2 relative">
-          <Label htmlFor="password">Password</Label>
-          <Input id="password" type={showPassword ? 'text' : 'password'} placeholder="Your password" />
+          <Label htmlFor="password">Şifre</Label>
+          <Input id="password" type={showPassword ? 'text' : 'password'} placeholder="Şifreniz" />
           <Button
             type="button"
             variant="ghost"
@@ -56,12 +56,12 @@ export default function Login({ onSwitchView }: LoginProps) {
       </CardContent>
       <CardFooter className="flex flex-col gap-4">
         <Button asChild className="w-full bg-primary hover:bg-primary/90 font-bold text-lg py-6 rounded-xl">
-          <Link href="/discover">Log In</Link>
+          <Link href="/discover">Giriş Yap</Link>
         </Button>
         <p className="text-sm text-muted-foreground">
-          Don&apos;t have an account?{' '}
+          Hesabın yok mu?{' '}
           <button onClick={() => onSwitchView('register')} className="font-semibold text-primary hover:underline">
-            Create New Account
+            Yeni Hesap Oluştur
           </button>
         </p>
       </CardFooter>

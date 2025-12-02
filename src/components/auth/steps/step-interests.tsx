@@ -4,8 +4,8 @@ import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
 
 const interestsList = [
-  'Music', 'Travel', 'Gaming', 'Movies', 'Reading', 'Cooking',
-  'Sports', 'Fitness', 'Art', 'Photography', 'Hiking', 'Dancing'
+  'Müzik', 'Seyahat', 'Oyun', 'Filmler', 'Okuma', 'Yemek yapmak',
+  'Spor', 'Fitness', 'Sanat', 'Fotoğrafçılık', 'Yürüyüş', 'Dans'
 ];
 
 export default function StepInterests() {

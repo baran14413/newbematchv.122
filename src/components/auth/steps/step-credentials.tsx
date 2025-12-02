@@ -29,23 +29,23 @@ export default function StepCredentials() {
   return (
     <div className="space-y-6">
       <div className="space-y-2">
-        <Label htmlFor="email">Email</Label>
+        <Label htmlFor="email">E-posta</Label>
         <Input 
           id="email" 
           name="email"
           type="email" 
-          placeholder="you@example.com" 
+          placeholder="eposta@adresiniz.com" 
           value={formData.email}
           onChange={handleChange}
         />
       </div>
       <div className="space-y-2 relative">
-        <Label htmlFor="password">Password</Label>
+        <Label htmlFor="password">Şifre</Label>
         <Input 
           id="password" 
           name="password"
           type={showPassword ? 'text' : 'password'}
-          placeholder="Create a password" 
+          placeholder="Bir şifre oluşturun" 
           value={formData.password}
           onChange={handleChange}
         />
@@ -61,12 +61,12 @@ export default function StepCredentials() {
         <PasswordStrength password={formData.password} />
       </div>
       <div className="space-y-2 relative">
-        <Label htmlFor="confirmPassword">Confirm Password</Label>
+        <Label htmlFor="confirmPassword">Şifreyi Onayla</Label>
         <Input 
           id="confirmPassword" 
           name="confirmPassword"
           type={showConfirmPassword ? 'text' : 'password'}
-          placeholder="Confirm your password"
+          placeholder="Şifrenizi doğrulayın"
           value={formData.confirmPassword}
           onChange={handleChange}
           className={
@@ -85,7 +85,7 @@ export default function StepCredentials() {
           {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
         </Button>
         {formData.confirmPassword && formData.password !== formData.confirmPassword && (
-            <p className="text-xs text-red-500">Passwords do not match.</p>
+            <p className="text-xs text-red-500">Şifreler eşleşmiyor.</p>
         )}
       </div>
     </div>

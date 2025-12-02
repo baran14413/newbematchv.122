@@ -20,11 +20,11 @@ export default function StepName() {
   return (
     <div className="space-y-6">
       <div className="space-y-2">
-        <Label htmlFor="firstName">First Name</Label>
+        <Label htmlFor="firstName">Adın</Label>
         <Input
           id="firstName"
           name="firstName"
-          placeholder="Your first name"
+          placeholder="Adınız"
           value={formData.firstName}
           onChange={handleChange}
           className="h-14 text-lg"
@@ -32,11 +32,11 @@ export default function StepName() {
         />
       </div>
       <div className="space-y-2">
-        <Label htmlFor="lastName">Last Name</Label>
+        <Label htmlFor="lastName">Soyadın</Label>
         <Input
           id="lastName"
           name="lastName"
-          placeholder="Your last name"
+          placeholder="Soyadınız"
           value={formData.lastName}
           onChange={handleChange}
           className="h-14 text-lg"

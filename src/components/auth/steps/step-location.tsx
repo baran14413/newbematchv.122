@@ -9,10 +9,10 @@ import { MapPin } from 'lucide-react';
 export default function StepLocation() {
   const { formData, updateFormData, setStepValid } = useOnboardingContext();
   
-  // Mock function to ask for location and set it
+  // Konum isteme ve ayarlama için sahte fonksiyon
   const handleLocationRequest = () => {
-    // In a real app, this would use navigator.geolocation
-    const newFormData = { ...formData, location: 'New York, NY', locationEnabled: true };
+    // Gerçek bir uygulamada bu, navigator.geolocation kullanırdı
+    const newFormData = { ...formData, location: 'İstanbul, TR', locationEnabled: true };
     updateFormData(newFormData);
     setStepValid(true);
   };
@@ -22,7 +22,7 @@ export default function StepLocation() {
     updateFormData(newFormData);
   };
 
-  // Automatically validate if location is already enabled
+  // Konum zaten etkinse otomatik olarak doğrula
   useEffect(() => {
     if(formData.locationEnabled){
       setStepValid(true);
@@ -42,24 +42,24 @@ export default function StepLocation() {
                 </div>
             </div>
             <p className="text-muted-foreground">
-                Please enable location services to find matches near you.
+                Yakınındaki eşleşmeleri bulmak için lütfen konum servislerini etkinleştir.
             </p>
-            <Button onClick={handleLocationRequest}>Enable Location</Button>
+            <Button onClick={handleLocationRequest}>Konumu Etkinleştir</Button>
         </div>
       ) : (
         <div className="space-y-6">
           <div>
-             <Label className='text-muted-foreground'>Your current city</Label>
+             <Label className='text-muted-foreground'>Şu anki şehrin</Label>
              <p className='font-bold text-lg'>{formData.location}</p>
           </div>
           <div className="space-y-4">
             <div className="flex justify-between items-baseline">
-                <Label>Maximum Distance</Label>
-                <span className="text-sm font-semibold text-primary">{formData.maxDistance} mi</span>
+                <Label>Maksimum Mesafe</Label>
+                <span className="text-sm font-semibold text-primary">{formData.maxDistance} km</span>
             </div>
             <Slider 
                 defaultValue={[formData.maxDistance]} 
-                max={100} 
+                max={150} 
                 step={1}
                 onValueChange={handleSliderChange}
             />
