@@ -1,99 +1,66 @@
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Slider } from "@/components/ui/slider";
-import { Switch } from "@/components/ui/switch";
-import { zodiacSigns } from "@/lib/data";
+'use client';
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Separator } from "@/components/ui/separator";
+import { ChevronRight, Heart, LogOut, MapPin, ShieldCheck, SlidersHorizontal, Smartphone, User, Wallet } from "lucide-react";
+import Link from "next/link";
+
+const SettingsSection = ({ title, children }: { title: string, children: React.ReactNode }) => (
+    <div className="space-y-4">
+        <h2 className="px-4 text-lg font-semibold text-muted-foreground">{title}</h2>
+        <Card className="shadow-none border-0 md:border md:shadow-sm">
+            <CardContent className="p-0">
+                <ul className="divide-y">
+                    {children}
+                </ul>
+            </CardContent>
+        </Card>
+    </div>
+);
+
+const SettingsItem = ({ icon, label, href = "#" }: { icon: React.ElementType, label: string, href?: string }) => (
+    <li className="list-none">
+        <Link href={href} passHref>
+            <div className="flex items-center p-4 hover:bg-secondary cursor-pointer">
+                <div className="w-10 h-10 mr-4 rounded-full flex items-center justify-center bg-primary/10 text-primary">
+                    <icon className="w-5 h-5" />
+                </div>
+                <span className="flex-1 font-medium">{label}</span>
+                <ChevronRight className="w-5 h-5 text-muted-foreground" />
+            </div>
+        </Link>
+    </li>
+);
 
 export default function SettingsPage() {
   return (
-    <div className="h-full overflow-y-auto p-4 md:p-8 space-y-8">
-      <header>
-        <h1 className="text-3xl font-bold text-primary">Kontrol Merkezi</h1>
-        <p className="text-muted-foreground">BeMatch deneyimini kendine göre ayarla.</p>
-      </header>
+    <div className="h-full overflow-y-auto bg-gray-50 dark:bg-black">
+        <header className="p-4 py-6 md:p-8">
+            <h1 className="text-3xl font-bold text-primary">Ayarlar</h1>
+            <p className="text-muted-foreground">Hesabını ve tercihlerini yönet.</p>
+        </header>
 
-      <Card className="bg-card/60 backdrop-blur-md border-border">
-        <CardHeader>
-          <CardTitle>Gizlilik</CardTitle>
-          <CardDescription>Platformdaki görünürlüğünü yönet.</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-          <div className="flex items-center justify-between rounded-lg border p-4">
-            <div>
-              <Label htmlFor="incognito-mode">Gizli Mod</Label>
-              <p className="text-sm text-muted-foreground">
-                Sadece beğendiğin kişilere gösteril.
-              </p>
-            </div>
-            <Switch id="incognito-mode" />
-          </div>
-           <div className="flex items-center justify-between rounded-lg border p-4">
-            <div>
-              <Label htmlFor="show-profile">Profili Göster</Label>
-              <p className="text-sm text-muted-foreground">
-                Profilinin BeMatch'te görünmesini engelle.
-              </p>
-            </div>
-            <Switch id="show-profile" defaultChecked/>
-          </div>
-        </CardContent>
-      </Card>
+        <div className="md:p-8 md:pt-0 space-y-8">
+            <SettingsSection title="Hesabın">
+                <SettingsItem icon={User} label="Kişisel Bilgiler" />
+                <SettingsItem icon={Wallet} label="Cüzdanım" />
+                <SettingsItem icon={MapPin} label="Konum" />
+                <SettingsItem icon={SlidersHorizontal} label="Tercihler" />
+            </SettingsSection>
 
-      <Card className="bg-card/60 backdrop-blur-md border-border">
-        <CardHeader>
-          <CardTitle>Keşfet Ayarları</CardTitle>
-          <CardDescription>Kimi aradığını belirt.</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-8">
-           <div className="space-y-4">
-            <div className="flex justify-between items-baseline">
-                <Label>Mesafe</Label>
-                <span className="text-sm text-muted-foreground">80 km</span>
-            </div>
-            <Slider defaultValue={[80]} max={150} step={1} />
-          </div>
-          <div className="space-y-4">
-            <div className="flex justify-between items-baseline">
-                <Label>Yaş Aralığı</Label>
-                <span className="text-sm text-muted-foreground">25 - 35</span>
-            </div>
-            <Slider defaultValue={[25, 35]} min={18} max={65} step={1} />
-          </div>
-          <div className="space-y-4">
-            <Label>Burç</Label>
-            <Select>
-              <SelectTrigger>
-                <SelectValue placeholder="Farketmez" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="any">Farketmez</SelectItem>
-                {zodiacSigns.map((sign) => (
-                  <SelectItem key={sign} value={sign.toLowerCase()}>{sign}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
-        </CardContent>
-      </Card>
+            <SettingsSection title="Profil ve Güvenlik">
+                <SettingsItem icon={Heart} label="İlgi Alanlarını Düzenle" />
+                <SettingsItem icon={ShieldCheck} label="Doğrulamalar" />
+            </SettingsSection>
 
-      <Card className="bg-card/60 backdrop-blur-md border-border">
-        <CardHeader>
-          <CardTitle>Bildirimler</CardTitle>
-          <CardDescription>Hangi bildirimleri almak istediğini seç.</CardDescription>
-        </CardHeader>
-        <CardContent className="space-y-6">
-            <div className="flex items-center justify-between">
-                <Label htmlFor="push-notifications">Anlık Bildirimler</Label>
-                <Switch id="push-notifications" defaultChecked />
-            </div>
-            <div className="flex items-center justify-between">
-                <Label htmlFor="email-notifications">E-posta Bildirimleri</Label>
-                <Switch id="email-notifications" />
-            </div>
-        </CardContent>
-      </Card>
+             <SettingsSection title="Uygulama Ayarları">
+                <SettingsItem icon={Smartphone} label="Uygulama" />
+            </SettingsSection>
 
+            <SettingsSection title="Oturum">
+                <SettingsItem icon={LogOut} label="Çıkış Yap" />
+            </SettingsSection>
+        </div>
     </div>
   );
 }
