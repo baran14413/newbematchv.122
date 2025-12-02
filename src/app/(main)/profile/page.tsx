@@ -3,7 +3,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { Crown, LogOut, Settings } from 'lucide-react';
+import { Crown, Settings } from 'lucide-react';
 import Link from 'next/link';
 import { profiles } from '@/lib/data';
 import Image from 'next/image';
@@ -39,9 +39,6 @@ export default function ProfilePage() {
                 </div>
                 <div className="text-center">
                     <h1 className="text-3xl font-bold">{userProfile.name}, {userProfile.age}</h1>
-                    <Button variant="outline" className="mt-4 rounded-full border-primary/50 text-primary hover:bg-primary/5 hover:text-primary">
-                    Profili Düzenle
-                    </Button>
                 </div>
             </div>
              <div className="flex-1 flex justify-end">
@@ -79,14 +76,6 @@ export default function ProfilePage() {
              </div>
           </CardContent>
         </Card>
-
-        {/* Logout */}
-        <div className="text-center">
-          <Button variant="ghost" className="text-muted-foreground hover:text-destructive">
-            <LogOut className="mr-2" />
-            Çıkış Yap
-          </Button>
-        </div>
       </div>
     </div>
   );
