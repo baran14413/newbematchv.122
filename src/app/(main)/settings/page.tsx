@@ -18,12 +18,12 @@ const SettingsSection = ({ title, children }: { title: string, children: React.R
     </div>
 );
 
-const SettingsItem = ({ icon, label, href = "#" }: { icon: React.ElementType, label: string, href?: string }) => (
+const SettingsItem = ({ icon: Icon, label, href = "#" }: { icon: React.ElementType, label: string, href?: string }) => (
     <li className="list-none">
         <Link href={href} passHref>
             <div className="flex items-center p-4 hover:bg-secondary cursor-pointer">
                 <div className="w-10 h-10 mr-4 rounded-full flex items-center justify-center bg-primary/10 text-primary">
-                    <icon className="w-5 h-5" />
+                    <Icon className="w-5 h-5" />
                 </div>
                 <span className="flex-1 font-medium">{label}</span>
                 <ChevronRight className="w-5 h-5 text-muted-foreground" />
