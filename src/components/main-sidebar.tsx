@@ -9,7 +9,7 @@ import {
   SidebarMenuButton,
   SidebarFooter,
 } from '@/components/ui/sidebar';
-import { Flame, MessagesSquare, UserCircle, Settings, Sparkles } from 'lucide-react';
+import { Flame, MessagesSquare, UserCircle, Settings, Heart } from 'lucide-react';
 import { usePathname } from 'next/navigation';
 import Link from 'next/link';
 import { Avatar, AvatarFallback, AvatarImage } from './ui/avatar';
@@ -28,9 +28,9 @@ export default function MainSidebar() {
 
 
   return (
-    <Sidebar className="border-r border-white/10 bg-card/60 backdrop-blur-2xl" collapsible="icon">
+    <Sidebar className="border-r" collapsible="icon">
       <SidebarHeader className="items-center justify-center p-4">
-        <Sparkles className="w-8 h-8 text-primary group-data-[collapsible=icon]:w-6 group-data-[collapsible=icon]:h-6 transition-all" />
+        <Heart className="w-8 h-8 text-primary group-data-[collapsible=icon]:w-6 group-data-[collapsible=icon]:h-6 transition-all" />
       </SidebarHeader>
       <SidebarContent className="p-2">
         <SidebarMenu>
@@ -40,7 +40,7 @@ export default function MainSidebar() {
                 <SidebarMenuButton
                   isActive={pathname.startsWith(item.href)}
                   tooltip={{ children: item.label, side:"right" }}
-                  className="data-[active=true]:bg-primary data-[active=true]:text-primary-foreground hover:bg-primary/20"
+                  className="data-[active=true]:bg-primary data-[active=true]:text-primary-foreground hover:bg-primary/10"
                 >
                   <item.icon />
                   <span>{item.label}</span>
