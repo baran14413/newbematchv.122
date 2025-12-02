@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { ChevronRight, Heart, LogOut, MapPin, ShieldCheck, SlidersHorizontal, Smartphone, User, Wallet } from "lucide-react";
+import { ChevronRight, Heart, LogOut, MapPin, ShieldCheck, SlidersHorizontal, Smartphone, User, Wallet, KeyRound, Trash2 } from "lucide-react";
 import Link from "next/link";
 
 const SettingsSection = ({ title, children }: { title: string, children: React.ReactNode }) => (
@@ -41,20 +41,24 @@ export default function SettingsPage() {
         </header>
 
         <div className="md:p-8 md:pt-0 space-y-8">
-            <SettingsSection title="Hesabın">
-                <SettingsItem icon={User} label="Kişisel Bilgiler" />
-                <SettingsItem icon={Wallet} label="Cüzdanım" />
-                <SettingsItem icon={MapPin} label="Konum" />
-                <SettingsItem icon={SlidersHorizontal} label="Tercihler" />
+            <SettingsSection title="Hesap Ayarları">
+                <SettingsItem icon={User} label="Kişisel Bilgiler" href="/settings/personal-info" />
+                <SettingsItem icon={Wallet} label="Cüzdanım" href="/settings/wallet"/>
+                <SettingsItem icon={Heart} label="İlgi Alanlarını Düzenle" href="/settings/interests" />
             </SettingsSection>
 
-            <SettingsSection title="Profil ve Güvenlik">
-                <SettingsItem icon={Heart} label="İlgi Alanlarını Düzenle" />
-                <SettingsItem icon={ShieldCheck} label="Doğrulamalar" />
+            <SettingsSection title="Keşfet Ayarları">
+                <SettingsItem icon={MapPin} label="Konum" href="/settings/location"/>
+                <SettingsItem icon={SlidersHorizontal} label="Tercihler" href="/settings/preferences"/>
             </SettingsSection>
 
              <SettingsSection title="Uygulama Ayarları">
-                <SettingsItem icon={Smartphone} label="Uygulama" />
+                <SettingsItem icon={Smartphone} label="Uygulama" href="/settings/application"/>
+            </SettingsSection>
+
+            <SettingsSection title="Gizlilik ve Güvenlik">
+                <SettingsItem icon={KeyRound} label="Şifre Değiştir" href="/settings/change-password" />
+                <SettingsItem icon={Trash2} label="Hesabı Sil" href="/settings/delete-account" />
             </SettingsSection>
 
             <SettingsSection title="Oturum">
