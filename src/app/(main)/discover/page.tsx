@@ -80,18 +80,18 @@ export default function DiscoverPage() {
                 </div>
             )}
         </div>
-      </div>
-
-      <div className="p-4 bg-transparent flex justify-center items-center gap-4">
-        <Button variant="outline" size="icon" className="w-16 h-16 rounded-full bg-white shadow-lg border-gray-200" onClick={() => handleSwipe('left')}>
-          <X className="w-8 h-8 text-red-500" />
-        </Button>
-        <Button variant="outline" size="icon" className="w-12 h-12 rounded-full bg-white shadow-lg border-gray-200" onClick={() => handleSwipe('up')}>
-          <Star className="w-6 h-6 text-blue-500" />
-        </Button>
-        <Button variant="outline" size="icon" className="w-16 h-16 rounded-full bg-white shadow-lg border-gray-200" onClick={() => handleSwipe('right')}>
-          <Heart className="w-8 h-8 text-primary" />
-        </Button>
+        
+        <div className="absolute bottom-8 flex justify-center items-center gap-4">
+            <Button variant="outline" size="icon" className="w-16 h-16 rounded-full bg-white shadow-lg border-gray-200" onClick={() => handleSwipe('left')}>
+            <X className="w-8 h-8 text-red-500" />
+            </Button>
+            <Button variant="outline" size="icon" className="w-12 h-12 rounded-full bg-white shadow-lg border-gray-200" onClick={() => handleSwipe('up')}>
+            <Star className="w-6 h-6 text-blue-500" />
+            </Button>
+            <Button variant="outline" size="icon" className="w-16 h-16 rounded-full bg-white shadow-lg border-gray-200" onClick={() => handleSwipe('right')}>
+            <Heart className="w-8 h-8 text-primary" />
+            </Button>
+        </div>
       </div>
     </div>
   );

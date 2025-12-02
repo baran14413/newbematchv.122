@@ -1,5 +1,4 @@
 import MainHeader from '@/components/main-header';
-import BottomNavBar from '@/components/bottom-nav-bar';
 
 export default function MainLayout({
   children,
@@ -10,7 +9,6 @@ export default function MainLayout({
     <div className="flex flex-col h-screen">
       <MainHeader />
       <main className="flex-1 overflow-y-auto">{children}</main>
-      <BottomNavBar />
     </div>
   );
 }
