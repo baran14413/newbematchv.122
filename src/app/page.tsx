@@ -1,16 +1,18 @@
 'use client';
-import AuthScreen from '@/components/auth/auth-screen';
-import { placeholderImages } from '@/lib/data';
-import Image from 'next/image';
+import { useEffect } from 'react';
+import { useRouter } from 'next/navigation';
+import { Loader2 } from 'lucide-react';
 
 export default function Home() {
-  const bgImage = placeholderImages.find((p) => p.id === 'auth-bg');
+  const router = useRouter();
+
+  useEffect(() => {
+    router.replace('/discover');
+  }, [router]);
 
   return (
-    <main className="flex flex-col min-h-screen bg-background">
-      <div className="flex-1 flex flex-col justify-center">
-        <AuthScreen />
-      </div>
-    </main>
+    <div className="flex items-center justify-center min-h-screen bg-background">
+      <Loader2 className="w-8 h-8 animate-spin text-primary" />
+    </div>
   );
 }
