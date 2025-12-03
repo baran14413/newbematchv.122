@@ -1,6 +1,7 @@
 'use client';
 import { useState, useMemo, useEffect } from 'react';
-import { AnimatePresence, motion, PanInfo } from 'framer-motion';
+import { AnimatePresence, motion } from 'framer-motion';
+import type { PanInfo } from 'framer-motion';
 import { profiles } from '@/lib/data';
 import { Card, CardContent } from '@/components/ui/card';
 import Image from 'next/image';
@@ -18,22 +19,20 @@ export default function DiscoverPage() {
   const [history, setHistory] = useState<UserProfile[]>([]);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isDetailSheetOpen, setDetailSheetOpen] = useState(false);
+  const [swipeDirection, setSwipeDirection] = useState<SwipeDirection | null>(null);
 
   const { t } = useLanguage();
 
   const activeProfile = useMemo(() => stack[stack.length - 1], [stack]);
 
   useEffect(() => {
-    // Reset image index when the active profile changes
     setCurrentImageIndex(0);
   }, [activeProfile]);
 
   const handleSwipe = (direction: SwipeDirection) => {
     if (!activeProfile) return;
-
-    // Move the swiped profile from stack to history
-    const swipedProfile = stack[stack.length - 1];
-    setHistory(prev => [swipedProfile, ...prev]);
+    setSwipeDirection(direction);
+    setHistory(prev => [activeProfile, ...prev]);
     setStack(prev => prev.slice(0, prev.length - 1));
   };
 
@@ -45,23 +44,8 @@ export default function DiscoverPage() {
     }
   };
 
-  const handleImageNavigation = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!activeProfile || !isDetailSheetOpen) return;
-    const { clientX, currentTarget } = e;
-    const { left, width } = currentTarget.getBoundingClientRect();
-    const clickPosition = clientX - left;
-
-    if (clickPosition < width / 2) {
-      // Clicked on the left side
-      setCurrentImageIndex(prev => Math.max(0, prev - 1));
-    } else {
-      // Clicked on the right side
-      setCurrentImageIndex(prev => Math.min(prev + 1, activeProfile.imageUrls.length - 1));
-    }
-  };
-  
   const handleTapOnCard = (e: React.MouseEvent<HTMLDivElement>) => {
-     if (!activeProfile) return;
+    if (!activeProfile) return;
     const { clientX, currentTarget } = e;
     const { left, width } = currentTarget.getBoundingClientRect();
     const clickPosition = clientX - left;
@@ -69,7 +53,7 @@ export default function DiscoverPage() {
     if (clickPosition < width / 3) {
       setCurrentImageIndex(prev => Math.max(0, prev - 1));
     } else if (clickPosition > (width * 2) / 3) {
-      setCurrentImageIndex(prev => Math.min(prev + 1, activeProfile.imageUrls.length - 1));
+      setCurrentImageIndex(prev => Math.min(prev + 1, (activeProfile.imageUrls?.length || 1) - 1));
     }
   };
 
@@ -84,10 +68,10 @@ export default function DiscoverPage() {
                 
                 return (
                   <motion.div
-                    key={`${profile.id}-${index}`} // Use a more unique key
+                    key={`${profile.id}-${index}`}
                     drag={isTop}
                     dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
-                    onDragEnd={(e, info) => {
+                    onDragEnd={(e, info: PanInfo) => {
                         const { offset, velocity } = info;
                         let direction: SwipeDirection | null = null;
                         const SWIPE_THRESHOLD = 100;
@@ -113,20 +97,12 @@ export default function DiscoverPage() {
                         opacity: index >= stack.length - 2 ? 1 : 0
                     }}
                     exit={{
-                        x: info => {
-                            if (info.offset.x > 100) return 300;
-                            if (info.offset.x < -100) return -300;
-                            return 0;
-                        },
-                        y: info => {
-                             if (info.offset.y < -100) return -500;
-                             return 0;
-                        },
+                        x: swipeDirection === 'left' ? -300 : swipeDirection === 'right' ? 300 : 0,
+                        y: swipeDirection === 'up' ? -500 : 0,
                         opacity: 0,
                         scale: 0.9,
                         transition: { duration: 0.3 }
                     }}
-                    custom={PanInfo}
                     style={{
                       position: 'absolute',
                       width: '100%',
@@ -137,7 +113,6 @@ export default function DiscoverPage() {
                   >
                     <Card className="w-full h-full rounded-2xl overflow-hidden shadow-2xl">
                       <CardContent className="p-0 h-full relative" onClick={isTop ? handleTapOnCard : undefined}>
-                        {/* Image Gallery */}
                         <AnimatePresence initial={false}>
                              <motion.div
                                 key={`${profile.id}-${currentImageIndex}`}
@@ -157,7 +132,6 @@ export default function DiscoverPage() {
                             </motion.div>
                         </AnimatePresence>
 
-                        {/* Top Progress Bars */}
                         <div className="absolute top-2 left-2 right-2 flex gap-1 z-20 pointer-events-none">
                             {profile.imageUrls.map((_, imgIndex) => (
                                 <div key={imgIndex} className="flex-1 h-1 rounded-full bg-white/50">
@@ -169,7 +143,6 @@ export default function DiscoverPage() {
                             ))}
                         </div>
 
-                        {/* Gradient & Info */}
                         <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-black/80 to-transparent p-6 flex flex-col justify-end pointer-events-none z-10">
                           <h2 className="text-3xl font-bold text-white">
                             {profile.name}, {profile.age}
@@ -177,14 +150,13 @@ export default function DiscoverPage() {
                           <p className="text-white/80 text-lg">{profile.bio.split('. ')[0]}</p>
                         </div>
 
-                        {/* Detail Sheet Trigger */}
                         {isTop && (
                              <Button 
                                 variant="ghost" 
                                 size="icon" 
                                 className="absolute bottom-4 right-4 z-20 text-white/80 hover:text-white hover:bg-white/20 rounded-full"
                                 onClick={(e) => {
-                                    e.stopPropagation(); // Prevent card tap
+                                    e.stopPropagation();
                                     setDetailSheetOpen(true);
                                 }}
                             >
