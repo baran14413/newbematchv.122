@@ -5,7 +5,7 @@ import { profiles } from '@/lib/data';
 import { Card, CardContent } from '@/components/ui/card';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { X, Star, Heart } from 'lucide-react';
+import { X, Star, Heart, Undo2 } from 'lucide-react';
 import { UserProfile } from '@/lib/data';
 import { useLanguage } from '@/context/language-context';
 
@@ -13,17 +13,28 @@ export default function DiscoverPage() {
   const [stack, setStack] = useState<UserProfile[]>(profiles);
   const [isAnimating, setIsAnimating] = useState(false);
   const { t } = useLanguage();
+  const [history, setHistory] = useState<UserProfile[]>([]);
 
-  const popCard = () => {
+  const popCard = (swipedProfile: UserProfile) => {
+    setHistory(prev => [...prev, swipedProfile]);
     setStack((prev) => prev.slice(0, -1));
   };
+  
+  const undoSwipe = () => {
+    if (history.length > 0) {
+      const lastSwiped = history[history.length - 1];
+      setHistory(prev => prev.slice(0, -1));
+      setStack(prev => [...prev, lastSwiped]);
+    }
+  }
 
   const handleSwipe = (direction: 'left' | 'right' | 'up') => {
-    if (isAnimating) return;
+    if (isAnimating || stack.length === 0) return;
     setIsAnimating(true);
     // Burada kaydırma mantığını yönetirsiniz (beğenme, beğenmeme, süper beğenme)
     console.log(`Kaydırıldı: ${direction}`);
-    popCard();
+    const swipedCard = stack[stack.length - 1];
+    popCard(swipedCard);
   };
 
   const onDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
@@ -84,14 +95,17 @@ export default function DiscoverPage() {
         </div>
         
         <div className="flex justify-center items-center gap-4 mt-8">
+            <Button variant="outline" size="icon" className="w-12 h-12 rounded-full bg-white shadow-lg border-gray-200" onClick={undoSwipe}>
+              <Undo2 className="w-6 h-6 text-yellow-500" />
+            </Button>
             <Button variant="outline" size="icon" className="w-16 h-16 rounded-full bg-white shadow-lg border-gray-200" onClick={() => handleSwipe('left')}>
-            <X className="w-8 h-8 text-red-500" />
+              <X className="w-8 h-8 text-red-500" />
             </Button>
             <Button variant="outline" size="icon" className="w-12 h-12 rounded-full bg-white shadow-lg border-gray-200" onClick={() => handleSwipe('up')}>
-            <Star className="w-6 h-6 text-blue-500" fill="currentColor" />
+              <Star className="w-6 h-6 text-blue-500" fill="currentColor" />
             </Button>
             <Button variant="outline" size="icon" className="w-16 h-16 rounded-full bg-white shadow-lg border-gray-200" onClick={() => handleSwipe('right')}>
-            <Heart className="w-8 h-8 text-primary" fill="currentColor"/>
+              <Heart className="w-8 h-8 text-primary" fill="currentColor"/>
             </Button>
         </div>
       </div>
