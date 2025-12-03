@@ -58,12 +58,6 @@ export default function OnboardingWizard({ onSwitchView }: OnboardingWizardProps
         </div>
         <div className="mt-auto pt-6">
           <WizardControls totalSteps={steps.length} />
-            <p className="text-sm text-muted-foreground text-center mt-4">
-                {t('onboarding.haveAccount')}{' '}
-                <button onClick={() => onSwitchView('login')} className="font-semibold text-primary hover:underline">
-                    {t('onboarding.login')}
-                </button>
-            </p>
         </div>
       </CardContent>
     </Card>
