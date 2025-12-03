@@ -15,6 +15,8 @@ export default function DiscoverPage() {
   const [stack, setStack] = useState<UserProfile[]>(profiles);
   const [history, setHistory] = useState<UserProfile[]>([]);
   const { t } = useLanguage();
+  const [dragEndInfo, setDragEndInfo] = useState<PanInfo | null>(null);
+
 
   const handleSwipe = (profile: UserProfile, direction: 'left' | 'right' | 'up') => {
     // Add swiped profile to history
@@ -33,6 +35,7 @@ export default function DiscoverPage() {
   };
 
   const onDragEnd = (info: PanInfo, profile: UserProfile) => {
+    setDragEndInfo(info);
     const { offset, velocity } = info;
     
     if (offset.x > SWIPE_THRESHOLD || velocity.x > 500) {
@@ -50,7 +53,9 @@ export default function DiscoverPage() {
     <div className="flex flex-col h-full bg-gray-50 dark:bg-black overflow-hidden">
       <div className="flex-1 flex flex-col items-center justify-center p-4 relative">
         <div className="w-full max-w-sm h-[60vh] max-h-[500px] relative flex items-center justify-center">
-          <AnimatePresence>
+          <AnimatePresence 
+            onExitComplete={() => setDragEndInfo(null)}
+          >
             {stack.length > 0 ? (
               stack.map((profile, index) => {
                 const isTop = index === activeIndex;
@@ -71,17 +76,21 @@ export default function DiscoverPage() {
                       opacity: 1,
                       transition: { duration: 0.3 }
                     }}
-                    exit={ (info: PanInfo) => {
-                      let exitX = 0;
-                      if(info.offset.x > 0) exitX = 300;
-                      if(info.offset.x < 0) exitX = -300;
-                      return {
-                          x: exitX,
-                          y: info.offset.y < 0 ? -300: 0,
-                          opacity: 0,
-                          scale: 0.8,
-                          transition: { duration: 0.3 }
-                      }
+                    exit={() => {
+                        let exitX = 0;
+                        let exitY = 0;
+                        if (dragEndInfo) {
+                           if(dragEndInfo.offset.x > 0) exitX = 300;
+                           if(dragEndInfo.offset.x < 0) exitX = -300;
+                           if(dragEndInfo.offset.y < 0) exitY = -300;
+                        }
+                        return {
+                            x: exitX,
+                            y: exitY,
+                            opacity: 0,
+                            scale: 0.8,
+                            transition: { duration: 0.3 }
+                        }
                     }}
                     style={{
                       position: 'absolute',
