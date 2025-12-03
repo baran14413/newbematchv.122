@@ -6,9 +6,11 @@ import { Label } from '@/components/ui/label';
 import { Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import PasswordStrength from '@/components/auth/password-strength';
+import { useLanguage } from '@/context/language-context';
 
 export default function StepCredentials() {
   const { formData, updateFormData, setStepValid } = useOnboardingContext();
+  const { t } = useLanguage();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
@@ -29,23 +31,23 @@ export default function StepCredentials() {
   return (
     <div className="space-y-6">
       <div className="space-y-2">
-        <Label htmlFor="email">E-posta</Label>
+        <Label htmlFor="email">{t('onboarding.credentials.email')}</Label>
         <Input 
           id="email" 
           name="email"
           type="email" 
-          placeholder="eposta@adresiniz.com" 
+          placeholder={t('onboarding.credentials.emailPlaceholder')}
           value={formData.email}
           onChange={handleChange}
         />
       </div>
       <div className="space-y-2 relative">
-        <Label htmlFor="password">Şifre</Label>
+        <Label htmlFor="password">{t('onboarding.credentials.password')}</Label>
         <Input 
           id="password" 
           name="password"
           type={showPassword ? 'text' : 'password'}
-          placeholder="Bir şifre oluşturun" 
+          placeholder={t('onboarding.credentials.passwordPlaceholder')}
           value={formData.password}
           onChange={handleChange}
         />
@@ -61,12 +63,12 @@ export default function StepCredentials() {
         <PasswordStrength password={formData.password} />
       </div>
       <div className="space-y-2 relative">
-        <Label htmlFor="confirmPassword">Şifreyi Onayla</Label>
+        <Label htmlFor="confirmPassword">{t('onboarding.credentials.confirmPassword')}</Label>
         <Input 
           id="confirmPassword" 
           name="confirmPassword"
           type={showConfirmPassword ? 'text' : 'password'}
-          placeholder="Şifrenizi doğrulayın"
+          placeholder={t('onboarding.credentials.confirmPasswordPlaceholder')}
           value={formData.confirmPassword}
           onChange={handleChange}
           className={
@@ -85,7 +87,7 @@ export default function StepCredentials() {
           {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
         </Button>
         {formData.confirmPassword && formData.password !== formData.confirmPassword && (
-            <p className="text-xs text-red-500">Şifreler eşleşmiyor.</p>
+            <p className="text-xs text-red-500">{t('onboarding.credentials.passwordMismatch')}</p>
         )}
       </div>
     </div>

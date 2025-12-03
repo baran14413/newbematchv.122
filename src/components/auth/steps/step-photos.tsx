@@ -4,11 +4,13 @@ import { useOnboardingContext } from '@/context/onboarding-context';
 import { Plus, X } from 'lucide-react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
+import { useLanguage } from '@/context/language-context';
 
 const MAX_PHOTOS = 6;
 
 export default function StepPhotos() {
   const { formData, updateFormData, setStepValid } = useOnboardingContext();
+  const { t } = useLanguage();
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -37,7 +39,7 @@ export default function StepPhotos() {
   return (
     <div className="space-y-4">
       <p className="text-center text-muted-foreground text-sm">
-        Devam etmek için en az 1 fotoğraf ekle. En fazla {MAX_PHOTOS} fotoğraf ekleyebilirsin.
+        {t('onboarding.photos.info', { maxPhotos: MAX_PHOTOS })}
       </p>
       <div className="grid grid-cols-3 gap-3">
         {Array.from({ length: MAX_PHOTOS }).map((_, index) => {
@@ -47,7 +49,7 @@ export default function StepPhotos() {
               <div key={index} className="relative aspect-square">
                 <Image
                   src={photo}
-                  alt={`Yükleme önizlemesi ${index + 1}`}
+                  alt={`${t('onboarding.photos.previewAlt')} ${index + 1}`}
                   fill
                   className="object-cover rounded-lg border-2 border-gray-200"
                 />
@@ -70,7 +72,7 @@ export default function StepPhotos() {
                 className="aspect-square flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-primary/50 text-primary hover:bg-primary/5 transition-colors"
               >
                 <Plus className="w-8 h-8" />
-                <span className="text-xs font-semibold">Fotoğraf Ekle</span>
+                <span className="text-xs font-semibold">{t('onboarding.photos.addButton')}</span>
               </button>
             );
           }

@@ -143,11 +143,40 @@
     },
     "onboarding": {
         "stepNameTitle": "Adınız nedir?",
+        "firstName": "Adın",
+        "firstNamePlaceholder": "Adınız",
+        "lastName": "Soyadın",
+        "lastNamePlaceholder": "Soyadınız",
         "stepGoalsTitle": "Burada ne arıyorsunuz?",
+        "goals": {
+            "longTerm": "Uzun süreli ilişki",
+            "casual": "Sıradan bir şeyler",
+            "chat": "Sohbet etmek için yeni arkadaşlar"
+        },
         "stepInterestsTitle": "İlgi alanların neler?",
         "stepLocationTitle": "Nerede yaşıyorsun?",
+        "location": {
+            "info": "Yakınındaki eşleşmeleri bulmak için lütfen konum servislerini etkinleştir.",
+            "enableButton": "Konumu Etkinleştir",
+            "currentCity": "Şu anki şehrin",
+            "maxDistance": "Maksimum Mesafe"
+        },
         "stepPhotosTitle": "En iyi fotoğraflarını ekle",
+        "photos": {
+            "info": "Devam etmek için en az 1 fotoğraf ekle. En fazla {maxPhotos} fotoğraf ekleyebilirsin.",
+            "addButton": "Fotoğraf Ekle",
+            "previewAlt": "Yükleme önizlemesi"
+        },
         "stepCredentialsTitle": "Hesabını oluştur",
+        "credentials": {
+            "email": "E-posta",
+            "emailPlaceholder": "eposta@adresiniz.com",
+            "password": "Şifre",
+            "passwordPlaceholder": "Bir şifre oluşturun",
+            "confirmPassword": "Şifreyi Onayla",
+            "confirmPasswordPlaceholder": "Şifrenizi doğrulayın",
+            "passwordMismatch": "Şifreler eşleşmiyor."
+        },
         "haveAccount": "Zaten bir hesabın var mı?",
         "login": "Giriş Yap",
         "back": "Geri",

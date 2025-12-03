@@ -5,9 +5,11 @@ import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { Button } from '@/components/ui/button';
 import { MapPin } from 'lucide-react';
+import { useLanguage } from '@/context/language-context';
 
 export default function StepLocation() {
   const { formData, updateFormData, setStepValid } = useOnboardingContext();
+  const { t } = useLanguage();
   
   // Konum isteme ve ayarlama için sahte fonksiyon
   const handleLocationRequest = () => {
@@ -42,20 +44,20 @@ export default function StepLocation() {
                 </div>
             </div>
             <p className="text-muted-foreground">
-                Yakınındaki eşleşmeleri bulmak için lütfen konum servislerini etkinleştir.
+                {t('onboarding.location.info')}
             </p>
-            <Button onClick={handleLocationRequest}>Konumu Etkinleştir</Button>
+            <Button onClick={handleLocationRequest}>{t('onboarding.location.enableButton')}</Button>
         </div>
       ) : (
         <div className="space-y-6">
           <div>
-             <Label className='text-muted-foreground'>Şu anki şehrin</Label>
+             <Label className='text-muted-foreground'>{t('onboarding.location.currentCity')}</Label>
              <p className='font-bold text-lg'>{formData.location}</p>
           </div>
           <div className="space-y-4">
             <div className="flex justify-between items-baseline">
-                <Label>Maksimum Mesafe</Label>
-                <span className="text-sm font-semibold text-primary">{formData.maxDistance} km</span>
+                <Label>{t('onboarding.location.maxDistance')}</Label>
+                <span className="text-sm font-semibold text-primary">{formData.maxDistance} {t('common.km')}</span>
             </div>
             <Slider 
                 defaultValue={[formData.maxDistance]} 

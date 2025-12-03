@@ -143,11 +143,40 @@
     },
     "onboarding": {
         "stepNameTitle": "What's your name?",
+        "firstName": "First Name",
+        "firstNamePlaceholder": "Your first name",
+        "lastName": "Last Name",
+        "lastNamePlaceholder": "Your last name",
         "stepGoalsTitle": "What are you looking for here?",
+        "goals": {
+            "longTerm": "Long-term relationship",
+            "casual": "Something casual",
+            "chat": "New friends to chat with"
+        },
         "stepInterestsTitle": "What are your interests?",
         "stepLocationTitle": "Where do you live?",
+        "location": {
+            "info": "Please enable location services to find matches near you.",
+            "enableButton": "Enable Location",
+            "currentCity": "Your current city",
+            "maxDistance": "Maximum Distance"
+        },
         "stepPhotosTitle": "Add your best photos",
+        "photos": {
+            "info": "Add at least 1 photo to continue. You can add up to {maxPhotos} photos.",
+            "addButton": "Add Photo",
+            "previewAlt": "Upload preview"
+        },
         "stepCredentialsTitle": "Create your account",
+        "credentials": {
+            "email": "Email",
+            "emailPlaceholder": "email@youraddress.com",
+            "password": "Password",
+            "passwordPlaceholder": "Create a password",
+            "confirmPassword": "Confirm Password",
+            "confirmPasswordPlaceholder": "Confirm your password",
+            "passwordMismatch": "Passwords do not match."
+        },
         "haveAccount": "Already have an account?",
         "login": "Log In",
         "back": "Back",
