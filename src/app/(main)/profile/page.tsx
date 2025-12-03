@@ -3,7 +3,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { Crown, Settings } from 'lucide-react';
+import { Crown, Settings, Pencil } from 'lucide-react';
 import Link from 'next/link';
 import { profiles } from '@/lib/data';
 import Image from 'next/image';
@@ -68,7 +68,13 @@ export default function ProfilePage() {
         {/* Photo Gallery */}
         <Card className="shadow-lg">
           <CardContent className="p-4">
-             <h3 className="text-lg font-semibold mb-4">{t('profile.myPhotos')}</h3>
+             <div className="flex justify-between items-center mb-4">
+                <h3 className="text-lg font-semibold">{t('profile.myPhotos')}</h3>
+                <Button variant="ghost" size="sm">
+                    <Pencil className="mr-2 h-4 w-4" />
+                    {t('common.edit')}
+                </Button>
+             </div>
              <div className="grid grid-cols-3 gap-2">
                 {userProfile.imageUrls.map((url, index) => (
                     <div key={index} className="relative aspect-square rounded-lg overflow-hidden">

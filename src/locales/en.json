@@ -205,7 +205,8 @@
         "next": "Next",
         "save": "Save",
         "daysAgo": "days ago",
-        "nowActive": "Active now"
+        "nowActive": "Active now",
+        "edit": "Edit"
     },
     "interests": {
         "music": "Music",
