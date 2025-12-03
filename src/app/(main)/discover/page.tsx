@@ -11,42 +11,53 @@ import { useLanguage } from '@/context/language-context';
 
 const SWIPE_THRESHOLD = 80;
 
+type SwipeDirection = 'left' | 'right' | 'up' | 'none';
+
 export default function DiscoverPage() {
   const [stack, setStack] = useState<UserProfile[]>(profiles);
-  const [history, setHistory] = useState<UserProfile[]>([]);
+  const [history, setHistory] = useState<{profile: UserProfile, direction: SwipeDirection}[]>([]);
   const { t } = useLanguage();
-  const [dragEndInfo, setDragEndInfo] = useState<PanInfo | null>(null);
+  const [swipeDirection, setSwipeDirection] = useState<SwipeDirection>('none');
 
-
-  const handleSwipe = (profile: UserProfile, direction: 'left' | 'right' | 'up') => {
-    // Add swiped profile to history
-    setHistory(prev => [profile, ...prev]);
-    // Remove swiped profile from stack
+  const handleSwipe = (profile: UserProfile, direction: SwipeDirection) => {
+    setSwipeDirection(direction);
+    setHistory(prev => [{ profile, direction }, ...prev]);
     setStack(prev => prev.filter(p => p.id !== profile.id));
   };
 
   const undoSwipe = () => {
     if (history.length > 0) {
-      const lastSwipedProfile = history[0];
+      const lastAction = history[0];
       setHistory(prev => prev.slice(1));
-      // Add it back to the top of the stack
-      setStack(prev => [lastSwipedProfile, ...prev]);
+      setStack(prev => [lastAction.profile, ...prev]);
+      setSwipeDirection('none'); // Reset swipe direction on undo
     }
   };
 
   const onDragEnd = (info: PanInfo, profile: UserProfile) => {
-    setDragEndInfo(info);
     const { offset, velocity } = info;
-    
+    let direction: SwipeDirection = 'none';
+
     if (offset.x > SWIPE_THRESHOLD || velocity.x > 500) {
-      handleSwipe(profile, 'right');
+      direction = 'right';
     } else if (offset.x < -SWIPE_THRESHOLD || velocity.x < -500) {
-      handleSwipe(profile, 'left');
+      direction = 'left';
     } else if (offset.y < -SWIPE_THRESHOLD || velocity.y < -500) {
-      handleSwipe(profile, 'up');
+      direction = 'up';
+    }
+    
+    if (direction !== 'none') {
+        handleSwipe(profile, direction);
     }
   };
   
+  const getExitVariant = () => {
+    if (swipeDirection === 'right') return { x: 300, opacity: 0, scale: 0.8 };
+    if (swipeDirection === 'left') return { x: -300, opacity: 0, scale: 0.8 };
+    if (swipeDirection === 'up') return { y: -500, opacity: 0, scale: 0.8 };
+    return { opacity: 1 };
+  };
+
   const activeIndex = stack.length - 1;
 
   return (
@@ -54,7 +65,8 @@ export default function DiscoverPage() {
       <div className="flex-1 flex flex-col items-center justify-center p-4 relative">
         <div className="w-full max-w-sm h-[60vh] max-h-[500px] relative flex items-center justify-center">
           <AnimatePresence 
-            onExitComplete={() => setDragEndInfo(null)}
+            initial={false}
+            onExitComplete={() => setSwipeDirection('none')}
           >
             {stack.length > 0 ? (
               stack.map((profile, index) => {
@@ -71,27 +83,12 @@ export default function DiscoverPage() {
                       opacity: index === activeIndex ? 1 : 0.8,
                     }}
                     animate={{
-                      scale: 1 - (stack.length - 1 - index) * 0.05,
-                      y: (stack.length - 1 - index) * 10,
+                      scale: 1,
+                      y: 0,
                       opacity: 1,
                       transition: { duration: 0.3 }
                     }}
-                    exit={() => {
-                        let exitX = 0;
-                        let exitY = 0;
-                        if (dragEndInfo) {
-                           if(dragEndInfo.offset.x > 0) exitX = 300;
-                           if(dragEndInfo.offset.x < 0) exitX = -300;
-                           if(dragEndInfo.offset.y < 0) exitY = -300;
-                        }
-                        return {
-                            x: exitX,
-                            y: exitY,
-                            opacity: 0,
-                            scale: 0.8,
-                            transition: { duration: 0.3 }
-                        }
-                    }}
+                    exit={getExitVariant()}
                     style={{
                       position: 'absolute',
                       width: '100%',
