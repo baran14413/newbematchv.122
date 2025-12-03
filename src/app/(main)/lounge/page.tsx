@@ -21,9 +21,9 @@ export default function LoungePage() {
           <ScrollArea className="flex-1">
               {conversations.map((convo) => (
                   <div key={convo.id} className={cn(
-                      "p-4 flex items-center gap-4 cursor-pointer border-b border-transparent",
+                      "p-4 flex items-center gap-4 cursor-pointer border-l-4",
                       "hover:bg-secondary/50 transition-colors duration-200",
-                      convo.id === selectedConversation.id ? 'bg-secondary border-primary' : 'border-border'
+                      convo.id === selectedConversation.id ? 'bg-secondary border-primary' : 'border-transparent'
                   )}>
                       <div className="relative">
                           <Avatar className="h-14 w-14">
