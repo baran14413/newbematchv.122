@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { ChevronRight, Heart, LogOut, MapPin, ShieldCheck, SlidersHorizontal, Smartphone, User, Wallet, KeyRound, Trash2 } from "lucide-react";
+import { ChevronRight, Heart, LogOut, MapPin, ShieldCheck, SlidersHorizontal, Smartphone, User, Wallet, KeyRound, Trash2, GalleryHorizontal } from "lucide-react";
 import Link from "next/link";
 import { useLanguage } from "@/context/language-context";
 
@@ -45,6 +45,7 @@ export default function SettingsPage() {
         <div className="md:p-8 md:pt-0 space-y-8">
             <SettingsSection title={t('settings.account')}>
                 <SettingsItem icon={User} label={t('settings.personalInfo')} href="/settings/personal-info" />
+                <SettingsItem icon={GalleryHorizontal} label={t('settings.editGallery')} href="/settings/gallery" />
                 <SettingsItem icon={Wallet} label={t('settings.wallet')} href="/settings/wallet"/>
                 <SettingsItem icon={Heart} label={t('settings.editInterests')} href="/settings/interests" />
             </SettingsSection>

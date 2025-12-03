@@ -31,6 +31,7 @@
         "personalInfo": "Personal Info",
         "wallet": "Wallet",
         "editInterests": "Edit Interests",
+        "editGallery": "Edit Gallery",
         "discovery": "Discovery Settings",
         "location": "Location",
         "preferences": "Preferences",
@@ -39,6 +40,9 @@
         "privacySecurity": "Privacy and Security",
         "session": "Session",
         "logout": "Log Out"
+    },
+    "galleryPage": {
+        "description": "Add, remove, or reorder your photos."
     },
     "personalInfoPage": {
         "title": "Personal Info",
@@ -165,7 +169,8 @@
         "photos": {
             "info": "Add at least 1 photo to continue. You can add up to {maxPhotos} photos.",
             "addButton": "Add Photo",
-            "previewAlt": "Upload preview"
+            "previewAlt": "Upload preview",
+            "profilePhotoHint": "The first photo you select will be your profile picture."
         },
         "stepCredentialsTitle": "Create your account",
         "credentials": {

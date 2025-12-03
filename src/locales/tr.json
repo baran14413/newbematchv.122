@@ -31,6 +31,7 @@
         "personalInfo": "Kişisel Bilgiler",
         "wallet": "Cüzdanım",
         "editInterests": "İlgi Alanlarını Düzenle",
+        "editGallery": "Galeriyi Düzenle",
         "discovery": "Keşfet Ayarları",
         "location": "Konum",
         "preferences": "Tercihler",
@@ -39,6 +40,9 @@
         "privacySecurity": "Gizlilik ve Güvenlik",
         "session": "Oturum",
         "logout": "Çıkış Yap"
+    },
+    "galleryPage": {
+        "description": "Fotoğraflarını ekle, çıkar veya yeniden sırala."
     },
     "personalInfoPage": {
         "title": "Kişisel Bilgiler",
@@ -165,7 +169,8 @@
         "photos": {
             "info": "Devam etmek için en az 1 fotoğraf ekle. En fazla {maxPhotos} fotoğraf ekleyebilirsin.",
             "addButton": "Fotoğraf Ekle",
-            "previewAlt": "Yükleme önizlemesi"
+            "previewAlt": "Yükleme önizlemesi",
+            "profilePhotoHint": "İlk seçtiğiniz fotoğraf, profil fotoğrafınız olarak ayarlanacaktır."
         },
         "stepCredentialsTitle": "Hesabını oluştur",
         "credentials": {

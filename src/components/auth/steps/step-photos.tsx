@@ -41,12 +41,18 @@ export default function StepPhotos() {
       <p className="text-center text-muted-foreground text-sm">
         {t('onboarding.photos.info', { maxPhotos: MAX_PHOTOS })}
       </p>
+      <p className="text-center text-muted-foreground text-xs italic">
+        {t('onboarding.photos.profilePhotoHint')}
+      </p>
       <div className="grid grid-cols-3 gap-3">
         {Array.from({ length: MAX_PHOTOS }).map((_, index) => {
           const photo = formData.photos[index];
           if (photo) {
             return (
               <div key={index} className="relative aspect-square">
+                {index === 0 && (
+                  <div className="absolute top-1 left-1 bg-black/60 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full z-10">{t('profile.title')}</div>
+                )}
                 <Image
                   src={photo}
                   alt={`${t('onboarding.photos.previewAlt')} ${index + 1}`}

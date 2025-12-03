@@ -70,10 +70,6 @@ export default function ProfilePage() {
           <CardContent className="p-4">
              <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg font-semibold">{t('profile.myPhotos')}</h3>
-                <Button variant="ghost" size="sm">
-                    <Pencil className="mr-2 h-4 w-4" />
-                    {t('common.edit')}
-                </Button>
              </div>
              <div className="grid grid-cols-3 gap-2">
                 {userProfile.imageUrls.map((url, index) => (
