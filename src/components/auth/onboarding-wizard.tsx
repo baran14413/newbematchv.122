@@ -37,7 +37,7 @@ export default function OnboardingWizard({ onSwitchView }: OnboardingWizardProps
         <div className="p-6">
             <StepIndicator currentStep={currentStep} totalSteps={steps.length} />
         </div>
-        <div className="flex-1 flex flex-col justify-center relative overflow-hidden">
+        <div className="flex-1 flex flex-col overflow-hidden">
            <AnimatePresence mode="wait">
              <motion.div
                 key={currentStep}
@@ -45,10 +45,10 @@ export default function OnboardingWizard({ onSwitchView }: OnboardingWizardProps
                 animate={{ opacity: 1, x: 0 }}
                 exit={{ opacity: 0, x: -50 }}
                 transition={{ duration: 0.3, ease: 'easeInOut' }}
-                className="w-full"
+                className="w-full flex-1 flex flex-col"
               >
-                <div className="py-8 px-4 sm:px-6">
-                    <h2 className="text-2xl font-bold mb-6 text-center">{steps[currentStep].title}</h2>
+                <div className="px-6 pb-8 flex-1">
+                    <h2 className="text-3xl font-bold mb-8 text-center">{steps[currentStep].title}</h2>
                     <CurrentStepComponent />
                 </div>
               </motion.div>
@@ -56,6 +56,12 @@ export default function OnboardingWizard({ onSwitchView }: OnboardingWizardProps
         </div>
         <div className="p-6 space-y-4">
           <WizardControls totalSteps={steps.length} />
+           <p className="text-sm text-muted-foreground text-center">
+                {t('onboarding.haveAccount')}{' '}
+                <button onClick={() => onSwitchView('login')} className="font-semibold text-primary hover:underline">
+                    {t('onboarding.login')}
+                </button>
+           </p>
         </div>
     </div>
   );

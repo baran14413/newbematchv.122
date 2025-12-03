@@ -23,25 +23,26 @@ export default function WizardControls({ totalSteps }: WizardControlsProps) {
   const isLastStep = currentStep === totalSteps - 1;
 
   return (
-    <div className="flex items-center justify-between">
-      <Button
-        variant="ghost"
-        onClick={prevStep}
-        disabled={currentStep === 0}
-        className="text-muted-foreground"
-      >
-        <ArrowLeft className="mr-2 h-4 w-4" />
-        {t('onboarding.back')}
-      </Button>
+    <div className="flex items-center justify-between gap-4">
+       {currentStep > 0 && (
+         <Button
+            variant="outline"
+            onClick={prevStep}
+            className="h-14 w-14 rounded-full flex-shrink-0"
+            aria-label={t('onboarding.back')}
+        >
+            <ArrowLeft className="h-6 w-6" />
+        </Button>
+       )}
 
       {isLastStep ? (
-        <Button onClick={handleFinish} disabled={!isStepValid} className="font-bold text-lg py-6 rounded-xl">
+        <Button onClick={handleFinish} disabled={!isStepValid} className="font-bold text-lg py-7 rounded-xl w-full">
           {t('onboarding.createAccount')}
         </Button>
       ) : (
-        <Button onClick={nextStep} disabled={!isStepValid}>
+        <Button onClick={nextStep} disabled={!isStepValid} className="font-bold text-lg py-7 rounded-xl w-full">
           {t('onboarding.next')}
-          <ArrowRight className="ml-2 h-4 w-4" />
+          <ArrowRight className="ml-2 h-5 w-5" />
         </Button>
       )}
     </div>
