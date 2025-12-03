@@ -10,7 +10,7 @@ const translations = { en, tr };
 interface LanguageContextType {
   locale: Locale;
   setLocale: (locale: Locale) => void;
-  t: (key: string) => string;
+  t: (key: string, values?: Record<string, any>) => string;
 }
 
 const LanguageContext = createContext<LanguageContextType | undefined>(undefined);
@@ -37,7 +37,7 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
   };
 
 
-  const t = useCallback((key: string): string => {
+  const t = useCallback((key: string, values?: Record<string, any>): string => {
     const keys = key.split('.');
     let result: any = translations[locale];
     for (const k of keys) {
@@ -48,9 +48,23 @@ export const LanguageProvider = ({ children }: { children: ReactNode }) => {
         for (const fk of keys) {
             fallbackResult = fallbackResult?.[fk];
         }
+        if (typeof fallbackResult === 'string' && values) {
+          return Object.entries(values).reduce(
+            (str, [key, value]) => str.replace(`{${key}}`, value),
+            fallbackResult
+          );
+        }
         return fallbackResult || key;
       }
     }
+
+    if (typeof result === 'string' && values) {
+      return Object.entries(values).reduce(
+        (str, [key, value]) => str.replace(`{${key}}`, value),
+        result
+      );
+    }
+
     return result || key;
   }, [locale]);
 

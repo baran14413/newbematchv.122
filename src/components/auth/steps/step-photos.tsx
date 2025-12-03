@@ -39,7 +39,7 @@ export default function StepPhotos() {
   return (
     <div className="space-y-4">
       <p className="text-center text-muted-foreground text-sm">
-        {t('onboarding.photos.info', { maxPhotos: MAX_PHOTOS })}
+        {t('onboarding.photos.info')}
       </p>
       <p className="text-center text-muted-foreground text-xs italic">
         {t('onboarding.photos.profilePhotoHint')}

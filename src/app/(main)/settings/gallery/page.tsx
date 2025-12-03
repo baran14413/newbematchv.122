@@ -49,7 +49,7 @@ export default function GallerySettingsPage() {
 
       <div className="md:p-8 md:pt-0 space-y-4">
         <p className="text-center text-muted-foreground text-sm">
-          {t('onboarding.photos.info', { maxPhotos: MAX_PHOTOS })}
+          {t('onboarding.photos.info')}
         </p>
         <p className="text-center text-muted-foreground text-xs italic">
           {t('onboarding.photos.profilePhotoHint')}

@@ -167,7 +167,7 @@
         },
         "stepPhotosTitle": "En iyi fotoğraflarını ekle",
         "photos": {
-            "info": "Devam etmek için en az 1 fotoğraf ekle. En fazla {maxPhotos} fotoğraf ekleyebilirsin.",
+            "info": "Devam etmek için en az 1 fotoğraf ekle. En fazla 6 fotoğraf ekleyebilirsin.",
             "addButton": "Fotoğraf Ekle",
             "previewAlt": "Yükleme önizlemesi",
             "profilePhotoHint": "İlk seçtiğiniz fotoğraf, profil fotoğrafınız olarak ayarlanacaktır."
