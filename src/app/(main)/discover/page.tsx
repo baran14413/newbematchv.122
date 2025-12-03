@@ -1,6 +1,6 @@
 'use client';
 import { useState, useMemo, useEffect } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { AnimatePresence, motion, PanInfo } from 'framer-motion';
 import { profiles } from '@/lib/data';
 import { Card, CardContent } from '@/components/ui/card';
 import Image from 'next/image';
@@ -30,7 +30,10 @@ export default function DiscoverPage() {
 
   const handleSwipe = (direction: SwipeDirection) => {
     if (!activeProfile) return;
-    setHistory(prev => [activeProfile, ...prev]);
+
+    // Move the swiped profile from stack to history
+    const swipedProfile = stack[stack.length - 1];
+    setHistory(prev => [swipedProfile, ...prev]);
     setStack(prev => prev.slice(0, prev.length - 1));
   };
 
@@ -38,12 +41,12 @@ export default function DiscoverPage() {
     if (history.length > 0) {
       const lastSwipedProfile = history[0];
       setHistory(prev => prev.slice(1));
-      setStack(prev => [...prev, lastSwipedProfile]);
+      setStack(prev => [...stack, lastSwipedProfile]);
     }
   };
 
   const handleImageNavigation = (e: React.MouseEvent<HTMLDivElement>) => {
-    if (!activeProfile) return;
+    if (!activeProfile || !isDetailSheetOpen) return;
     const { clientX, currentTarget } = e;
     const { left, width } = currentTarget.getBoundingClientRect();
     const clickPosition = clientX - left;
@@ -53,14 +56,20 @@ export default function DiscoverPage() {
       setCurrentImageIndex(prev => Math.max(0, prev - 1));
     } else {
       // Clicked on the right side
-      setCurrentImageIndex(prev => {
-        if (prev === activeProfile.imageUrls.length - 1) {
-          // If on the last image, swipe right
-          handleSwipe('right');
-          return prev;
-        }
-        return prev + 1;
-      });
+      setCurrentImageIndex(prev => Math.min(prev + 1, activeProfile.imageUrls.length - 1));
+    }
+  };
+  
+  const handleTapOnCard = (e: React.MouseEvent<HTMLDivElement>) => {
+     if (!activeProfile) return;
+    const { clientX, currentTarget } = e;
+    const { left, width } = currentTarget.getBoundingClientRect();
+    const clickPosition = clientX - left;
+    
+    if (clickPosition < width / 3) {
+      setCurrentImageIndex(prev => Math.max(0, prev - 1));
+    } else if (clickPosition > (width * 2) / 3) {
+      setCurrentImageIndex(prev => Math.min(prev + 1, activeProfile.imageUrls.length - 1));
     }
   };
 
@@ -75,13 +84,13 @@ export default function DiscoverPage() {
                 
                 return (
                   <motion.div
-                    key={`${profile.id}-${index}`}
+                    key={`${profile.id}-${index}`} // Use a more unique key
                     drag={isTop}
                     dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
                     onDragEnd={(e, info) => {
                         const { offset, velocity } = info;
                         let direction: SwipeDirection | null = null;
-                        const SWIPE_THRESHOLD = 80;
+                        const SWIPE_THRESHOLD = 100;
 
                         if (Math.abs(offset.x) > SWIPE_THRESHOLD || Math.abs(velocity.x) > 500) {
                             direction = offset.x > 0 ? 'right' : 'left';
@@ -96,19 +105,28 @@ export default function DiscoverPage() {
                     initial={{
                         y: 0,
                         scale: 1 - (stack.length - 1 - index) * 0.05,
-                        opacity: isTop ? 1 : 0.5
+                        opacity: index === stack.length - 1 ? 1 : 0
                     }}
                     animate={{
                         y: (stack.length - 1 - index) * -10,
                         scale: 1 - (stack.length - 1 - index) * 0.05,
-                        opacity: isTop ? 1 : (index === stack.length - 2 ? 1 : 0)
+                        opacity: index >= stack.length - 2 ? 1 : 0
                     }}
                     exit={{
-                        x: 300,
+                        x: info => {
+                            if (info.offset.x > 100) return 300;
+                            if (info.offset.x < -100) return -300;
+                            return 0;
+                        },
+                        y: info => {
+                             if (info.offset.y < -100) return -500;
+                             return 0;
+                        },
                         opacity: 0,
                         scale: 0.9,
                         transition: { duration: 0.3 }
                     }}
+                    custom={PanInfo}
                     style={{
                       position: 'absolute',
                       width: '100%',
@@ -118,7 +136,7 @@ export default function DiscoverPage() {
                     className={isTop ? "cursor-grab active:cursor-grabbing" : "pointer-events-none"}
                   >
                     <Card className="w-full h-full rounded-2xl overflow-hidden shadow-2xl">
-                      <CardContent className="p-0 h-full relative">
+                      <CardContent className="p-0 h-full relative" onClick={isTop ? handleTapOnCard : undefined}>
                         {/* Image Gallery */}
                         <AnimatePresence initial={false}>
                              <motion.div
@@ -140,19 +158,16 @@ export default function DiscoverPage() {
                         </AnimatePresence>
 
                         {/* Top Progress Bars */}
-                        <div className="absolute top-2 left-2 right-2 flex gap-1 z-20">
+                        <div className="absolute top-2 left-2 right-2 flex gap-1 z-20 pointer-events-none">
                             {profile.imageUrls.map((_, imgIndex) => (
                                 <div key={imgIndex} className="flex-1 h-1 rounded-full bg-white/50">
                                     <div 
-                                        className="h-full rounded-full bg-white" 
-                                        style={{ width: imgIndex < currentImageIndex ? '100%' : (imgIndex === currentImageIndex ? '100%' : '0%'), transition: 'width 0.3s' }} 
+                                        className="h-full rounded-full bg-white transition-all duration-300"
+                                        style={{ width: imgIndex === currentImageIndex ? '100%' : '0%' }}
                                     />
                                 </div>
                             ))}
                         </div>
-
-                        {/* Navigation Overlay */}
-                        {isTop && <div className="absolute inset-0 z-10" onClick={handleImageNavigation} />}
 
                         {/* Gradient & Info */}
                         <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-black/80 to-transparent p-6 flex flex-col justify-end pointer-events-none z-10">
@@ -168,7 +183,10 @@ export default function DiscoverPage() {
                                 variant="ghost" 
                                 size="icon" 
                                 className="absolute bottom-4 right-4 z-20 text-white/80 hover:text-white hover:bg-white/20 rounded-full"
-                                onClick={() => setDetailSheetOpen(true)}
+                                onClick={(e) => {
+                                    e.stopPropagation(); // Prevent card tap
+                                    setDetailSheetOpen(true);
+                                }}
                             >
                                 <ChevronUp className="w-6 h-6" />
                             </Button>
