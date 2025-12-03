@@ -11,16 +11,11 @@ import { useLanguage } from '@/context/language-context';
 
 export default function DiscoverPage() {
   const [stack, setStack] = useState<UserProfile[]>(profiles);
-  const [isAnimating, setIsAnimating] = useState(false);
-  const { t } = useLanguage();
   const [history, setHistory] = useState<UserProfile[]>([]);
-  const [dragDirection, setDragDirection] = useState<'left' | 'right' | 'up' | null>(null);
+  const { t } = useLanguage();
 
-  const popCard = (swipedProfile: UserProfile, direction: 'left' | 'right' | 'up') => {
-    if (isAnimating || stack.length === 0) return;
-    setIsAnimating(true);
-    setDragDirection(direction);
-    setHistory(prev => [...prev, swipedProfile]);
+  const popCard = (profile: UserProfile, direction: 'left' | 'right' | 'up') => {
+    setHistory(prev => [...prev, profile]);
     setStack((prev) => prev.slice(0, -1));
   };
   
@@ -29,67 +24,81 @@ export default function DiscoverPage() {
       const lastSwiped = history[history.length - 1];
       setHistory(prev => prev.slice(0, -1));
       setStack(prev => [...prev, lastSwiped]);
-      setDragDirection(null);
     }
   }
 
-  const handleButtonClick = (direction: 'left' | 'right' | 'up') => {
-    if (isAnimating || stack.length === 0) return;
-    const swipedCard = stack[stack.length - 1];
-    popCard(swipedCard, direction);
-  };
-
-  const onDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
-    const { offset, velocity } = info;
-    const threshold = 100;
-
-    if (Math.abs(offset.y) > threshold && offset.y < 0) {
-        popCard(stack[stack.length - 1], 'up');
-    } else if (Math.abs(offset.x) > threshold) {
-        popCard(stack[stack.length - 1], offset.x > 0 ? 'right' : 'left');
+  const handleAction = (direction: 'left' | 'right' | 'up') => {
+    if (stack.length > 0) {
+      const topCard = stack[stack.length - 1];
+      // Animate the card out
+      // A more robust implementation would use a state to trigger exit animation
+      // For now, we just pop it. The AnimatePresence will handle the exit.
+      popCard(topCard, direction);
     }
   };
+
+  const onDragEnd = (e: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+    const { offset, velocity } = info;
+    const swipeThreshold = 50;
+    const swipePower = (offset: number, velocity: number) => {
+      return Math.abs(offset) * velocity;
+    };
+
+    if (swipePower(info.offset.x, info.velocity.x) < -10000) {
+      popCard(stack[stack.length - 1], 'left');
+    } else if (swipePower(info.offset.x, info.velocity.x) > 10000) {
+      popCard(stack[stack.length - 1], 'right');
+    } else if (swipePower(info.offset.y, info.velocity.y) < -10000) {
+      popCard(stack[stack.length - 1], 'up');
+    }
+  };
+
+  const variants = {
+    enter: {
+      x: 0,
+      y: 0,
+      opacity: 1,
+      scale: 1,
+    },
+    center: (index: number) => ({
+      x: 0,
+      y: index * -10,
+      scale: 1 - index * 0.05,
+      zIndex: profiles.length - index,
+    }),
+    exit: (direction: 'left' | 'right' | 'up') => {
+      return {
+        x: direction === 'left' ? -300 : direction === 'right' ? 300 : 0,
+        y: direction === 'up' ? -300 : 0,
+        opacity: 0,
+        scale: 0.8,
+        transition: { duration: 0.3 }
+      };
+    },
+  };
+
 
   return (
     <div className="flex flex-col h-full bg-gray-50 dark:bg-black overflow-hidden">
       <div className="flex-1 flex flex-col items-center justify-center p-4 relative">
         <div className="w-full max-w-sm h-[60vh] max-h-[500px] relative flex items-center justify-center">
-            <AnimatePresence 
-              initial={false}
-              onExitComplete={() => {
-                setIsAnimating(false);
-                setDragDirection(null);
-              }}
-            >
+            <AnimatePresence initial={false}>
                 {stack.map((profile, index) => {
                 const isTop = index === stack.length - 1;
                 
-                const exitX = dragDirection === 'left' ? -500 : (dragDirection === 'right' ? 500 : 0);
-                const exitY = dragDirection === 'up' ? -500 : 0;
-
                 return (
                     <motion.div
                       key={profile.id}
                       drag={isTop}
                       dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
-                      dragElastic={0.5}
+                      dragElastic={0.2}
                       onDragEnd={onDragEnd}
-                      initial={{ scale: 1 - (stack.length - 1 - index) * 0.05, y: (stack.length - 1 - index) * -10, opacity: 1 }}
-                      animate={{ 
-                        scale: 1 - (stack.length - 1 - index) * 0.05, 
-                        y: (stack.length - 1 - index) * -10,
-                        opacity: 1,
-                        transition: { duration: 0.2 }
-                      }}
-                      exit={{ 
-                        x: exitX,
-                        y: exitY,
-                        opacity: 0, 
-                        scale: 0.8, 
-                        transition: { duration: 0.3 } 
-                      }}
+                      variants={variants}
+                      initial="enter"
+                      animate="center"
+                      exit="exit"
+                      custom={index}
                       className="absolute w-full h-full"
-                      style={{ zIndex: index }}
                     >
                       <Card className="w-full h-full rounded-2xl overflow-hidden shadow-2xl">
                           <CardContent className="p-0 h-full relative">
@@ -112,7 +121,7 @@ export default function DiscoverPage() {
                 );
                 })}
             </AnimatePresence>
-            {stack.length === 0 && !isAnimating && (
+            {stack.length === 0 && (
                 <div className="text-center text-muted-foreground">
                     <p>{t('discover.noMoreProfiles')}</p>
                 </div>
@@ -123,13 +132,13 @@ export default function DiscoverPage() {
             <Button variant="outline" size="icon" className="w-12 h-12 rounded-full bg-white shadow-lg border-gray-200" onClick={undoSwipe} disabled={history.length === 0}>
               <Undo2 className="w-6 h-6 text-yellow-500" />
             </Button>
-            <Button variant="outline" size="icon" className="w-16 h-16 rounded-full bg-white shadow-lg border-gray-200" onClick={() => handleButtonClick('left')}>
+            <Button variant="outline" size="icon" className="w-16 h-16 rounded-full bg-white shadow-lg border-gray-200" onClick={() => handleAction('left')} disabled={stack.length === 0}>
               <X className="w-8 h-8 text-red-500" />
             </Button>
-            <Button variant="outline" size="icon" className="w-12 h-12 rounded-full bg-white shadow-lg border-gray-200" onClick={() => handleButtonClick('up')}>
+            <Button variant="outline" size="icon" className="w-12 h-12 rounded-full bg-white shadow-lg border-gray-200" onClick={() => handleAction('up')} disabled={stack.length === 0}>
               <Star className="w-6 h-6 text-blue-500" fill="currentColor" />
             </Button>
-            <Button variant="outline" size="icon" className="w-16 h-16 rounded-full bg-white shadow-lg border-gray-200" onClick={() => handleButtonClick('right')}>
+            <Button variant="outline" size="icon" className="w-16 h-16 rounded-full bg-white shadow-lg border-gray-200" onClick={() => handleAction('right')} disabled={stack.length === 0}>
               <Heart className="w-8 h-8 text-primary" fill="currentColor"/>
             </Button>
         </div>
