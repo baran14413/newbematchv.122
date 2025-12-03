@@ -52,24 +52,14 @@ export default function ProfilePage() {
             </div>
         </div>
 
-        {/* BeMatch Gold Banner */}
-        <Card className="overflow-hidden shadow-xl border-0">
-            <div className="p-6 bg-gradient-to-br from-yellow-300 via-yellow-400 to-orange-400 dark:from-yellow-500 dark:via-amber-500 dark:to-orange-600 text-black">
-                 <CardContent className="p-0 flex items-center gap-6">
-                    <Crown className="w-12 h-12" />
-                    <div>
-                        <h2 className="text-2xl font-bold">{t('profile.getGold')}</h2>
-                        <p className="font-medium">{t('profile.goldDescription')}</p>
-                    </div>
-                </CardContent>
-            </div>
-        </Card>
-
         {/* Photo Gallery */}
         <Card className="shadow-lg">
           <CardContent className="p-4">
              <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg font-semibold">{t('profile.myPhotos')}</h3>
+                <Link href="/settings/gallery" passHref>
+                    <Button variant="ghost" size="sm">{t('common.edit')}</Button>
+                </Link>
              </div>
              <div className="grid grid-cols-3 gap-2">
                 {userProfile.imageUrls.map((url, index) => (
@@ -79,6 +69,19 @@ export default function ProfilePage() {
                 ))}
              </div>
           </CardContent>
+        </Card>
+
+        {/* BeMatch Gold Banner */}
+        <Card className="overflow-hidden shadow-xl border-0">
+            <div className="p-4 bg-gradient-to-br from-yellow-300 via-yellow-400 to-orange-400 dark:from-yellow-500 dark:via-amber-500 dark:to-orange-600 text-black">
+                 <CardContent className="p-0 flex items-center gap-4">
+                    <Crown className="w-8 h-8" />
+                    <div>
+                        <h2 className="text-xl font-bold">{t('profile.getGold')}</h2>
+                        <p className="text-sm font-medium">{t('profile.goldDescription')}</p>
+                    </div>
+                </CardContent>
+            </div>
         </Card>
       </div>
     </div>
