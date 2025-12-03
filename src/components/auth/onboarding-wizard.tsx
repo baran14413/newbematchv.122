@@ -8,7 +8,6 @@ import StepLocation from '@/components/auth/steps/step-location';
 import StepPhotos from '@/components/auth/steps/step-photos';
 import StepCredentials from '@/components/auth/steps/step-credentials';
 import WizardControls from '@/components/auth/wizard-controls';
-import { Card, CardContent } from '../ui/card';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useLanguage } from '@/context/language-context';
 
@@ -34,12 +33,11 @@ export default function OnboardingWizard({ onSwitchView }: OnboardingWizardProps
   const CurrentStepComponent = steps[currentStep].component;
 
   return (
-    <Card className="w-full max-w-md mx-auto shadow-2xl rounded-2xl overflow-hidden">
-      <CardContent className="p-6 flex flex-col">
-        <div className="mb-6">
+    <div className="w-full h-full flex flex-col bg-background">
+        <div className="p-6">
             <StepIndicator currentStep={currentStep} totalSteps={steps.length} />
         </div>
-        <div className="flex-grow flex flex-col justify-center relative overflow-hidden">
+        <div className="flex-1 flex flex-col justify-center relative overflow-hidden">
            <AnimatePresence mode="wait">
              <motion.div
                 key={currentStep}
@@ -56,10 +54,9 @@ export default function OnboardingWizard({ onSwitchView }: OnboardingWizardProps
               </motion.div>
            </AnimatePresence>
         </div>
-        <div className="pt-6 space-y-4">
+        <div className="p-6 space-y-4">
           <WizardControls totalSteps={steps.length} />
         </div>
-      </CardContent>
-    </Card>
+    </div>
   );
 }

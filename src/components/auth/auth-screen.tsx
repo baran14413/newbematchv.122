@@ -13,9 +13,9 @@ export default function AuthScreen() {
   };
 
   return (
-    <div className="w-full max-w-md mx-auto">
+    <>
       {view === 'login' && <Login onSwitchView={onSwitchView} />}
       {view === 'register' && <OnboardingWizard onSwitchView={onSwitchView} />}
-    </div>
+    </>
   );
 }
