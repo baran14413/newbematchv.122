@@ -57,8 +57,7 @@ export default function SettingsPage() {
             </SettingsSection>
 
             <SettingsSection title="Gizlilik ve Güvenlik">
-                <SettingsItem icon={KeyRound} label="Şifre Değiştir" href="/settings/change-password" />
-                <SettingsItem icon={Trash2} label="Hesabı Sil" href="/settings/delete-account" />
+                <SettingsItem icon={ShieldCheck} label="Gizlilik ve Güvenlik" href="/settings/security" />
             </SettingsSection>
 
             <SettingsSection title="Oturum">
