@@ -8,15 +8,15 @@ import { Send, Plus, Mic, Video, Phone, CheckCheck } from "lucide-react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import VoiceNotePlayer from "./voice-note-player";
-
+import AiIcebreaker from "./ai-icebreaker";
 
 export default function ChatArea({ conversation, matchProfile }: { conversation: Conversation; matchProfile: UserProfile }) {
   const isTyping = true; // Dummy data for typing indicator
 
   return (
-    <div className="flex flex-col h-full bg-background">
+    <div className="flex flex-col h-full bg-secondary/20">
       {/* Header */}
-      <header className="flex items-center gap-4 p-3 border-b bg-card">
+      <header className="flex items-center gap-4 p-3 border-b bg-background">
         <Avatar className="h-10 w-10">
           <AvatarImage src={conversation.avatarUrl} alt={conversation.userName} />
           <AvatarFallback>{conversation.userName.charAt(0)}</AvatarFallback>
@@ -54,7 +54,7 @@ export default function ChatArea({ conversation, matchProfile }: { conversation:
                     "max-w-md p-3 rounded-2xl flex flex-col",
                     message.sender === 'me'
                     ? 'bg-primary text-primary-foreground rounded-br-none'
-                    : 'bg-secondary text-secondary-foreground rounded-bl-none'
+                    : 'bg-background text-foreground rounded-bl-none'
                 )}
               >
                 {message.type === 'image' && message.imageUrl && (
@@ -79,15 +79,20 @@ export default function ChatArea({ conversation, matchProfile }: { conversation:
       </ScrollArea>
 
       {/* Input Bar */}
-      <footer className="p-2 border-t bg-card">
+      <footer className="p-2 border-t bg-background">
         <div className="flex items-center gap-2">
             <Button size="icon" variant="ghost" className="text-muted-foreground">
                 <Plus className="w-6 h-6" />
             </Button>
-            <Input
-                placeholder="Message..."
-                className="flex-1 bg-secondary border-none focus-visible:ring-0 focus-visible:ring-offset-0 h-11"
-            />
+            <div className="flex-1 relative flex items-center">
+                 <Input
+                    placeholder="Message..."
+                    className="flex-1 bg-secondary border-none focus-visible:ring-0 focus-visible:ring-offset-0 h-11 rounded-full px-4 pr-12"
+                />
+                 <div className="absolute right-2 flex items-center">
+                    <AiIcebreaker matchProfile={matchProfile} />
+                </div>
+            </div>
             <Button size="icon" variant="ghost" className="text-muted-foreground">
                 <Mic className="w-6 h-6" />
             </Button>
