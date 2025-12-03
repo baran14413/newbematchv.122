@@ -125,7 +125,7 @@ export default function DiscoverPage() {
                         </motion.div>
                          <motion.div style={{ opacity: superLikeOpacity }} className="absolute inset-0 flex items-center justify-center z-10">
                             <Star className="w-24 h-24 text-blue-500/90" fill="currentColor" />
-                        </motion.from>
+                        </motion.div>
                         
                         <Image
                           src={profile.imageUrls[0]}
