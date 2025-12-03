@@ -35,12 +35,12 @@ export default function ApplicationSettingsPage() {
                         <CardTitle>Veri Yönetimi</CardTitle>
                     </CardHeader>
                     <CardContent>
-                        <div className="flex items-center justify-between">
-                            <div>
+                        <div className="flex items-start justify-between">
+                            <div className="flex-1 pr-4">
                                 <p className="font-medium">Önbelleği Temizle</p>
                                 <p className="text-sm text-muted-foreground">Uygulama performansını artırmak için geçici verileri sil.</p>
                             </div>
-                            <Button variant="destructive" onClick={handleClearCache}>
+                            <Button variant="destructive" size="sm" onClick={handleClearCache}>
                                 <Trash2 className="mr-2 h-4 w-4" />
                                 Temizle
                             </Button>
