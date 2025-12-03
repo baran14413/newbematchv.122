@@ -1,18 +1,21 @@
 'use client';
+import { useState } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { Crown, Settings, Pencil } from 'lucide-react';
+import { Crown, Settings, X } from 'lucide-react';
 import Link from 'next/link';
 import { profiles } from '@/lib/data';
 import Image from 'next/image';
 import { useLanguage } from '@/context/language-context';
+import { Dialog, DialogContent } from '@/components/ui/dialog';
 
 export default function ProfilePage() {
   const profileCompletion = 75;
   const userProfile = profiles[1]; // Using Alex as a sample profile
   const { t } = useLanguage();
+  const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   return (
     <div className="h-full overflow-y-auto p-4 md:p-6 bg-gray-50 dark:bg-black">
@@ -57,15 +60,16 @@ export default function ProfilePage() {
           <CardContent className="p-4">
              <div className="flex justify-between items-center mb-4">
                 <h3 className="text-lg font-semibold">{t('profile.myPhotos')}</h3>
-                <Link href="/settings/gallery" passHref>
-                    <Button variant="ghost" size="sm">{t('common.edit')}</Button>
-                </Link>
              </div>
-             <div className="grid grid-cols-3 gap-2">
+             <div className="grid grid-cols-3 gap-3">
                 {userProfile.imageUrls.map((url, index) => (
-                    <div key={index} className="relative aspect-square rounded-lg overflow-hidden">
-                        <Image src={url} alt={`${t('profile.profilePhoto')} ${index + 1}`} fill className="object-cover" />
-                    </div>
+                    <button 
+                      key={index} 
+                      className="relative aspect-square rounded-lg overflow-hidden group focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
+                      onClick={() => setSelectedImage(url)}
+                    >
+                        <Image src={url} alt={`${t('profile.profilePhoto')} ${index + 1}`} fill className="object-cover transition-transform group-hover:scale-105" />
+                    </button>
                 ))}
              </div>
           </CardContent>
@@ -74,16 +78,31 @@ export default function ProfilePage() {
         {/* BeMatch Gold Banner */}
         <Card className="overflow-hidden shadow-xl border-0">
             <div className="p-4 bg-gradient-to-br from-yellow-300 via-yellow-400 to-orange-400 dark:from-yellow-500 dark:via-amber-500 dark:to-orange-600 text-black">
-                 <CardContent className="p-0 flex items-center gap-4">
-                    <Crown className="w-8 h-8" />
+                 <CardContent className="p-0 flex items-center gap-3">
+                    <Crown className="w-6 h-6" />
                     <div>
-                        <h2 className="text-xl font-bold">{t('profile.getGold')}</h2>
-                        <p className="text-sm font-medium">{t('profile.goldDescription')}</p>
+                        <h2 className="text-lg font-bold">{t('profile.getGold')}</h2>
+                        <p className="text-xs font-medium">{t('profile.goldDescription')}</p>
                     </div>
                 </CardContent>
             </div>
         </Card>
       </div>
+
+       {selectedImage && (
+        <Dialog open={!!selectedImage} onOpenChange={(isOpen) => !isOpen && setSelectedImage(null)}>
+          <DialogContent className="p-0 border-0 bg-transparent max-w-none w-auto h-auto shadow-none">
+            <div className="relative w-[90vw] h-[80vh]">
+              <Image 
+                src={selectedImage} 
+                alt="Enlarged profile" 
+                fill 
+                className="object-contain"
+              />
+            </div>
+          </DialogContent>
+        </Dialog>
+      )}
     </div>
   );
 }
