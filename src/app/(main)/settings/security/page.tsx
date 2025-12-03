@@ -19,6 +19,12 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion";
 
 const deletionReasons = [
     { id: 'privacy', label: 'Gizlilik endişelerim var.' },
@@ -61,35 +67,43 @@ export default function SecurityPage() {
                 {/* Şifre Değiştirme Bölümü */}
                 <div className="space-y-4">
                     <Card>
-                        <CardHeader>
-                            <CardTitle>Şifre Değiştir</CardTitle>
-                            <CardDescription>Güvenliğin için yeni bir şifre belirle.</CardDescription>
-                        </CardHeader>
-                        <CardContent className="space-y-6">
-                            <div className="space-y-2 relative">
-                                <Label htmlFor="currentPassword">Mevcut Şifre</Label>
-                                <Input id="currentPassword" type={showCurrent ? 'text' : 'password'} placeholder="Mevcut şifreniz" />
-                                <Button type="button" variant="ghost" size="icon" className="absolute right-2.5 top-8 h-7 w-7 text-muted-foreground" onClick={() => setShowCurrent(!showCurrent)}>
-                                    {showCurrent ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                                </Button>
+                      <Accordion type="single" collapsible>
+                        <AccordionItem value="item-1" className="border-b-0">
+                          <AccordionTrigger className="p-6 hover:no-underline">
+                              <div className="text-left">
+                                <h3 className="text-lg font-semibold">Şifre Değiştir</h3>
+                                <p className="text-sm text-muted-foreground">Güvenliğin için yeni bir şifre belirle.</p>
+                              </div>
+                          </AccordionTrigger>
+                          <AccordionContent className="p-6 pt-0">
+                            <div className="space-y-6">
+                                <div className="space-y-2 relative">
+                                    <Label htmlFor="currentPassword">Mevcut Şifre</Label>
+                                    <Input id="currentPassword" type={showCurrent ? 'text' : 'password'} placeholder="Mevcut şifreniz" />
+                                    <Button type="button" variant="ghost" size="icon" className="absolute right-2.5 top-8 h-7 w-7 text-muted-foreground" onClick={() => setShowCurrent(!showCurrent)}>
+                                        {showCurrent ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                    </Button>
+                                </div>
+                                <div className="space-y-2 relative">
+                                    <Label htmlFor="newPassword">Yeni Şifre</Label>
+                                    <Input id="newPassword" type={showNew ? 'text' : 'password'} placeholder="Yeni bir şifre oluşturun" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
+                                     <Button type="button" variant="ghost" size="icon" className="absolute right-2.5 top-8 h-7 w-7 text-muted-foreground" onClick={() => setShowNew(!showNew)}>
+                                        {showNew ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                    </Button>
+                                    <PasswordStrength password={newPassword} />
+                                </div>
+                                <div className="space-y-2 relative">
+                                    <Label htmlFor="confirmPassword">Yeni Şifreyi Onayla</Label>
+                                    <Input id="confirmPassword" type={showConfirm ? 'text' : 'password'} placeholder="Yeni şifrenizi doğrulayın" />
+                                     <Button type="button" variant="ghost" size="icon" className="absolute right-2.5 top-8 h-7 w-7 text-muted-foreground" onClick={() => setShowConfirm(!showConfirm)}>
+                                        {showConfirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                                    </Button>
+                                </div>
+                                <Button>Şifreyi Değiştir</Button>
                             </div>
-                            <div className="space-y-2 relative">
-                                <Label htmlFor="newPassword">Yeni Şifre</Label>
-                                <Input id="newPassword" type={showNew ? 'text' : 'password'} placeholder="Yeni bir şifre oluşturun" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
-                                 <Button type="button" variant="ghost" size="icon" className="absolute right-2.5 top-8 h-7 w-7 text-muted-foreground" onClick={() => setShowNew(!showNew)}>
-                                    {showNew ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                                </Button>
-                                <PasswordStrength password={newPassword} />
-                            </div>
-                            <div className="space-y-2 relative">
-                                <Label htmlFor="confirmPassword">Yeni Şifreyi Onayla</Label>
-                                <Input id="confirmPassword" type={showConfirm ? 'text' : 'password'} placeholder="Yeni şifrenizi doğrulayın" />
-                                 <Button type="button" variant="ghost" size="icon" className="absolute right-2.5 top-8 h-7 w-7 text-muted-foreground" onClick={() => setShowConfirm(!showConfirm)}>
-                                    {showConfirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                                </Button>
-                            </div>
-                            <Button>Şifreyi Değiştir</Button>
-                        </CardContent>
+                          </AccordionContent>
+                        </AccordionItem>
+                      </Accordion>
                     </Card>
                 </div>
                 
