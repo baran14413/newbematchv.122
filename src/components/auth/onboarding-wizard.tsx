@@ -39,7 +39,7 @@ export default function OnboardingWizard({ onSwitchView }: OnboardingWizardProps
         <div className="mb-6">
             <StepIndicator currentStep={currentStep} totalSteps={steps.length} />
         </div>
-        <div className="flex-1 flex flex-col justify-center relative overflow-hidden py-8">
+        <div className="flex flex-col justify-center relative overflow-hidden py-8">
            <AnimatePresence mode="wait">
              <motion.div
                 key={currentStep}
