@@ -3,6 +3,7 @@ import './globals.css';
 import { Toaster } from "@/components/ui/toaster";
 import { OnboardingProvider } from '@/context/onboarding-context';
 import { ThemeProvider } from '@/components/theme-provider';
+import { LanguageProvider } from '@/context/language-context';
 
 export const metadata: Metadata = {
   title: 'BeMatch',
@@ -28,10 +29,12 @@ export default function RootLayout({
           enableSystem
           disableTransitionOnChange
         >
-          <OnboardingProvider>
-            {children}
-          </OnboardingProvider>
-          <Toaster />
+          <LanguageProvider>
+            <OnboardingProvider>
+              {children}
+            </OnboardingProvider>
+            <Toaster />
+          </LanguageProvider>
         </ThemeProvider>
       </body>
     </html>

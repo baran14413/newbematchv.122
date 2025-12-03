@@ -4,15 +4,17 @@ import Link from 'next/link';
 import { Button } from './ui/button';
 import { usePathname } from 'next/navigation';
 import { cn } from '@/lib/utils';
+import { useLanguage } from '@/context/language-context';
 
-const navLinks = [
-    { href: '/discover', icon: Flame, label: 'Keşfet' },
-    { href: '/lounge', icon: MessagesSquare, label: 'Sohbet' },
-    { href: '/profile', icon: UserCircle, label: 'Profil' },
-]
-
-export default function MainHeader() {
+const MainHeader = () => {
     const pathname = usePathname();
+    const { t } = useLanguage();
+
+    const navLinks = [
+        { href: '/discover', icon: Flame, label: t('discover.title') },
+        { href: '/lounge', icon: MessagesSquare, label: t('lounge.title') },
+        { href: '/profile', icon: UserCircle, label: t('profile.title') },
+    ];
     
     return (
         <header className="flex items-center justify-between p-4 h-16 border-b border-border bg-background z-10">
@@ -34,3 +36,5 @@ export default function MainHeader() {
         </header>
     )
 }
+
+export default MainHeader;

@@ -5,6 +5,7 @@ import { Trash2, ArrowLeft, Monitor, Sun, Moon, Languages } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
 import { useTheme } from "next-themes";
+import { useLanguage } from "@/context/language-context";
 import {
     Select,
     SelectContent,
@@ -17,11 +18,12 @@ import { Separator } from "@/components/ui/separator";
 export default function ApplicationSettingsPage() {
     const { toast } = useToast();
     const { setTheme, theme } = useTheme();
+    const { locale, setLocale, t } = useLanguage();
 
     const handleClearCache = () => {
         toast({
-            title: "Önbellek Temizlendi",
-            description: "Uygulama verileri ve önbellek başarıyla temizlendi.",
+            title: t('applicationPage.cacheClearedTitle'),
+            description: t('applicationPage.cacheClearedDescription'),
         });
     };
 
@@ -34,40 +36,40 @@ export default function ApplicationSettingsPage() {
                     </Button>
                 </Link>
                 <div>
-                    <h1 className="text-3xl font-bold text-primary">Uygulama Ayarları</h1>
-                    <p className="text-muted-foreground">Uygulama verilerini ve ayarlarını yönet.</p>
+                    <h1 className="text-3xl font-bold text-primary">{t('applicationPage.title')}</h1>
+                    <p className="text-muted-foreground">{t('applicationPage.description')}</p>
                 </div>
             </header>
 
             <div className="md:p-8 md:pt-0 space-y-8">
                 <Card>
                     <CardHeader>
-                        <CardTitle>Görünüm</CardTitle>
+                        <CardTitle>{t('applicationPage.appearance')}</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-6">
                         <div className="flex items-center justify-between">
                             <div className="flex-1 pr-4">
-                                <p className="font-medium">Tema</p>
-                                <p className="text-sm text-muted-foreground">Uygulama genelinde kullanılacak temayı seçin.</p>
+                                <p className="font-medium">{t('applicationPage.theme')}</p>
+                                <p className="text-sm text-muted-foreground">{t('applicationPage.themeDescription')}</p>
                             </div>
                             <Select onValueChange={setTheme} defaultValue={theme}>
                                 <SelectTrigger className="w-[180px]">
-                                    <SelectValue placeholder="Tema Seç" />
+                                    <SelectValue placeholder={t('applicationPage.selectTheme')} />
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="light">
                                         <div className="flex items-center gap-2">
-                                            <Sun className="w-4 h-4" /> Aydınlık
+                                            <Sun className="w-4 h-4" /> {t('applicationPage.light')}
                                         </div>
                                     </SelectItem>
                                     <SelectItem value="dark">
                                         <div className="flex items-center gap-2">
-                                            <Moon className="w-4 h-4" /> Karanlık
+                                            <Moon className="w-4 h-4" /> {t('applicationPage.dark')}
                                         </div>
                                     </SelectItem>
                                     <SelectItem value="system">
                                         <div className="flex items-center gap-2">
-                                            <Monitor className="w-4 h-4" /> Sistem
+                                            <Monitor className="w-4 h-4" /> {t('applicationPage.system')}
                                         </div>
                                     </SelectItem>
                                 </SelectContent>
@@ -76,12 +78,12 @@ export default function ApplicationSettingsPage() {
                         <Separator />
                          <div className="flex items-center justify-between">
                             <div className="flex-1 pr-4">
-                                <p className="font-medium">Dil</p>
-                                <p className="text-sm text-muted-foreground">Uygulamanın dilini seçin.</p>
+                                <p className="font-medium">{t('applicationPage.language')}</p>
+                                <p className="text-sm text-muted-foreground">{t('applicationPage.languageDescription')}</p>
                             </div>
-                            <Select defaultValue="tr">
+                            <Select onValueChange={(value) => setLocale(value as 'tr' | 'en')} defaultValue={locale}>
                                 <SelectTrigger className="w-[180px]">
-                                    <SelectValue placeholder="Dil Seç" />
+                                    <SelectValue placeholder={t('applicationPage.selectLanguage')} />
                                 </SelectTrigger>
                                 <SelectContent>
                                     <SelectItem value="tr">
@@ -102,17 +104,17 @@ export default function ApplicationSettingsPage() {
 
                 <Card>
                     <CardHeader>
-                        <CardTitle>Veri Yönetimi</CardTitle>
+                        <CardTitle>{t('applicationPage.dataManagement')}</CardTitle>
                     </CardHeader>
                     <CardContent>
                          <div className="flex items-start justify-between">
                             <div className="flex-1 pr-4">
-                                <p className="font-medium">Önbelleği Temizle</p>
-                                <p className="text-sm text-muted-foreground">Uygulama performansını artırmak için geçici verileri sil.</p>
+                                <p className="font-medium">{t('applicationPage.clearCache')}</p>
+                                <p className="text-sm text-muted-foreground">{t('applicationPage.clearCacheDescription')}</p>
                             </div>
                             <Button variant="destructive" size="sm" onClick={handleClearCache} className="mt-1">
                                 <Trash2 className="mr-2 h-4 w-4" />
-                                Temizle
+                                {t('applicationPage.clear')}
                             </Button>
                         </div>
                     </CardContent>

@@ -1,0 +1,180 @@
+{
+    "discover": {
+        "noMoreProfiles": "No more profiles to show.",
+        "job": "Software Engineer"
+    },
+    "lounge": {
+        "title": "Lounge",
+        "newMatches": "New Matches",
+        "conversations": "Conversations",
+        "chatInputPlaceholder": "Send a message...",
+        "aiIcebreaker": {
+            "title": "AI Icebreaker",
+            "description": "Get help from AI to start the conversation.",
+            "generate": "Generate new idea",
+            "generating": "Generating...",
+            "errorTitle": "Error",
+            "errorDescription": "Could not generate AI icebreaker. Please try again."
+        }
+    },
+    "profile": {
+        "getGold": "Get BeMatch Gold",
+        "goldDescription": "See who likes you & get unlimited swipes!",
+        "myPhotos": "My Photos",
+        "profilePhoto": "Profile photo"
+    },
+    "settings": {
+        "title": "Settings",
+        "description": "Manage your account and preferences.",
+        "account": "Account Settings",
+        "personalInfo": "Personal Info",
+        "wallet": "Wallet",
+        "editInterests": "Edit Interests",
+        "discovery": "Discovery Settings",
+        "location": "Location",
+        "preferences": "Preferences",
+        "app": "Application Settings",
+        "application": "Application",
+        "privacySecurity": "Privacy and Security",
+        "session": "Session",
+        "logout": "Log Out"
+    },
+    "personalInfoPage": {
+        "title": "Personal Info",
+        "description": "This information appears on your profile and cannot be edited.",
+        "profileDetails": "Profile Details",
+        "firstName": "First Name",
+        "lastName": "Last Name",
+        "age": "Age",
+        "sessionActivity": "Session Activity",
+        "sessionDescription": "See your active sessions and logged-in devices.",
+        "activeNow": "Active now"
+    },
+    "walletPage": {
+        "title": "My Wallet",
+        "description": "Manage your subscriptions and tokens.",
+        "goldSub": "BeMatch Gold",
+        "nextBillDate": "Your next billing date is:",
+        "manageSub": "Manage Subscription",
+        "superLikes": "Super Likes",
+        "getMore": "Get More",
+        "tokens": "Tokens",
+        "addTokens": "Add Tokens"
+    },
+    "interestsPage": {
+        "title": "Edit Interests",
+        "description": "Select up to 7 interests to show on your profile.",
+        "save": "Save Changes"
+    },
+    "locationPage": {
+        "title": "Location",
+        "description": "Manage your location for match suggestions.",
+        "currentLocation": "Current Location",
+        "infoText": "BeMatch uses your device's location to provide better suggestions. We only use your location to show you an approximate distance to potential matches.",
+        "updateLocation": "Update Location",
+        "updateToastTitle": "Location Updated!",
+        "updateToastDescription": "Your new location has been set successfully."
+    },
+    "preferencesPage": {
+        "title": "Preferences",
+        "description": "Set who you want to see on the discovery page.",
+        "distance": "Distance Preference",
+        "maxDistance": "Maximum Distance",
+        "ageRange": "Age Range",
+        "save": "Save Preferences"
+    },
+    "applicationPage": {
+        "title": "Application Settings",
+        "description": "Manage application data and settings.",
+        "appearance": "Appearance",
+        "theme": "Theme",
+        "themeDescription": "Select the theme to be used throughout the application.",
+        "selectTheme": "Select Theme",
+        "light": "Light",
+        "dark": "Dark",
+        "system": "System",
+        "language": "Language",
+        "languageDescription": "Select the application's language.",
+        "selectLanguage": "Select Language",
+        "dataManagement": "Data Management",
+        "clearCache": "Clear Cache",
+        "clearCacheDescription": "Delete temporary data to improve application performance.",
+        "clear": "Clear",
+        "cacheClearedTitle": "Cache Cleared",
+        "cacheClearedDescription": "Application data and cache have been cleared successfully."
+    },
+    "securityPage": {
+        "title": "Privacy and Security",
+        "description": "Change your password or manage your account.",
+        "changePassword": "Change Password",
+        "changePasswordDescription": "Set a new password for your security.",
+        "currentPassword": "Current Password",
+        "newPassword": "New Password",
+        "confirmNewPassword": "Confirm New Password",
+        "passwordHintCurrent": "Your current password",
+        "passwordHintNew": "Create a new password",
+        "passwordHintConfirm": "Confirm your new password",
+        "savePassword": "Change Password",
+        "deleteAccountTitle": "Permanently Delete Account",
+        "deleteAccountWarning": "This action is irreversible. Deleting your account will permanently destroy all your matches, chats, and profile information.",
+        "deleteAccountInfo": "If you're sure you want to proceed, please click the button below.",
+        "startDeletion": "Start Account Deletion Process",
+        "deleteModal": {
+            "step0Title": "Can we have a moment before you go?",
+            "step0Description": "We'd like to know why you're leaving. Your feedback helps us make BeMatch better for everyone.",
+            "continue": "Continue",
+            "cancel": "Cancel",
+            "step1Title": "You are about to delete your account. Are you sure?",
+            "step1Description": "This action is absolutely irreversible. To confirm, please enter your password.",
+            "passwordLabel": "Password",
+            "passwordPlaceholder": "Enter your password to confirm",
+            "goBack": "Go Back",
+            "confirmDelete": "Yes, Permanently Delete My Account"
+        },
+        "deletionReasons": {
+            "privacy": "I have privacy concerns.",
+            "matches": "I didn't find good matches.",
+            "break": "I want to take a break.",
+            "met_someone": "I met someone.",
+            "technical": "There are too many technical issues with the app.",
+            "other": "Another reason."
+        }
+    },
+    "onboarding": {
+        "stepNameTitle": "What's your name?",
+        "stepGoalsTitle": "What are you looking for here?",
+        "stepInterestsTitle": "What are your interests?",
+        "stepLocationTitle": "Where do you live?",
+        "stepPhotosTitle": "Add your best photos",
+        "stepCredentialsTitle": "Create your account",
+        "haveAccount": "Already have an account?",
+        "login": "Log In",
+        "back": "Back",
+        "next": "Next",
+        "createAccount": "Create Account"
+    },
+    "login": {
+        "title": "BeMatch",
+        "description": "Log in to find your perfect match.",
+        "email": "Email",
+        "emailPlaceholder": "email@youraddress.com",
+        "password": "Password",
+        "passwordPlaceholder": "Your password",
+        "button": "Log In",
+        "noAccount": "Don't have an account?",
+        "createAccount": "Create New Account"
+    },
+    "passwordStrength": {
+        "weak": "Weak",
+        "medium": "Medium",
+        "strong": "Strong"
+    },
+    "common": {
+        "km": "km",
+        "back": "Back",
+        "next": "Next",
+        "save": "Save",
+        "daysAgo": "days ago",
+        "nowActive": "Active now"
+    }
+}

@@ -1,0 +1,180 @@
+{
+    "discover": {
+        "noMoreProfiles": "Gösterilecek başka profil yok.",
+        "job": "Yazılım Mühendisi"
+    },
+    "lounge": {
+        "title": "Sohbet",
+        "newMatches": "Yeni Eşleşmeler",
+        "conversations": "Sohbetler",
+        "chatInputPlaceholder": "Bir mesaj gönder...",
+        "aiIcebreaker": {
+            "title": "Yapay Zeka Buzkıran",
+            "description": "Sohbeti başlatmak için yapay zekadan yardım al.",
+            "generate": "Yeni fikir üret",
+            "generating": "Oluşturuluyor...",
+            "errorTitle": "Hata",
+            "errorDescription": "Yapay zeka buzkıranı oluşturulamadı. Lütfen tekrar deneyin."
+        }
+    },
+    "profile": {
+        "getGold": "BeMatch Gold Alın",
+        "goldDescription": "Sizi kimlerin beğendiğini görün ve sınırsız kaydırın!",
+        "myPhotos": "Fotoğraflarım",
+        "profilePhoto": "Profil fotoğrafı"
+    },
+    "settings": {
+        "title": "Ayarlar",
+        "description": "Hesabını ve tercihlerini yönet.",
+        "account": "Hesap Ayarları",
+        "personalInfo": "Kişisel Bilgiler",
+        "wallet": "Cüzdanım",
+        "editInterests": "İlgi Alanlarını Düzenle",
+        "discovery": "Keşfet Ayarları",
+        "location": "Konum",
+        "preferences": "Tercihler",
+        "app": "Uygulama Ayarları",
+        "application": "Uygulama",
+        "privacySecurity": "Gizlilik ve Güvenlik",
+        "session": "Oturum",
+        "logout": "Çıkış Yap"
+    },
+    "personalInfoPage": {
+        "title": "Kişisel Bilgiler",
+        "description": "Bu bilgiler profilinde görünür ve düzenlenemez.",
+        "profileDetails": "Profil Detayları",
+        "firstName": "Ad",
+        "lastName": "Soyad",
+        "age": "Yaş",
+        "sessionActivity": "Oturum Hareketleri",
+        "sessionDescription": "Aktif oturumlarını ve giriş yaptığın cihazları gör.",
+        "activeNow": "Şimdi aktif"
+    },
+    "walletPage": {
+        "title": "Cüzdanım",
+        "description": "Aboneliklerini ve jetonlarını yönet.",
+        "goldSub": "BeMatch Gold",
+        "nextBillDate": "Bir sonraki fatura tarihiniz:",
+        "manageSub": "Aboneliği Yönet",
+        "superLikes": "Süper Beğeni",
+        "getMore": "Daha Fazla Al",
+        "tokens": "Jetonlar",
+        "addTokens": "Jeton Yükle"
+    },
+    "interestsPage": {
+        "title": "İlgi Alanlarını Düzenle",
+        "description": "Profilinde göstereceğin en fazla 7 ilgi alanı seç.",
+        "save": "Değişiklikleri Kaydet"
+    },
+    "locationPage": {
+        "title": "Konum",
+        "description": "Eşleşme önerileri için konumunu yönet.",
+        "currentLocation": "Mevcut Konum",
+        "infoText": "BeMatch, sana daha iyi öneriler sunmak için cihazının konumunu kullanır. Konumunu sadece eşleşme potansiyeli olan kişilere yaklaşık bir mesafede göstermek için kullanırız.",
+        "updateLocation": "Konumu Güncelle",
+        "updateToastTitle": "Konum Güncellendi!",
+        "updateToastDescription": "Yeni konumun başarıyla ayarlandı."
+    },
+    "preferencesPage": {
+        "title": "Tercihler",
+        "description": "Keşfet sayfasında kimleri görmek istediğini ayarla.",
+        "distance": "Mesafe Tercihi",
+        "maxDistance": "Maksimum Mesafe",
+        "ageRange": "Yaş Aralığı",
+        "save": "Tercihleri Kaydet"
+    },
+    "applicationPage": {
+        "title": "Uygulama Ayarları",
+        "description": "Uygulama verilerini ve ayarlarını yönet.",
+        "appearance": "Görünüm",
+        "theme": "Tema",
+        "themeDescription": "Uygulama genelinde kullanılacak temayı seçin.",
+        "selectTheme": "Tema Seç",
+        "light": "Aydınlık",
+        "dark": "Karanlık",
+        "system": "Sistem",
+        "language": "Dil",
+        "languageDescription": "Uygulamanın dilini seçin.",
+        "selectLanguage": "Dil Seç",
+        "dataManagement": "Veri Yönetimi",
+        "clearCache": "Önbelleği Temizle",
+        "clearCacheDescription": "Uygulama performansını artırmak için geçici verileri sil.",
+        "clear": "Temizle",
+        "cacheClearedTitle": "Önbellek Temizlendi",
+        "cacheClearedDescription": "Uygulama verileri ve önbellek başarıyla temizlendi."
+    },
+    "securityPage": {
+        "title": "Gizlilik ve Güvenlik",
+        "description": "Şifreni değiştir veya hesabını yönet.",
+        "changePassword": "Şifre Değiştir",
+        "changePasswordDescription": "Güvenliğin için yeni bir şifre belirle.",
+        "currentPassword": "Mevcut Şifre",
+        "newPassword": "Yeni Şifre",
+        "confirmNewPassword": "Yeni Şifreyi Onayla",
+        "passwordHintCurrent": "Mevcut şifreniz",
+        "passwordHintNew": "Yeni bir şifre oluşturun",
+        "passwordHintConfirm": "Yeni şifrenizi doğrulayın",
+        "savePassword": "Şifreyi Değiştir",
+        "deleteAccountTitle": "Hesabı Kalıcı Olarak Sil",
+        "deleteAccountWarning": "Bu işlem geri alınamaz. Hesabını silmek tüm eşleşmelerini, sohbetlerini ve profil bilgilerini kalıcı olarak yok edecektir.",
+        "deleteAccountInfo": "Devam etmek istediğine eminsen, lütfen aşağıdaki butona tıkla.",
+        "startDeletion": "Hesabımı Silme İşlemini Başlat",
+        "deleteModal": {
+            "step0Title": "Gitmeden önce bir dakikanızı alabilir miyiz?",
+            "step0Description": "Ayrılma nedeninizi öğrenmek isteriz. Geri bildiriminiz, BeMatch'i herkes için daha iyi hale getirmemize yardımcı olur.",
+            "continue": "Devam",
+            "cancel": "İptal",
+            "step1Title": "Hesabını Silmek Üzeresin. Emin misin?",
+            "step1Description": "Bu işlem kesinlikle geri alınamaz. Onaylamak için lütfen şifreni gir.",
+            "passwordLabel": "Şifre",
+            "passwordPlaceholder": "Onaylamak için şifrenizi girin",
+            "goBack": "Geri",
+            "confirmDelete": "Evet, Hesabımı Kalıcı Olarak Sil"
+        },
+        "deletionReasons": {
+            "privacy": "Gizlilik endişelerim var.",
+            "matches": "İyi eşleşmeler bulamadım.",
+            "break": "Ara vermek istiyorum.",
+            "met_someone": "Biriyle tanıştım.",
+            "technical": "Uygulamada çok fazla teknik sorun var.",
+            "other": "Başka bir neden."
+        }
+    },
+    "onboarding": {
+        "stepNameTitle": "Adınız nedir?",
+        "stepGoalsTitle": "Burada ne arıyorsunuz?",
+        "stepInterestsTitle": "İlgi alanların neler?",
+        "stepLocationTitle": "Nerede yaşıyorsun?",
+        "stepPhotosTitle": "En iyi fotoğraflarını ekle",
+        "stepCredentialsTitle": "Hesabını oluştur",
+        "haveAccount": "Zaten bir hesabın var mı?",
+        "login": "Giriş Yap",
+        "back": "Geri",
+        "next": "İleri",
+        "createAccount": "Hesap Oluştur"
+    },
+    "login": {
+        "title": "BeMatch",
+        "description": "Mükemmel eşini bulmak için giriş yap.",
+        "email": "E-posta",
+        "emailPlaceholder": "eposta@adresiniz.com",
+        "password": "Şifre",
+        "passwordPlaceholder": "Şifreniz",
+        "button": "Giriş Yap",
+        "noAccount": "Hesabın yok mu?",
+        "createAccount": "Yeni Hesap Oluştur"
+    },
+    "passwordStrength": {
+        "weak": "Zayıf",
+        "medium": "Orta",
+        "strong": "Güçlü"
+    },
+    "common": {
+        "km": "km",
+        "back": "Geri",
+        "next": "İleri",
+        "save": "Kaydet",
+        "daysAgo": "gün önce",
+        "nowActive": "Şimdi aktif"
+    }
+}
