@@ -1,8 +1,8 @@
 'use client';
-import { useOnboardingContext } from '@/context/onboarding-context';
+import { useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
@@ -13,11 +13,13 @@ const interestsList = [
   'Teknoloji', 'Moda', 'Yoga', 'Kamp', 'Tiyatro', 'Gönüllülük'
 ];
 
+const initialUserInterests = ['Müzik', 'Seyahat', 'Spor'];
+
 export default function InterestsPage() {
-  const { formData, updateFormData } = useOnboardingContext();
+  const [selectedInterests, setSelectedInterests] = useState<string[]>(initialUserInterests);
 
   const handleToggle = (interest: string) => {
-    const newInterests = new Set(formData.interests);
+    const newInterests = new Set(selectedInterests);
     if (newInterests.has(interest)) {
       newInterests.delete(interest);
     } else {
@@ -25,8 +27,7 @@ export default function InterestsPage() {
         newInterests.add(interest);
       }
     }
-    const newFormData = { ...formData, interests: Array.from(newInterests) };
-    updateFormData(newFormData);
+    setSelectedInterests(Array.from(newInterests));
   };
 
   return (
@@ -51,10 +52,10 @@ export default function InterestsPage() {
                         <Badge
                         key={interest}
                         onClick={() => handleToggle(interest)}
-                        variant={formData.interests.includes(interest) ? 'default' : 'secondary'}
+                        variant={selectedInterests.includes(interest) ? 'default' : 'secondary'}
                         className={cn(
                             'px-4 py-2 text-sm font-semibold cursor-pointer transition-all rounded-full',
-                            formData.interests.includes(interest)
+                            selectedInterests.includes(interest)
                             ? 'bg-primary text-primary-foreground'
                             : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
                         )}
