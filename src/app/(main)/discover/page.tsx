@@ -7,10 +7,12 @@ import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { X, Star, Heart } from 'lucide-react';
 import { UserProfile } from '@/lib/data';
+import { useLanguage } from '@/context/language-context';
 
 export default function DiscoverPage() {
   const [stack, setStack] = useState<UserProfile[]>(profiles);
   const [isAnimating, setIsAnimating] = useState(false);
+  const { t } = useLanguage();
 
   const popCard = () => {
     setStack((prev) => prev.slice(0, -1));
@@ -66,7 +68,7 @@ export default function DiscoverPage() {
                             <h2 className="text-3xl font-bold text-white">
                             {profile.name}, {profile.age}
                             </h2>
-                            <p className="text-white/80 text-lg">Yazılım Mühendisi</p>
+                            <p className="text-white/80 text-lg">{t('discover.job')}</p>
                         </div>
                         </CardContent>
                     </Card>
@@ -76,7 +78,7 @@ export default function DiscoverPage() {
             </AnimatePresence>
             {stack.length === 0 && (
                 <div className="text-center text-muted-foreground">
-                    <p>Gösterilecek başka profil yok.</p>
+                    <p>{t('discover.noMoreProfiles')}</p>
                 </div>
             )}
         </div>

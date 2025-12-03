@@ -1,21 +1,24 @@
+'use client';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
 import { conversations, newMatches, profiles } from "@/lib/data";
 import ChatArea from "@/components/lounge/chat-area";
+import { useLanguage } from "@/context/language-context";
 
 export default function LoungePage() {
   const selectedConversation = conversations[0];
   const matchProfile = profiles.find(p => p.id === selectedConversation.userId);
+  const { t } = useLanguage();
 
   return (
     <div className="h-full flex flex-col">
       <header className="p-4 border-b border-border">
-        <h1 className="text-2xl font-bold text-primary">Sohbet</h1>
+        <h1 className="text-2xl font-bold text-primary">{t('lounge.title')}</h1>
       </header>
       <div className="p-4">
-        <h2 className="text-lg font-semibold mb-2">Yeni Eşleşmeler</h2>
+        <h2 className="text-lg font-semibold mb-2">{t('lounge.newMatches')}</h2>
         <ScrollArea>
           <div className="flex space-x-4 pb-4">
             {newMatches.map((match) => (
@@ -34,7 +37,7 @@ export default function LoungePage() {
       <Separator />
       <div className="flex-1 grid md:grid-cols-3 lg:grid-cols-4 overflow-hidden">
         <div className="md:col-span-1 lg:col-span-1 border-r border-border flex flex-col">
-            <h2 className="text-lg font-semibold p-4">Sohbetler</h2>
+            <h2 className="text-lg font-semibold p-4">{t('lounge.conversations')}</h2>
             <ScrollArea className="flex-1">
                 {conversations.map((convo) => (
                     <div key={convo.id} className={`p-4 flex items-center gap-4 cursor-pointer hover:bg-secondary ${convo.id === selectedConversation.id ? 'bg-secondary' : ''}`}>

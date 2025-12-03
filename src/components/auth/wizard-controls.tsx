@@ -3,6 +3,7 @@ import { useOnboardingContext } from '@/context/onboarding-context';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, ArrowRight } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useLanguage } from '@/context/language-context';
 
 interface WizardControlsProps {
   totalSteps: number;
@@ -11,6 +12,7 @@ interface WizardControlsProps {
 export default function WizardControls({ totalSteps }: WizardControlsProps) {
   const { currentStep, prevStep, nextStep, isStepValid } = useOnboardingContext();
   const router = useRouter();
+  const { t } = useLanguage();
 
   const handleFinish = () => {
     // Burada genellikle form verilerini gönderirsiniz
@@ -29,16 +31,16 @@ export default function WizardControls({ totalSteps }: WizardControlsProps) {
         className="text-muted-foreground"
       >
         <ArrowLeft className="mr-2 h-4 w-4" />
-        Geri
+        {t('onboarding.back')}
       </Button>
 
       {isLastStep ? (
         <Button onClick={handleFinish} disabled={!isStepValid} className="font-bold text-lg py-6 rounded-xl">
-          Hesap Oluştur
+          {t('onboarding.createAccount')}
         </Button>
       ) : (
         <Button onClick={nextStep} disabled={!isStepValid}>
-          İleri
+          {t('onboarding.next')}
           <ArrowRight className="ml-2 h-4 w-4" />
         </Button>
       )}

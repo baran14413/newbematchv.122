@@ -7,10 +7,12 @@ import { Crown, Settings } from 'lucide-react';
 import Link from 'next/link';
 import { profiles } from '@/lib/data';
 import Image from 'next/image';
+import { useLanguage } from '@/context/language-context';
 
 export default function ProfilePage() {
   const profileCompletion = 75;
   const userProfile = profiles[1]; // Using Alex as a sample profile
+  const { t } = useLanguage();
 
   return (
     <div className="h-full overflow-y-auto p-4 md:p-6 bg-gray-50 dark:bg-black">
@@ -43,7 +45,7 @@ export default function ProfilePage() {
             </div>
              <div className="flex-1 flex justify-end">
                 <Link href="/settings" passHref>
-                    <Button variant="ghost" size="icon" aria-label="Ayarlar">
+                    <Button variant="ghost" size="icon" aria-label={t('settings.title')}>
                         <Settings className="w-6 h-6 text-muted-foreground" />
                     </Button>
                 </Link>
@@ -56,8 +58,8 @@ export default function ProfilePage() {
                  <CardContent className="p-0 flex items-center gap-6">
                     <Crown className="w-12 h-12" />
                     <div>
-                        <h2 className="text-2xl font-bold">BeMatch Gold Alın</h2>
-                        <p className="font-medium">Sizi kimlerin beğendiğini görün ve sınırsız kaydırın!</p>
+                        <h2 className="text-2xl font-bold">{t('profile.getGold')}</h2>
+                        <p className="font-medium">{t('profile.goldDescription')}</p>
                     </div>
                 </CardContent>
             </div>
@@ -66,11 +68,11 @@ export default function ProfilePage() {
         {/* Photo Gallery */}
         <Card className="shadow-lg">
           <CardContent className="p-4">
-             <h3 className="text-lg font-semibold mb-4">Fotoğraflarım</h3>
+             <h3 className="text-lg font-semibold mb-4">{t('profile.myPhotos')}</h3>
              <div className="grid grid-cols-3 gap-2">
                 {userProfile.imageUrls.map((url, index) => (
                     <div key={index} className="relative aspect-square rounded-lg overflow-hidden">
-                        <Image src={url} alt={`Profil fotoğrafı ${index + 1}`} fill className="object-cover" />
+                        <Image src={url} alt={`${t('profile.profilePhoto')} ${index + 1}`} fill className="object-cover" />
                     </div>
                 ))}
              </div>

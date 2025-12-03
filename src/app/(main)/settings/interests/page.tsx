@@ -6,6 +6,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+import { useLanguage } from '@/context/language-context';
 
 const interestsList = [
   'Müzik', 'Seyahat', 'Oyun', 'Filmler', 'Okuma', 'Yemek yapmak',
@@ -17,6 +18,7 @@ const initialUserInterests = ['Müzik', 'Seyahat', 'Spor'];
 
 export default function InterestsPage() {
   const [selectedInterests, setSelectedInterests] = useState<string[]>(initialUserInterests);
+  const { t } = useLanguage();
 
   const handleToggle = (interest: string) => {
     const newInterests = new Set(selectedInterests);
@@ -39,8 +41,8 @@ export default function InterestsPage() {
                 </Button>
             </Link>
             <div>
-                <h1 className="text-3xl font-bold text-primary">İlgi Alanlarını Düzenle</h1>
-                <p className="text-muted-foreground">Profilinde göstereceğin en fazla 7 ilgi alanı seç.</p>
+                <h1 className="text-3xl font-bold text-primary">{t('interestsPage.title')}</h1>
+                <p className="text-muted-foreground">{t('interestsPage.description')}</p>
             </div>
         </header>
 
@@ -66,7 +68,7 @@ export default function InterestsPage() {
                     </div>
                 </CardContent>
             </Card>
-             <Button className="w-full md:w-auto">Değişiklikleri Kaydet</Button>
+             <Button className="w-full md:w-auto">{t('interestsPage.save')}</Button>
         </div>
     </div>
   );

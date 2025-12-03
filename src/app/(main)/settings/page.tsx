@@ -4,6 +4,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
 import { ChevronRight, Heart, LogOut, MapPin, ShieldCheck, SlidersHorizontal, Smartphone, User, Wallet, KeyRound, Trash2 } from "lucide-react";
 import Link from "next/link";
+import { useLanguage } from "@/context/language-context";
 
 const SettingsSection = ({ title, children }: { title: string, children: React.ReactNode }) => (
     <div className="space-y-4">
@@ -33,35 +34,36 @@ const SettingsItem = ({ icon: Icon, label, href = "#" }: { icon: React.ElementTy
 );
 
 export default function SettingsPage() {
+    const { t } = useLanguage();
   return (
     <div className="h-full overflow-y-auto bg-gray-50 dark:bg-black">
         <header className="p-4 py-6 md:p-8">
-            <h1 className="text-3xl font-bold text-primary">Ayarlar</h1>
-            <p className="text-muted-foreground">Hesabını ve tercihlerini yönet.</p>
+            <h1 className="text-3xl font-bold text-primary">{t('settings.title')}</h1>
+            <p className="text-muted-foreground">{t('settings.description')}</p>
         </header>
 
         <div className="md:p-8 md:pt-0 space-y-8">
-            <SettingsSection title="Hesap Ayarları">
-                <SettingsItem icon={User} label="Kişisel Bilgiler" href="/settings/personal-info" />
-                <SettingsItem icon={Wallet} label="Cüzdanım" href="/settings/wallet"/>
-                <SettingsItem icon={Heart} label="İlgi Alanlarını Düzenle" href="/settings/interests" />
+            <SettingsSection title={t('settings.account')}>
+                <SettingsItem icon={User} label={t('settings.personalInfo')} href="/settings/personal-info" />
+                <SettingsItem icon={Wallet} label={t('settings.wallet')} href="/settings/wallet"/>
+                <SettingsItem icon={Heart} label={t('settings.editInterests')} href="/settings/interests" />
             </SettingsSection>
 
-            <SettingsSection title="Keşfet Ayarları">
-                <SettingsItem icon={MapPin} label="Konum" href="/settings/location"/>
-                <SettingsItem icon={SlidersHorizontal} label="Tercihler" href="/settings/preferences"/>
+            <SettingsSection title={t('settings.discovery')}>
+                <SettingsItem icon={MapPin} label={t('settings.location')} href="/settings/location"/>
+                <SettingsItem icon={SlidersHorizontal} label={t('settings.preferences')} href="/settings/preferences"/>
             </SettingsSection>
 
-             <SettingsSection title="Uygulama Ayarları">
-                <SettingsItem icon={Smartphone} label="Uygulama" href="/settings/application"/>
+             <SettingsSection title={t('settings.app')}>
+                <SettingsItem icon={Smartphone} label={t('settings.application')} href="/settings/application"/>
             </SettingsSection>
 
-            <SettingsSection title="Gizlilik ve Güvenlik">
-                <SettingsItem icon={ShieldCheck} label="Gizlilik ve Güvenlik" href="/settings/security" />
+            <SettingsSection title={t('settings.privacySecurity')}>
+                <SettingsItem icon={ShieldCheck} label={t('settings.privacySecurity')} href="/settings/security" />
             </SettingsSection>
 
-            <SettingsSection title="Oturum">
-                <SettingsItem icon={LogOut} label="Çıkış Yap" />
+            <SettingsSection title={t('settings.session')}>
+                <SettingsItem icon={LogOut} label={t('settings.logout')} />
             </SettingsSection>
         </div>
     </div>

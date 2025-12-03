@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Smartphone, Monitor, MapPin, ArrowLeft } from "lucide-react";
 import Link from 'next/link';
+import { useLanguage } from '@/context/language-context';
 
 const InfoItem = ({ label, value }: { label: string, value: string }) => (
     <div className="flex justify-between items-center py-3">
@@ -23,6 +24,7 @@ const SessionItem = ({ icon: Icon, device, location, time }: { icon: React.Eleme
 );
 
 export default function PersonalInfoPage() {
+    const { t } = useLanguage();
     // Örnek veriler
     const userInfo = {
         firstName: "Alex",
@@ -39,31 +41,31 @@ export default function PersonalInfoPage() {
                     </Button>
                 </Link>
                 <div>
-                    <h1 className="text-3xl font-bold text-primary">Kişisel Bilgiler</h1>
-                    <p className="text-muted-foreground">Bu bilgiler profilinde görünür ve düzenlenemez.</p>
+                    <h1 className="text-3xl font-bold text-primary">{t('personalInfoPage.title')}</h1>
+                    <p className="text-muted-foreground">{t('personalInfoPage.description')}</p>
                 </div>
             </header>
 
             <div className="md:p-8 md:pt-0 space-y-8">
                 <Card>
                     <CardHeader>
-                        <CardTitle>Profil Detayları</CardTitle>
+                        <CardTitle>{t('personalInfoPage.profileDetails')}</CardTitle>
                     </CardHeader>
                     <CardContent className="divide-y">
-                        <InfoItem label="Ad" value={userInfo.firstName} />
-                        <InfoItem label="Soyad" value={userInfo.lastName} />
-                        <InfoItem label="Yaş" value={userInfo.age.toString()} />
+                        <InfoItem label={t('personalInfoPage.firstName')} value={userInfo.firstName} />
+                        <InfoItem label={t('personalInfoPage.lastName')} value={userInfo.lastName} />
+                        <InfoItem label={t('personalInfoPage.age')} value={userInfo.age.toString()} />
                     </CardContent>
                 </Card>
 
                 <Card>
                     <CardHeader>
-                        <CardTitle>Oturum Hareketleri</CardTitle>
-                        <CardDescription>Aktif oturumlarını ve giriş yaptığın cihazları gör.</CardDescription>
+                        <CardTitle>{t('personalInfoPage.sessionActivity')}</CardTitle>
+                        <CardDescription>{t('personalInfoPage.sessionDescription')}</CardDescription>
                     </CardHeader>
                     <CardContent className="divide-y">
-                        <SessionItem icon={Smartphone} device="iPhone 15 Pro" location="İstanbul, TR" time="Şimdi aktif" />
-                        <SessionItem icon={Monitor} device="Chrome - macOS" location="Ankara, TR" time="2 gün önce" />
+                        <SessionItem icon={Smartphone} device="iPhone 15 Pro" location="İstanbul, TR" time={t('personalInfoPage.activeNow')} />
+                        <SessionItem icon={Monitor} device="Chrome - macOS" location="Ankara, TR" time={`2 ${t('common.daysAgo')}`} />
                     </CardContent>
                 </Card>
             </div>

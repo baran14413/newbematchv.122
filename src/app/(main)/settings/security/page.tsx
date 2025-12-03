@@ -25,17 +25,20 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "@/components/ui/accordion";
-
-const deletionReasons = [
-    { id: 'privacy', label: 'Gizlilik endişelerim var.' },
-    { id: 'matches', label: 'İyi eşleşmeler bulamadım.' },
-    { id: 'break', label: 'Ara vermek istiyorum.' },
-    { id: 'met_someone', label: 'Biriyle tanıştım.' },
-    { id: 'technical', label: 'Uygulamada çok fazla teknik sorun var.' },
-    { id: 'other', label: 'Başka bir neden.' },
-];
+import { useLanguage } from '@/context/language-context';
 
 export default function SecurityPage() {
+    const { t } = useLanguage();
+
+    const deletionReasons = [
+        { id: 'privacy', label: t('securityPage.deletionReasons.privacy') },
+        { id: 'matches', label: t('securityPage.deletionReasons.matches') },
+        { id: 'break', label: t('securityPage.deletionReasons.break') },
+        { id: 'met_someone', label: t('securityPage.deletionReasons.met_someone') },
+        { id: 'technical', label: t('securityPage.deletionReasons.technical') },
+        { id: 'other', label: t('securityPage.deletionReasons.other') },
+    ];
+
     const [showCurrent, setShowCurrent] = useState(false);
     const [showNew, setShowNew] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
@@ -58,8 +61,8 @@ export default function SecurityPage() {
                     </Button>
                 </Link>
                 <div>
-                    <h1 className="text-3xl font-bold text-primary">Gizlilik ve Güvenlik</h1>
-                    <p className="text-muted-foreground">Şifreni değiştir veya hesabını yönet.</p>
+                    <h1 className="text-3xl font-bold text-primary">{t('securityPage.title')}</h1>
+                    <p className="text-muted-foreground">{t('securityPage.description')}</p>
                 </div>
             </header>
 
@@ -71,35 +74,35 @@ export default function SecurityPage() {
                         <AccordionItem value="item-1" className="border-b-0">
                           <AccordionTrigger className="p-6 hover:no-underline">
                               <div className="text-left">
-                                <h3 className="text-lg font-semibold">Şifre Değiştir</h3>
-                                <p className="text-sm text-muted-foreground">Güvenliğin için yeni bir şifre belirle.</p>
+                                <h3 className="text-lg font-semibold">{t('securityPage.changePassword')}</h3>
+                                <p className="text-sm text-muted-foreground">{t('securityPage.changePasswordDescription')}</p>
                               </div>
                           </AccordionTrigger>
                           <AccordionContent className="p-6 pt-0">
                             <div className="space-y-6">
                                 <div className="space-y-2 relative">
-                                    <Label htmlFor="currentPassword">Mevcut Şifre</Label>
-                                    <Input id="currentPassword" type={showCurrent ? 'text' : 'password'} placeholder="Mevcut şifreniz" />
+                                    <Label htmlFor="currentPassword">{t('securityPage.currentPassword')}</Label>
+                                    <Input id="currentPassword" type={showCurrent ? 'text' : 'password'} placeholder={t('securityPage.passwordHintCurrent')} />
                                     <Button type="button" variant="ghost" size="icon" className="absolute right-2.5 top-8 h-7 w-7 text-muted-foreground" onClick={() => setShowCurrent(!showCurrent)}>
                                         {showCurrent ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                                     </Button>
                                 </div>
                                 <div className="space-y-2 relative">
-                                    <Label htmlFor="newPassword">Yeni Şifre</Label>
-                                    <Input id="newPassword" type={showNew ? 'text' : 'password'} placeholder="Yeni bir şifre oluşturun" value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
+                                    <Label htmlFor="newPassword">{t('securityPage.newPassword')}</Label>
+                                    <Input id="newPassword" type={showNew ? 'text' : 'password'} placeholder={t('securityPage.passwordHintNew')} value={newPassword} onChange={(e) => setNewPassword(e.target.value)} />
                                      <Button type="button" variant="ghost" size="icon" className="absolute right-2.5 top-8 h-7 w-7 text-muted-foreground" onClick={() => setShowNew(!showNew)}>
                                         {showNew ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                                     </Button>
                                     <PasswordStrength password={newPassword} />
                                 </div>
                                 <div className="space-y-2 relative">
-                                    <Label htmlFor="confirmPassword">Yeni Şifreyi Onayla</Label>
-                                    <Input id="confirmPassword" type={showConfirm ? 'text' : 'password'} placeholder="Yeni şifrenizi doğrulayın" />
+                                    <Label htmlFor="confirmPassword">{t('securityPage.confirmNewPassword')}</Label>
+                                    <Input id="confirmPassword" type={showConfirm ? 'text' : 'password'} placeholder={t('securityPage.passwordHintConfirm')} />
                                      <Button type="button" variant="ghost" size="icon" className="absolute right-2.5 top-8 h-7 w-7 text-muted-foreground" onClick={() => setShowConfirm(!showConfirm)}>
                                         {showConfirm ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
                                     </Button>
                                 </div>
-                                <Button>Şifreyi Değiştir</Button>
+                                <Button>{t('securityPage.savePassword')}</Button>
                             </div>
                           </AccordionContent>
                         </AccordionItem>
@@ -113,25 +116,25 @@ export default function SecurityPage() {
                         <CardHeader>
                             <div className="flex items-center gap-3 text-destructive">
                                 <AlertTriangle className="w-6 h-6" />
-                                <CardTitle>Hesabı Kalıcı Olarak Sil</CardTitle>
+                                <CardTitle>{t('securityPage.deleteAccountTitle')}</CardTitle>
                             </div>
                             <CardDescription className="text-destructive/80">
-                                Bu işlem geri alınamaz. Hesabını silmek tüm eşleşmelerini, sohbetlerini ve profil bilgilerini kalıcı olarak yok edecektir.
+                                {t('securityPage.deleteAccountWarning')}
                             </CardDescription>
                         </CardHeader>
                         <CardContent className="space-y-4">
-                            <p className="text-sm text-muted-foreground">Devam etmek istediğine eminsen, lütfen aşağıdaki butona tıkla.</p>
+                            <p className="text-sm text-muted-foreground">{t('securityPage.deleteAccountInfo')}</p>
                              <AlertDialog onOpenChange={(open) => !open && resetDeleteFlow()}>
                                 <AlertDialogTrigger asChild>
-                                    <Button variant="destructive" className="w-full">Hesabımı Silme İşlemini Başlat</Button>
+                                    <Button variant="destructive" className="w-full">{t('securityPage.startDeletion')}</Button>
                                 </AlertDialogTrigger>
                                 <AlertDialogContent>
                                     {deleteStep === 0 && (
                                         <>
                                             <AlertDialogHeader>
-                                                <AlertDialogTitle>Gitmeden önce bir dakikanızı alabilir miyiz?</AlertDialogTitle>
+                                                <AlertDialogTitle>{t('securityPage.deleteModal.step0Title')}</AlertDialogTitle>
                                                 <AlertDialogDescription>
-                                                   Ayrılma nedeninizi öğrenmek isteriz. Geri bildiriminiz, BeMatch'i herkes için daha iyi hale getirmemize yardımcı olur.
+                                                   {t('securityPage.deleteModal.step0Description')}
                                                 </AlertDialogDescription>
                                             </AlertDialogHeader>
                                             <div className="py-4 space-y-4">
@@ -145,9 +148,9 @@ export default function SecurityPage() {
                                                 </RadioGroup>
                                             </div>
                                             <AlertDialogFooter>
-                                                <AlertDialogCancel>İptal</AlertDialogCancel>
+                                                <AlertDialogCancel>{t('securityPage.deleteModal.cancel')}</AlertDialogCancel>
                                                 <Button onClick={() => setDeleteStep(1)} disabled={!selectedReason}>
-                                                    Devam
+                                                    {t('securityPage.deleteModal.continue')}
                                                 </Button>
                                             </AlertDialogFooter>
                                         </>
@@ -155,18 +158,18 @@ export default function SecurityPage() {
                                     {deleteStep === 1 && (
                                         <>
                                             <AlertDialogHeader>
-                                                <AlertDialogTitle>Hesabını Silmek Üzeresin. Emin misin?</AlertDialogTitle>
+                                                <AlertDialogTitle>{t('securityPage.deleteModal.step1Title')}</AlertDialogTitle>
                                                 <AlertDialogDescription>
-                                                    Bu işlem kesinlikle geri alınamaz. Onaylamak için lütfen şifreni gir.
+                                                    {t('securityPage.deleteModal.step1Description')}
                                                 </AlertDialogDescription>
                                             </AlertDialogHeader>
                                             <div className="space-y-2 py-4">
-                                                <Label htmlFor="password-confirm" className="sr-only">Şifre</Label>
-                                                <Input id="password-confirm" type="password" placeholder="Onaylamak için şifrenizi girin" />
+                                                <Label htmlFor="password-confirm" className="sr-only">{t('securityPage.deleteModal.passwordLabel')}</Label>
+                                                <Input id="password-confirm" type="password" placeholder={t('securityPage.deleteModal.passwordPlaceholder')} />
                                             </div>
                                             <AlertDialogFooter>
-                                                <Button variant="ghost" onClick={() => setDeleteStep(0)}>Geri</Button>
-                                                <AlertDialogAction className="bg-destructive hover:bg-destructive/90">Evet, Hesabımı Kalıcı Olarak Sil</AlertDialogAction>
+                                                <Button variant="ghost" onClick={() => setDeleteStep(0)}>{t('securityPage.deleteModal.goBack')}</Button>
+                                                <AlertDialogAction className="bg-destructive hover:bg-destructive/90">{t('securityPage.deleteModal.confirmDelete')}</AlertDialogAction>
                                             </AlertDialogFooter>
                                         </>
                                     )}

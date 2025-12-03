@@ -7,11 +7,13 @@ import { Bot, Loader2 } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import type { UserProfile } from '@/lib/data';
 import { generateAiIcebreaker } from '@/app/actions';
+import { useLanguage } from '@/context/language-context';
 
 export default function AiIcebreaker({ matchProfile }: { matchProfile: UserProfile }) {
   const [isPending, startTransition] = useTransition();
   const [icebreaker, setIcebreaker] = useState<string>('');
   const { toast } = useToast();
+  const { t } = useLanguage();
 
   const handleGenerate = () => {
     startTransition(async () => {
@@ -28,8 +30,8 @@ export default function AiIcebreaker({ matchProfile }: { matchProfile: UserProfi
         console.error(error);
         toast({
           variant: 'destructive',
-          title: 'Hata',
-          description: 'Yapay zeka buzkıranı oluşturulamadı. Lütfen tekrar deneyin.',
+          title: t('lounge.aiIcebreaker.errorTitle'),
+          description: t('lounge.aiIcebreaker.errorDescription'),
         });
       }
     });
@@ -40,15 +42,15 @@ export default function AiIcebreaker({ matchProfile }: { matchProfile: UserProfi
       <PopoverTrigger asChild>
         <Button variant="ghost" size="icon" className="w-9 h-9 text-primary hover:text-primary">
           {isPending ? <Loader2 className="w-5 h-5 animate-spin" /> : <Bot className="w-5 h-5" />}
-          <span className="sr-only">Yapay Zeka Buzkıran Oluştur</span>
+          <span className="sr-only">{t('lounge.aiIcebreaker.title')}</span>
         </Button>
       </PopoverTrigger>
       <PopoverContent className="w-80">
         <div className="grid gap-4">
           <div className="space-y-2">
-            <h4 className="font-medium leading-none">Yapay Zeka Buzkıran</h4>
+            <h4 className="font-medium leading-none">{t('lounge.aiIcebreaker.title')}</h4>
             <p className="text-sm text-muted-foreground">
-              Sohbeti başlatmak için yapay zekadan yardım al.
+              {t('lounge.aiIcebreaker.description')}
             </p>
           </div>
           {icebreaker && (
@@ -60,10 +62,10 @@ export default function AiIcebreaker({ matchProfile }: { matchProfile: UserProfi
             {isPending ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Oluşturuluyor...
+                {t('lounge.aiIcebreaker.generating')}
               </>
             ) : (
-              'Yeni fikir üret'
+              t('lounge.aiIcebreaker.generate')
             )}
           </Button>
         </div>

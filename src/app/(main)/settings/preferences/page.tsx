@@ -6,10 +6,12 @@ import { Slider } from "@/components/ui/slider";
 import { Button } from '@/components/ui/button';
 import { ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+import { useLanguage } from '@/context/language-context';
 
 export default function PreferencesPage() {
     const [distance, setDistance] = useState(25);
     const [ageRange, setAgeRange] = useState([22, 35]);
+    const { t } = useLanguage();
 
     return (
         <div className="h-full overflow-y-auto bg-gray-50 dark:bg-black">
@@ -20,21 +22,21 @@ export default function PreferencesPage() {
                     </Button>
                 </Link>
                 <div>
-                    <h1 className="text-3xl font-bold text-primary">Tercihler</h1>
-                    <p className="text-muted-foreground">Keşfet sayfasında kimleri görmek istediğini ayarla.</p>
+                    <h1 className="text-3xl font-bold text-primary">{t('preferencesPage.title')}</h1>
+                    <p className="text-muted-foreground">{t('preferencesPage.description')}</p>
                 </div>
             </header>
 
             <div className="md:p-8 md:pt-0 space-y-8">
                 <Card>
                     <CardHeader>
-                        <CardTitle>Mesafe Tercihi</CardTitle>
+                        <CardTitle>{t('preferencesPage.distance')}</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-4">
                             <div className="flex justify-between items-baseline">
-                                <Label>Maksimum Mesafe</Label>
-                                <span className="text-lg font-semibold text-primary">{distance} km</span>
+                                <Label>{t('preferencesPage.maxDistance')}</Label>
+                                <span className="text-lg font-semibold text-primary">{distance} {t('common.km')}</span>
                             </div>
                             <Slider
                                 value={[distance]}
@@ -48,12 +50,12 @@ export default function PreferencesPage() {
 
                 <Card>
                     <CardHeader>
-                        <CardTitle>Yaş Aralığı</CardTitle>
+                        <CardTitle>{t('preferencesPage.ageRange')}</CardTitle>
                     </CardHeader>
                     <CardContent>
                         <div className="space-y-4">
                             <div className="flex justify-between items-baseline">
-                                <Label>Yaş Aralığı</Label>
+                                <Label>{t('preferencesPage.ageRange')}</Label>
                                 <span className="text-lg font-semibold text-primary">{ageRange[0]} - {ageRange[1]}</span>
                             </div>
                              <Slider
@@ -67,7 +69,7 @@ export default function PreferencesPage() {
                     </CardContent>
                 </Card>
 
-                <Button className="w-full md:w-auto">Tercihleri Kaydet</Button>
+                <Button className="w-full md:w-auto">{t('preferencesPage.save')}</Button>
             </div>
         </div>
     );

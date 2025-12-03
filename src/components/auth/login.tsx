@@ -14,6 +14,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Eye, EyeOff, Heart } from 'lucide-react';
 import Link from 'next/link';
+import { useLanguage } from '@/context/language-context';
 
 type AuthView = 'login' | 'register';
 
@@ -23,6 +24,7 @@ interface LoginProps {
 
 export default function Login({ onSwitchView }: LoginProps) {
   const [showPassword, setShowPassword] = useState(false);
+  const { t } = useLanguage();
 
   return (
     <Card className="w-full max-w-md shadow-2xl rounded-2xl">
@@ -30,19 +32,19 @@ export default function Login({ onSwitchView }: LoginProps) {
         <div className="flex justify-center items-center mb-4">
           <Heart className="w-10 h-10 text-primary" />
         </div>
-        <CardTitle className="text-4xl font-extrabold text-primary tracking-tight">BeMatch</CardTitle>
+        <CardTitle className="text-4xl font-extrabold text-primary tracking-tight">{t('login.title')}</CardTitle>
         <CardDescription className="text-muted-foreground">
-          Mükemmel eşini bulmak için giriş yap.
+          {t('login.description')}
         </CardDescription>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="space-y-2">
-          <Label htmlFor="email">E-posta</Label>
-          <Input id="email" type="email" placeholder="eposta@adresiniz.com" />
+          <Label htmlFor="email">{t('login.email')}</Label>
+          <Input id="email" type="email" placeholder={t('login.emailPlaceholder')} />
         </div>
         <div className="space-y-2 relative">
-          <Label htmlFor="password">Şifre</Label>
-          <Input id="password" type={showPassword ? 'text' : 'password'} placeholder="Şifreniz" />
+          <Label htmlFor="password">{t('login.password')}</Label>
+          <Input id="password" type={showPassword ? 'text' : 'password'} placeholder={t('login.passwordPlaceholder')} />
           <Button
             type="button"
             variant="ghost"
@@ -56,12 +58,12 @@ export default function Login({ onSwitchView }: LoginProps) {
       </CardContent>
       <CardFooter className="flex flex-col gap-4">
         <Button asChild className="w-full bg-primary hover:bg-primary/90 font-bold text-lg py-6 rounded-xl">
-          <Link href="/discover">Giriş Yap</Link>
+          <Link href="/discover">{t('login.button')}</Link>
         </Button>
         <p className="text-sm text-muted-foreground">
-          Hesabın yok mu?{' '}
+          {t('login.noAccount')}{' '}
           <button onClick={() => onSwitchView('register')} className="font-semibold text-primary hover:underline">
-            Yeni Hesap Oluştur
+            {t('login.createAccount')}
           </button>
         </p>
       </CardFooter>

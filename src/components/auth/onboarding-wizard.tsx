@@ -10,15 +10,7 @@ import StepCredentials from '@/components/auth/steps/step-credentials';
 import WizardControls from '@/components/auth/wizard-controls';
 import { Card, CardContent } from '../ui/card';
 import { AnimatePresence, motion } from 'framer-motion';
-
-const steps = [
-  { component: StepName, title: "Adınız nedir?" },
-  { component: StepGoals, title: 'Burada ne arıyorsunuz?' },
-  { component: StepInterests, title: 'İlgi alanların neler?' },
-  { component: StepLocation, title: 'Nerede yaşıyorsun?' },
-  { component: StepPhotos, title: 'En iyi fotoğraflarını ekle' },
-  { component: StepCredentials, title: 'Hesabını oluştur' },
-];
+import { useLanguage } from '@/context/language-context';
 
 type AuthView = 'login' | 'register';
 
@@ -28,6 +20,17 @@ interface OnboardingWizardProps {
 
 export default function OnboardingWizard({ onSwitchView }: OnboardingWizardProps) {
   const { currentStep } = useOnboardingContext();
+  const { t } = useLanguage();
+
+  const steps = [
+    { component: StepName, title: t("onboarding.stepNameTitle") },
+    { component: StepGoals, title: t('onboarding.stepGoalsTitle') },
+    { component: StepInterests, title: t('onboarding.stepInterestsTitle') },
+    { component: StepLocation, title: t('onboarding.stepLocationTitle') },
+    { component: StepPhotos, title: t('onboarding.stepPhotosTitle') },
+    { component: StepCredentials, title: t('onboarding.stepCredentialsTitle') },
+  ];
+
   const CurrentStepComponent = steps[currentStep].component;
 
   return (
@@ -56,9 +59,9 @@ export default function OnboardingWizard({ onSwitchView }: OnboardingWizardProps
         <div className="p-6 bg-gray-50 border-t">
           <WizardControls totalSteps={steps.length} />
             <p className="text-sm text-muted-foreground text-center mt-4">
-                Zaten bir hesabın var mı?{' '}
+                {t('onboarding.haveAccount')}{' '}
                 <button onClick={() => onSwitchView('login')} className="font-semibold text-primary hover:underline">
-                    Giriş Yap
+                    {t('onboarding.login')}
                 </button>
             </p>
         </div>

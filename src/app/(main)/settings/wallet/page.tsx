@@ -3,6 +3,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Button } from "@/components/ui/button";
 import { Crown, Star, Gem, ArrowLeft } from "lucide-react";
 import Link from 'next/link';
+import { useLanguage } from "@/context/language-context";
 
 const InfoCard = ({ icon: Icon, title, value, actionText, onActionClick }: { icon: React.ElementType, title: string, value: string, actionText: string, onActionClick?: () => void }) => (
     <Card className="text-center">
@@ -20,6 +21,7 @@ const InfoCard = ({ icon: Icon, title, value, actionText, onActionClick }: { ico
 );
 
 export default function WalletPage() {
+    const { t } = useLanguage();
     return (
         <div className="h-full overflow-y-auto bg-gray-50 dark:bg-black">
             <header className="p-4 py-6 md:p-8 flex items-center gap-4">
@@ -29,8 +31,8 @@ export default function WalletPage() {
                     </Button>
                 </Link>
                 <div>
-                    <h1 className="text-3xl font-bold text-primary">Cüzdanım</h1>
-                    <p className="text-muted-foreground">Aboneliklerini ve jetonlarını yönet.</p>
+                    <h1 className="text-3xl font-bold text-primary">{t('walletPage.title')}</h1>
+                    <p className="text-muted-foreground">{t('walletPage.description')}</p>
                 </div>
             </header>
 
@@ -40,12 +42,12 @@ export default function WalletPage() {
                         <CardHeader className="p-0 mb-4">
                             <div className="flex items-center gap-3">
                                 <Crown className="w-8 h-8" />
-                                <CardTitle className="text-2xl text-black">BeMatch Gold</CardTitle>
+                                <CardTitle className="text-2xl text-black">{t('walletPage.goldSub')}</CardTitle>
                             </div>
                         </CardHeader>
                         <CardContent className="p-0">
-                            <p className="font-medium">Bir sonraki fatura tarihiniz: <span className="font-bold">24 Temmuz 2024</span></p>
-                            <Button variant="outline" className="mt-4 bg-transparent border-black text-black hover:bg-black/10">Aboneliği Yönet</Button>
+                            <p className="font-medium">{t('walletPage.nextBillDate')} <span className="font-bold">24 Temmuz 2024</span></p>
+                            <Button variant="outline" className="mt-4 bg-transparent border-black text-black hover:bg-black/10">{t('walletPage.manageSub')}</Button>
                         </CardContent>
                     </div>
                 </Card>
@@ -53,15 +55,15 @@ export default function WalletPage() {
                 <div className="grid md:grid-cols-2 gap-6">
                     <InfoCard
                         icon={Star}
-                        title="Süper Beğeni"
+                        title={t('walletPage.superLikes')}
                         value="3"
-                        actionText="Daha Fazla Al"
+                        actionText={t('walletPage.getMore')}
                     />
                     <InfoCard
                         icon={Gem}
-                        title="Jetonlar"
+                        title={t('walletPage.tokens')}
                         value="150"
-                        actionText="Jeton Yükle"
+                        actionText={t('walletPage.addTokens')}
                     />
                 </div>
             </div>

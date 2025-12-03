@@ -1,3 +1,4 @@
+'use client';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Textarea } from "@/components/ui/textarea";
@@ -5,9 +6,10 @@ import type { Conversation, UserProfile } from "@/lib/data";
 import { Button } from "../ui/button";
 import { Send } from "lucide-react";
 import AiIcebreaker from "./ai-icebreaker";
+import { useLanguage } from "@/context/language-context";
 
 export default function ChatArea({ conversation, matchProfile }: { conversation: Conversation; matchProfile: UserProfile }) {
-
+  const { t } = useLanguage();
   return (
     <div className="flex flex-col h-full">
       <header className="flex items-center gap-4 p-4 border-b border-border">
@@ -50,7 +52,7 @@ export default function ChatArea({ conversation, matchProfile }: { conversation:
       <footer className="p-4 border-t border-border">
         <div className="relative">
           <Textarea
-            placeholder="Bir mesaj gönder..."
+            placeholder={t('lounge.chatInputPlaceholder')}
             className="pr-24 min-h-[50px]"
           />
           <div className="absolute right-2 top-1/2 -translate-y-1/2 flex items-center gap-2">

@@ -5,16 +5,18 @@ import { Button } from "@/components/ui/button";
 import { MapPin, ArrowLeft } from "lucide-react";
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
+import { useLanguage } from '@/context/language-context';
 
 export default function LocationPage() {
     const [currentLocation, setCurrentLocation] = useState("İstanbul, TR");
     const { toast } = useToast();
+    const { t } = useLanguage();
 
     const handleUpdateLocation = () => {
         // Mock function for location update
         toast({
-            title: "Konum Güncellendi!",
-            description: "Yeni konumun başarıyla ayarlandı.",
+            title: t('locationPage.updateToastTitle'),
+            description: t('locationPage.updateToastDescription'),
         });
     };
 
@@ -27,15 +29,15 @@ export default function LocationPage() {
                     </Button>
                 </Link>
                 <div>
-                    <h1 className="text-3xl font-bold text-primary">Konum</h1>
-                    <p className="text-muted-foreground">Eşleşme önerileri için konumunu yönet.</p>
+                    <h1 className="text-3xl font-bold text-primary">{t('locationPage.title')}</h1>
+                    <p className="text-muted-foreground">{t('locationPage.description')}</p>
                 </div>
             </header>
 
             <div className="md:p-8 md:pt-0 space-y-8">
                 <Card>
                     <CardHeader>
-                        <CardTitle>Mevcut Konum</CardTitle>
+                        <CardTitle>{t('locationPage.currentLocation')}</CardTitle>
                     </CardHeader>
                     <CardContent className="space-y-6">
                         <div className="flex items-center gap-4 p-4 border rounded-lg">
@@ -43,10 +45,10 @@ export default function LocationPage() {
                             <p className="text-lg font-semibold">{currentLocation}</p>
                         </div>
                         <p className="text-sm text-muted-foreground">
-                            BeMatch, sana daha iyi öneriler sunmak için cihazının konumunu kullanır. Konumunu sadece eşleşme potansiyeli olan kişilere yaklaşık bir mesafede göstermek için kullanırız.
+                            {t('locationPage.infoText')}
                         </p>
                         <Button onClick={handleUpdateLocation} className="w-full md:w-auto">
-                            Konumu Güncelle
+                            {t('locationPage.updateLocation')}
                         </Button>
                     </CardContent>
                 </Card>
