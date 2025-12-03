@@ -14,8 +14,12 @@ export default function DiscoverPage() {
   const [isAnimating, setIsAnimating] = useState(false);
   const { t } = useLanguage();
   const [history, setHistory] = useState<UserProfile[]>([]);
+  const [dragDirection, setDragDirection] = useState<'left' | 'right' | 'up' | null>(null);
 
-  const popCard = (swipedProfile: UserProfile) => {
+  const popCard = (swipedProfile: UserProfile, direction: 'left' | 'right' | 'up') => {
+    if (isAnimating || stack.length === 0) return;
+    setIsAnimating(true);
+    setDragDirection(direction);
     setHistory(prev => [...prev, swipedProfile]);
     setStack((prev) => prev.slice(0, -1));
   };
@@ -25,24 +29,24 @@ export default function DiscoverPage() {
       const lastSwiped = history[history.length - 1];
       setHistory(prev => prev.slice(0, -1));
       setStack(prev => [...prev, lastSwiped]);
+      setDragDirection(null);
     }
   }
 
-  const handleSwipe = (direction: 'left' | 'right' | 'up') => {
+  const handleButtonClick = (direction: 'left' | 'right' | 'up') => {
     if (isAnimating || stack.length === 0) return;
-    setIsAnimating(true);
-    // Burada kaydırma mantığını yönetirsiniz (beğenme, beğenmeme, süper beğenme)
-    console.log(`Kaydırıldı: ${direction}`);
     const swipedCard = stack[stack.length - 1];
-    popCard(swipedCard);
+    popCard(swipedCard, direction);
   };
 
   const onDragEnd = (event: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
-    const { offset } = info;
+    const { offset, velocity } = info;
     const threshold = 100;
 
-    if (Math.abs(offset.x) > threshold) {
-      handleSwipe(offset.x > 0 ? 'right' : 'left');
+    if (Math.abs(offset.y) > threshold && offset.y < 0) {
+        popCard(stack[stack.length - 1], 'up');
+    } else if (Math.abs(offset.x) > threshold) {
+        popCard(stack[stack.length - 1], offset.x > 0 ? 'right' : 'left');
     }
   };
 
@@ -50,44 +54,65 @@ export default function DiscoverPage() {
     <div className="flex flex-col h-full bg-gray-50 dark:bg-black overflow-hidden">
       <div className="flex-1 flex flex-col items-center justify-center p-4 relative">
         <div className="w-full max-w-sm h-[60vh] max-h-[500px] relative flex items-center justify-center">
-            <AnimatePresence onExitComplete={() => setIsAnimating(false)}>
+            <AnimatePresence 
+              initial={false}
+              onExitComplete={() => {
+                setIsAnimating(false);
+                setDragDirection(null);
+              }}
+            >
                 {stack.map((profile, index) => {
                 const isTop = index === stack.length - 1;
+                
+                const exitX = dragDirection === 'left' ? -500 : (dragDirection === 'right' ? 500 : 0);
+                const exitY = dragDirection === 'up' ? -500 : 0;
+
                 return (
                     <motion.div
-                    key={profile.id}
-                    drag={isTop}
-                    dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
-                    dragElastic={0.7}
-                    onDragEnd={onDragEnd}
-                    initial={{ scale: 1 - (stack.length - 1 - index) * 0.05, y: (stack.length - 1 - index) * -10, opacity: 1 }}
-                    animate={{ scale: 1 - (stack.length - 1 - index) * 0.05, y: (stack.length - 1 - index) * -10, opacity: 1 }}
-                    exit={{ x: stack[index].id % 2 === 0 ? 300 : -300, opacity: 0, scale: 0.8, transition: { duration: 0.3 } }}
-                    className="absolute w-full h-full"
-                    style={{ zIndex: index }}
+                      key={profile.id}
+                      drag={isTop}
+                      dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
+                      dragElastic={0.5}
+                      onDragEnd={onDragEnd}
+                      initial={{ scale: 1 - (stack.length - 1 - index) * 0.05, y: (stack.length - 1 - index) * -10, opacity: 1 }}
+                      animate={{ 
+                        scale: 1 - (stack.length - 1 - index) * 0.05, 
+                        y: (stack.length - 1 - index) * -10,
+                        opacity: 1,
+                        transition: { duration: 0.2 }
+                      }}
+                      exit={{ 
+                        x: exitX,
+                        y: exitY,
+                        opacity: 0, 
+                        scale: 0.8, 
+                        transition: { duration: 0.3 } 
+                      }}
+                      className="absolute w-full h-full"
+                      style={{ zIndex: index }}
                     >
-                    <Card className="w-full h-full rounded-2xl overflow-hidden shadow-2xl">
-                        <CardContent className="p-0 h-full relative">
-                        <Image
-                            src={profile.imageUrls[0]}
-                            alt={profile.name}
-                            fill
-                            className="object-cover"
-                            priority={isTop}
-                        />
-                        <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-black/80 to-transparent p-6 flex flex-col justify-end">
-                            <h2 className="text-3xl font-bold text-white">
-                            {profile.name}, {profile.age}
-                            </h2>
-                            <p className="text-white/80 text-lg">{t('discover.job')}</p>
-                        </div>
-                        </CardContent>
-                    </Card>
+                      <Card className="w-full h-full rounded-2xl overflow-hidden shadow-2xl">
+                          <CardContent className="p-0 h-full relative">
+                          <Image
+                              src={profile.imageUrls[0]}
+                              alt={profile.name}
+                              fill
+                              className="object-cover"
+                              priority={isTop}
+                          />
+                          <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-black/80 to-transparent p-6 flex flex-col justify-end">
+                              <h2 className="text-3xl font-bold text-white">
+                              {profile.name}, {profile.age}
+                              </h2>
+                              <p className="text-white/80 text-lg">{profile.bio.split('. ')[0]}</p>
+                          </div>
+                          </CardContent>
+                      </Card>
                     </motion.div>
                 );
                 })}
             </AnimatePresence>
-            {stack.length === 0 && (
+            {stack.length === 0 && !isAnimating && (
                 <div className="text-center text-muted-foreground">
                     <p>{t('discover.noMoreProfiles')}</p>
                 </div>
@@ -95,16 +120,16 @@ export default function DiscoverPage() {
         </div>
         
         <div className="flex justify-center items-center gap-4 mt-8">
-            <Button variant="outline" size="icon" className="w-12 h-12 rounded-full bg-white shadow-lg border-gray-200" onClick={undoSwipe}>
+            <Button variant="outline" size="icon" className="w-12 h-12 rounded-full bg-white shadow-lg border-gray-200" onClick={undoSwipe} disabled={history.length === 0}>
               <Undo2 className="w-6 h-6 text-yellow-500" />
             </Button>
-            <Button variant="outline" size="icon" className="w-16 h-16 rounded-full bg-white shadow-lg border-gray-200" onClick={() => handleSwipe('left')}>
+            <Button variant="outline" size="icon" className="w-16 h-16 rounded-full bg-white shadow-lg border-gray-200" onClick={() => handleButtonClick('left')}>
               <X className="w-8 h-8 text-red-500" />
             </Button>
-            <Button variant="outline" size="icon" className="w-12 h-12 rounded-full bg-white shadow-lg border-gray-200" onClick={() => handleSwipe('up')}>
+            <Button variant="outline" size="icon" className="w-12 h-12 rounded-full bg-white shadow-lg border-gray-200" onClick={() => handleButtonClick('up')}>
               <Star className="w-6 h-6 text-blue-500" fill="currentColor" />
             </Button>
-            <Button variant="outline" size="icon" className="w-16 h-16 rounded-full bg-white shadow-lg border-gray-200" onClick={() => handleSwipe('right')}>
+            <Button variant="outline" size="icon" className="w-16 h-16 rounded-full bg-white shadow-lg border-gray-200" onClick={() => handleButtonClick('right')}>
               <Heart className="w-8 h-8 text-primary" fill="currentColor"/>
             </Button>
         </div>
