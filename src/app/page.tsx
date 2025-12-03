@@ -1,22 +1,23 @@
 'use client';
-
-import { useEffect } from 'react';
-import { useRouter } from 'next/navigation';
-import { Loader2 } from 'lucide-react';
+import AuthScreen from '@/components/auth/auth-screen';
+import { placeholderImages } from '@/lib/data';
+import Image from 'next/image';
 
 export default function Home() {
-  const router = useRouter();
-
-  useEffect(() => {
-    router.replace('/discover');
-  }, [router]);
+  const bgImage = placeholderImages.find((p) => p.id === 'auth-bg');
 
   return (
-    <main className="flex min-h-screen flex-col items-center justify-center bg-background">
-      <div className="flex flex-col items-center gap-4">
-        <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <p className="text-muted-foreground">Yönlendiriliyor...</p>
-      </div>
+    <main className="flex min-h-screen flex-col items-center justify-center p-4 sm:p-6 md:p-8 relative overflow-hidden">
+      {bgImage && (
+        <Image
+          src={bgImage.imageUrl}
+          alt={bgImage.description}
+          fill
+          className="object-cover -z-10 brightness-[0.2]"
+          priority
+        />
+      )}
+      <AuthScreen />
     </main>
   );
 }
