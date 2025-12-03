@@ -9,12 +9,12 @@ import Link from 'next/link';
 import { useLanguage } from '@/context/language-context';
 
 const interestsList = [
-  'Müzik', 'Seyahat', 'Oyun', 'Filmler', 'Okuma', 'Yemek yapmak',
-  'Spor', 'Fitness', 'Sanat', 'Fotoğrafçılık', 'Yürüyüş', 'Dans',
-  'Teknoloji', 'Moda', 'Yoga', 'Kamp', 'Tiyatro', 'Gönüllülük'
+  'music', 'travel', 'gaming', 'movies', 'reading', 'cooking',
+  'sports', 'fitness', 'art', 'photography', 'hiking', 'dancing',
+  'technology', 'fashion', 'yoga', 'camping', 'theater', 'volunteering'
 ];
 
-const initialUserInterests = ['Müzik', 'Seyahat', 'Spor'];
+const initialUserInterests = ['music', 'travel', 'sports'];
 
 export default function InterestsPage() {
   const [selectedInterests, setSelectedInterests] = useState<string[]>(initialUserInterests);
@@ -62,7 +62,7 @@ export default function InterestsPage() {
                             : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
                         )}
                         >
-                        {interest}
+                        {t(`interests.${interest}`)}
                         </Badge>
                     ))}
                     </div>

@@ -18,6 +18,7 @@
         }
     },
     "profile": {
+        "title": "Profil",
         "getGold": "BeMatch Gold Alın",
         "goldDescription": "Sizi kimlerin beğendiğini görün ve sınırsız kaydırın!",
         "myPhotos": "Fotoğraflarım",
@@ -176,5 +177,25 @@
         "save": "Kaydet",
         "daysAgo": "gün önce",
         "nowActive": "Şimdi aktif"
+    },
+    "interests": {
+        "music": "Müzik",
+        "travel": "Seyahat",
+        "gaming": "Oyun",
+        "movies": "Filmler",
+        "reading": "Okuma",
+        "cooking": "Yemek yapmak",
+        "sports": "Spor",
+        "fitness": "Fitness",
+        "art": "Sanat",
+        "photography": "Fotoğrafçılık",
+        "hiking": "Yürüyüş",
+        "dancing": "Dans",
+        "technology": "Teknoloji",
+        "fashion": "Moda",
+        "yoga": "Yoga",
+        "camping": "Kamp",
+        "theater": "Tiyatro",
+        "volunteering": "Gönüllülük"
     }
 }

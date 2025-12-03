@@ -2,14 +2,16 @@
 import { useOnboardingContext } from '@/context/onboarding-context';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
+import { useLanguage } from '@/context/language-context';
 
 const interestsList = [
-  'Müzik', 'Seyahat', 'Oyun', 'Filmler', 'Okuma', 'Yemek yapmak',
-  'Spor', 'Fitness', 'Sanat', 'Fotoğrafçılık', 'Yürüyüş', 'Dans'
+  'music', 'travel', 'gaming', 'movies', 'reading', 'cooking',
+  'sports', 'fitness', 'art', 'photography', 'hiking', 'dancing'
 ];
 
 export default function StepInterests() {
   const { formData, updateFormData, setStepValid } = useOnboardingContext();
+  const { t } = useLanguage();
 
   const handleToggle = (interest: string) => {
     const newInterests = new Set(formData.interests);
@@ -37,7 +39,7 @@ export default function StepInterests() {
               : 'bg-secondary text-secondary-foreground hover:bg-secondary/80'
           )}
         >
-          {interest}
+          {t(`interests.${interest}`)}
         </Badge>
       ))}
     </div>

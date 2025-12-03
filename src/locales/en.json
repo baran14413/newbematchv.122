@@ -18,6 +18,7 @@
         }
     },
     "profile": {
+        "title": "Profile",
         "getGold": "Get BeMatch Gold",
         "goldDescription": "See who likes you & get unlimited swipes!",
         "myPhotos": "My Photos",
@@ -176,5 +177,25 @@
         "save": "Save",
         "daysAgo": "days ago",
         "nowActive": "Active now"
+    },
+    "interests": {
+        "music": "Music",
+        "travel": "Travel",
+        "gaming": "Gaming",
+        "movies": "Movies",
+        "reading": "Reading",
+        "cooking": "Cooking",
+        "sports": "Sports",
+        "fitness": "Fitness",
+        "art": "Art",
+        "photography": "Photography",
+        "hiking": "Hiking",
+        "dancing": "Dancing",
+        "technology": "Technology",
+        "fashion": "Fashion",
+        "yoga": "Yoga",
+        "camping": "Camping",
+        "theater": "Theater",
+        "volunteering": "Volunteering"
     }
 }
