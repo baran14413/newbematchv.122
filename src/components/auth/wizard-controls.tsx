@@ -41,8 +41,7 @@ export default function WizardControls({ totalSteps }: WizardControlsProps) {
         </Button>
       ) : (
         <Button onClick={nextStep} disabled={!isStepValid} className="font-bold text-lg py-7 rounded-xl w-full">
-          {t('onboarding.next')}
-          <ArrowRight className="ml-2 h-5 w-5" />
+          <ArrowRight className="h-5 w-5" />
         </Button>
       )}
     </div>
