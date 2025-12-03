@@ -1,7 +1,7 @@
 'use client';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Trash2, ArrowLeft, Monitor, Sun, Moon } from "lucide-react";
+import { Trash2, ArrowLeft, Monitor, Sun, Moon, Languages } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import Link from "next/link";
 import { useTheme } from "next-themes";
@@ -12,6 +12,7 @@ import {
     SelectTrigger,
     SelectValue,
 } from "@/components/ui/select";
+import { Separator } from "@/components/ui/separator";
 
 export default function ApplicationSettingsPage() {
     const { toast } = useToast();
@@ -43,7 +44,7 @@ export default function ApplicationSettingsPage() {
                     <CardHeader>
                         <CardTitle>Görünüm</CardTitle>
                     </CardHeader>
-                    <CardContent>
+                    <CardContent className="space-y-6">
                         <div className="flex items-center justify-between">
                             <div className="flex-1 pr-4">
                                 <p className="font-medium">Tema</p>
@@ -67,6 +68,30 @@ export default function ApplicationSettingsPage() {
                                     <SelectItem value="system">
                                         <div className="flex items-center gap-2">
                                             <Monitor className="w-4 h-4" /> Sistem
+                                        </div>
+                                    </SelectItem>
+                                </SelectContent>
+                            </Select>
+                        </div>
+                        <Separator />
+                         <div className="flex items-center justify-between">
+                            <div className="flex-1 pr-4">
+                                <p className="font-medium">Dil</p>
+                                <p className="text-sm text-muted-foreground">Uygulamanın dilini seçin.</p>
+                            </div>
+                            <Select defaultValue="tr">
+                                <SelectTrigger className="w-[180px]">
+                                    <SelectValue placeholder="Dil Seç" />
+                                </SelectTrigger>
+                                <SelectContent>
+                                    <SelectItem value="tr">
+                                        <div className="flex items-center gap-2">
+                                            🇹🇷 Türkçe
+                                        </div>
+                                    </SelectItem>
+                                    <SelectItem value="en">
+                                        <div className="flex items-center gap-2">
+                                            🇬🇧 English
                                         </div>
                                     </SelectItem>
                                 </SelectContent>
