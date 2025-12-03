@@ -14,6 +14,16 @@ export type Prompt = {
   answer: string;
 };
 
+export type Message = { 
+  id: number; 
+  text: string; 
+  sender: 'me' | 'them'; 
+  timestamp: string;
+  type?: 'text' | 'image' | 'voice';
+  imageUrl?: string;
+  audioUrl?: string;
+};
+
 export type UserProfile = {
   id: number;
   name: string;
@@ -36,7 +46,7 @@ export type Conversation = {
   lastMessage: string;
   timestamp: string;
   unreadCount: number;
-  messages: { id: number; text: string; sender: 'me' | 'them'; timestamp: string }[];
+  messages: Message[];
 };
 
 export const currentUser = {
@@ -124,12 +134,15 @@ export const conversations: Conversation[] = [
     userName: 'Selin',
     avatarUrl: placeholderImages.find(p => p.id === 'user-1-avatar')?.imageUrl ?? '',
     lastMessage: 'Haha, bu cesur bir iddia! Meydan okumanı kabul ediyorum!',
-    timestamp: '10dk önce',
+    timestamp: '10m ago',
     unreadCount: 1,
     messages: [
-      { id: 1, text: 'Şu konuda çok hırslanırım: Mario Kart. Bana bulaşma bile.', sender: 'them', timestamp: '1 saat önce' },
-      { id: 2, text: 'Bu bir meydan okuma mı? Ben bir Rainbow Road ustasıyımdır da.', sender: 'me', timestamp: '30dk önce' },
-      { id: 3, text: 'Haha, bu cesur bir iddia! Meydan okumanı kabul ediyorum!', sender: 'them', timestamp: '10dk önce' },
+      { id: 1, text: 'Şu konuda çok hırslanırım: Mario Kart. Bana bulaşma bile.', sender: 'them', timestamp: '10:40 PM', type: 'text' },
+      { id: 2, text: 'Bu bir meydan okuma mı? Ben bir Rainbow Road ustasıyımdır da.', sender: 'me', timestamp: '10:41 PM', type: 'text' },
+      { id: 3, text: 'Geçen haftasonu çektiğim bir fotoğraf :)', sender: 'them', timestamp: '10:42 PM', type: 'image', imageUrl: placeholderImages.find(p => p.id === 'user-1-p2')?.imageUrl ?? '' },
+      { id: 4, text: 'Haha, bu cesur bir iddia! Meydan okumanı kabul ediyorum!', sender: 'them', timestamp: '10:43 PM', type: 'text' },
+      { id: 5, text: 'Bunu bir sesli notla duymak istiyorum!', sender: 'me', timestamp: '10:44 PM', type: 'text' },
+      { id: 6, text: 'Al bakalım ;)', sender: 'them', timestamp: '10:45 PM', type: 'voice', audioUrl: '/placeholder-audio.mp3' },
     ],
   },
   {
@@ -138,10 +151,10 @@ export const conversations: Conversation[] = [
     userName: 'Alex',
     avatarUrl: placeholderImages.find(p => p.id === 'user-2-avatar')?.imageUrl ?? '',
     lastMessage: 'Sous şef lafıyla beni tavladın.',
-    timestamp: '1 saat önce',
+    timestamp: '1h ago',
     unreadCount: 0,
     messages: [
-      { id: 1, text: 'Sous şef lafıyla beni tavladın.', sender: 'me', timestamp: '1 saat önce' },
+      { id: 1, text: 'Sous şef lafıyla beni tavladın.', sender: 'me', timestamp: '9:30 PM', type: 'text' },
     ],
   },
 ];
