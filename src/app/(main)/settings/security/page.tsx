@@ -17,13 +17,31 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
   AlertDialogTrigger,
-} from "@/components/ui/alert-dialog"
+} from "@/components/ui/alert-dialog";
+import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
+
+const deletionReasons = [
+    { id: 'privacy', label: 'Gizlilik endişelerim var.' },
+    { id: 'matches', label: 'İyi eşleşmeler bulamadım.' },
+    { id: 'break', label: 'Ara vermek istiyorum.' },
+    { id: 'met_someone', label: 'Biriyle tanıştım.' },
+    { id: 'technical', label: 'Uygulamada çok fazla teknik sorun var.' },
+    { id: 'other', label: 'Başka bir neden.' },
+];
 
 export default function SecurityPage() {
     const [showCurrent, setShowCurrent] = useState(false);
     const [showNew, setShowNew] = useState(false);
     const [showConfirm, setShowConfirm] = useState(false);
     const [newPassword, setNewPassword] = useState('');
+    const [deleteStep, setDeleteStep] = useState(0);
+    const [selectedReason, setSelectedReason] = useState('');
+
+
+    const resetDeleteFlow = () => {
+        setDeleteStep(0);
+        setSelectedReason('');
+    }
 
     return (
         <div className="h-full overflow-y-auto bg-gray-50 dark:bg-black">
@@ -89,25 +107,55 @@ export default function SecurityPage() {
                         </CardHeader>
                         <CardContent className="space-y-4">
                             <p className="text-sm text-muted-foreground">Devam etmek istediğine eminsen, lütfen aşağıdaki butona tıkla.</p>
-                            <AlertDialog>
+                             <AlertDialog onOpenChange={(open) => !open && resetDeleteFlow()}>
                                 <AlertDialogTrigger asChild>
                                     <Button variant="destructive" className="w-full">Hesabımı Silme İşlemini Başlat</Button>
                                 </AlertDialogTrigger>
                                 <AlertDialogContent>
-                                    <AlertDialogHeader>
-                                    <AlertDialogTitle>Hesabını Silmek Üzeresin. Emin misin?</AlertDialogTitle>
-                                    <AlertDialogDescription>
-                                        Bu işlem kesinlikle geri alınamaz. Onaylamak için lütfen şifreni gir.
-                                    </AlertDialogDescription>
-                                    </AlertDialogHeader>
-                                    <div className="space-y-2 py-4">
-                                        <Label htmlFor="password-confirm" className="sr-only">Şifre</Label>
-                                        <Input id="password-confirm" type="password" placeholder="Onaylamak için şifrenizi girin" />
-                                    </div>
-                                    <AlertDialogFooter>
-                                    <AlertDialogCancel>İptal</AlertDialogCancel>
-                                    <AlertDialogAction className="bg-destructive hover:bg-destructive/90">Evet, Hesabımı Kalıcı Olarak Sil</AlertDialogAction>
-                                    </AlertDialogFooter>
+                                    {deleteStep === 0 && (
+                                        <>
+                                            <AlertDialogHeader>
+                                                <AlertDialogTitle>Gitmeden önce bir dakikanızı alabilir miyiz?</AlertDialogTitle>
+                                                <AlertDialogDescription>
+                                                   Ayrılma nedeninizi öğrenmek isteriz. Geri bildiriminiz, BeMatch'i herkes için daha iyi hale getirmemize yardımcı olur.
+                                                </AlertDialogDescription>
+                                            </AlertDialogHeader>
+                                            <div className="py-4 space-y-4">
+                                                <RadioGroup value={selectedReason} onValueChange={setSelectedReason}>
+                                                    {deletionReasons.map((reason) => (
+                                                        <div key={reason.id} className="flex items-center space-x-2">
+                                                            <RadioGroupItem value={reason.id} id={reason.id} />
+                                                            <Label htmlFor={reason.id} className="cursor-pointer">{reason.label}</Label>
+                                                        </div>
+                                                    ))}
+                                                </RadioGroup>
+                                            </div>
+                                            <AlertDialogFooter>
+                                                <AlertDialogCancel>İptal</AlertDialogCancel>
+                                                <Button onClick={() => setDeleteStep(1)} disabled={!selectedReason}>
+                                                    Devam
+                                                </Button>
+                                            </AlertDialogFooter>
+                                        </>
+                                    )}
+                                    {deleteStep === 1 && (
+                                        <>
+                                            <AlertDialogHeader>
+                                                <AlertDialogTitle>Hesabını Silmek Üzeresin. Emin misin?</AlertDialogTitle>
+                                                <AlertDialogDescription>
+                                                    Bu işlem kesinlikle geri alınamaz. Onaylamak için lütfen şifreni gir.
+                                                </AlertDialogDescription>
+                                            </AlertDialogHeader>
+                                            <div className="space-y-2 py-4">
+                                                <Label htmlFor="password-confirm" className="sr-only">Şifre</Label>
+                                                <Input id="password-confirm" type="password" placeholder="Onaylamak için şifrenizi girin" />
+                                            </div>
+                                            <AlertDialogFooter>
+                                                <Button variant="ghost" onClick={() => setDeleteStep(0)}>Geri</Button>
+                                                <AlertDialogAction className="bg-destructive hover:bg-destructive/90">Evet, Hesabımı Kalıcı Olarak Sil</AlertDialogAction>
+                                            </AlertDialogFooter>
+                                        </>
+                                    )}
                                 </AlertDialogContent>
                             </AlertDialog>
                         </CardContent>
