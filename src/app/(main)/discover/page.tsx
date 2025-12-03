@@ -71,14 +71,17 @@ export default function DiscoverPage() {
                       opacity: 1,
                       transition: { duration: 0.3 }
                     }}
-                    exit={{
-                      x: (e, info: PanInfo) => {
-                          if (info.offset.x > 0) return 300;
-                          return -300;
-                      },
-                      opacity: 0,
-                      scale: 0.8,
-                      transition: { duration: 0.3 }
+                    exit={ (info: PanInfo) => {
+                      let exitX = 0;
+                      if(info.offset.x > 0) exitX = 300;
+                      if(info.offset.x < 0) exitX = -300;
+                      return {
+                          x: exitX,
+                          y: info.offset.y < 0 ? -300: 0,
+                          opacity: 0,
+                          scale: 0.8,
+                          transition: { duration: 0.3 }
+                      }
                     }}
                     style={{
                       position: 'absolute',
