@@ -35,11 +35,11 @@ export default function OnboardingWizard({ onSwitchView }: OnboardingWizardProps
 
   return (
     <Card className="w-full max-w-md mx-auto shadow-2xl rounded-2xl overflow-hidden">
-      <CardContent className="p-6 flex flex-col min-h-[600px]">
+      <CardContent className="p-6 flex flex-col">
         <div className="mb-6">
             <StepIndicator currentStep={currentStep} totalSteps={steps.length} />
         </div>
-        <div className="flex-1 flex flex-col justify-center relative overflow-hidden">
+        <div className="flex-1 flex flex-col justify-center relative overflow-hidden py-8">
            <AnimatePresence mode="wait">
              <motion.div
                 key={currentStep}
@@ -58,12 +58,6 @@ export default function OnboardingWizard({ onSwitchView }: OnboardingWizardProps
         </div>
         <div className="mt-auto pt-6 space-y-4">
           <WizardControls totalSteps={steps.length} />
-            <p className="text-sm text-muted-foreground text-center">
-                {t('onboarding.haveAccount')}{' '}
-                <button onClick={() => onSwitchView('login')} className="font-semibold text-primary hover:underline">
-                    {t('onboarding.login')}
-                </button>
-            </p>
         </div>
       </CardContent>
     </Card>
