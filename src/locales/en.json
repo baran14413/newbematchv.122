@@ -41,6 +41,26 @@
         "session": "Session",
         "logout": "Log Out"
     },
+    "subscriptionsPage": {
+        "title": "Premium Packages",
+        "description": "Upgrade your experience and get the most out of BeMatch.",
+        "weekly": "weekly",
+        "monthly": "monthly",
+        "yearly": "yearly",
+        "mostPopular": "Most Popular",
+        "choosePlan": "Choose Plan",
+        "features": {
+            "unlimitedLikes": "Unlimited Likes",
+            "hideAds": "Hide Ads",
+            "superLikes": "Super Likes per week",
+            "plusFeatures": "All features in Plus",
+            "seeWhoLikesYou": "See Who Likes You",
+            "boostPerWeek": "Boost per week",
+            "goldFeatures": "All features in Gold",
+            "topMessages": "Keep your messages at the top",
+            "unlimitedRewinds": "Unlimited Rewinds"
+        }
+    },
     "galleryPage": {
         "description": "Add, remove, or reorder your photos."
     },

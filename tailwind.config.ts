@@ -78,7 +78,7 @@ export default {
             height: '0',
           },
         },
-        'spin-slow': {
+        'spin': {
           '0%': { transform: 'rotate(0deg)' },
           '100%': { transform: 'rotate(360deg)' },
         },
@@ -86,7 +86,7 @@ export default {
       animation: {
         'accordion-down': 'accordion-down 0.2s ease-out',
         'accordion-up': 'accordion-up 0.2s ease-out',
-        'spin-slow': 'spin-slow 5s linear infinite',
+        'spin-slow': 'spin 5s linear infinite',
       },
       backdropBlur: {
         '2xl': '40px',

@@ -41,6 +41,26 @@
         "session": "Oturum",
         "logout": "Çıkış Yap"
     },
+    "subscriptionsPage": {
+        "title": "Premium Paketler",
+        "description": "Deneyimini bir üst seviyeye taşı ve BeMatch'in keyfini çıkar.",
+        "weekly": "haftalık",
+        "monthly": "aylık",
+        "yearly": "yıllık",
+        "mostPopular": "En Popüler",
+        "choosePlan": "Planı Seç",
+        "features": {
+            "unlimitedLikes": "Sınırsız Beğeni",
+            "hideAds": "Reklamları Gizle",
+            "superLikes": "Haftalık Süper Beğeni",
+            "plusFeatures": "Plus'taki tüm özellikler",
+            "seeWhoLikesYou": "Seni Kimlerin Beğendiğini Gör",
+            "boostPerWeek": "Haftalık Öne Çıkarma",
+            "goldFeatures": "Gold'daki tüm özellikler",
+            "topMessages": "Mesajlarını en üstte tut",
+            "unlimitedRewinds": "Sınırsız Geri Alma"
+        }
+    },
     "galleryPage": {
         "description": "Fotoğraflarını ekle, çıkar veya yeniden sırala."
     },

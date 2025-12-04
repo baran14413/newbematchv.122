@@ -12,7 +12,6 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 export default function ProfilePage() {
-  const profileCompletion = 75;
   const userProfile = profiles[1]; // Using Alex as a sample profile
   const { t } = useLanguage();
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
@@ -39,7 +38,7 @@ export default function ProfilePage() {
             <div className="flex-1" />
             <div className="flex flex-col items-center space-y-4 flex-1">
                 <div className="relative w-40 h-40">
-                    <div className="absolute inset-0 animate-spin-slow">
+                    <div className="absolute inset-0 animate-[spin_5s_linear_infinite]">
                         <svg className="w-full h-full" viewBox="0 0 160 160">
                             <defs>
                                 <linearGradient id="neon-gradient" x1="0%" y1="0%" x2="100%" y2="100%">
@@ -101,17 +100,19 @@ export default function ProfilePage() {
         </Card>
 
         {/* BeMatch Gold Banner */}
-        <Card className="overflow-hidden shadow-xl border-0">
-            <div className="p-4 bg-gradient-to-br from-yellow-300 via-yellow-400 to-orange-400 dark:from-yellow-500 dark:via-amber-500 dark:to-orange-600 text-black">
-                 <CardContent className="p-0 flex items-center gap-3">
-                    <Crown className="w-6 h-6" />
-                    <div>
-                        <h2 className="text-lg font-bold">{t('profile.getGold')}</h2>
-                        <p className="text-xs font-medium">{t('profile.goldDescription')}</p>
-                    </div>
-                </CardContent>
-            </div>
-        </Card>
+        <Link href="/settings/subscriptions" passHref>
+            <Card className="overflow-hidden shadow-xl border-0 cursor-pointer transition-transform hover:scale-105">
+                <div className="p-4 bg-gradient-to-br from-yellow-300 via-yellow-400 to-orange-400 dark:from-yellow-500 dark:via-amber-500 dark:to-orange-600 text-black">
+                     <CardContent className="p-0 flex items-center gap-3">
+                        <Crown className="w-6 h-6" />
+                        <div>
+                            <h2 className="text-lg font-bold">{t('profile.getGold')}</h2>
+                            <p className="text-xs font-medium">{t('profile.goldDescription')}</p>
+                        </div>
+                    </CardContent>
+                </div>
+            </Card>
+        </Link>
       </div>
 
       <AnimatePresence>
@@ -124,7 +125,7 @@ export default function ProfilePage() {
             onClick={() => setSelectedImageIndex(null)}
           >
             <DialogHeader>
-              <DialogTitle className="sr-only">Enlarged profile photo</DialogTitle>
+                <DialogTitle className="sr-only">Enlarged profile photo</DialogTitle>
             </DialogHeader>
             <Button
               variant="ghost"
