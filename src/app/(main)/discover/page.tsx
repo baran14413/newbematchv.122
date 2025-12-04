@@ -60,7 +60,7 @@ export default function DiscoverPage() {
   return (
     <div className="flex flex-col h-full bg-gray-50 dark:bg-black overflow-hidden">
       <div className="flex-1 flex flex-col items-center justify-center p-4 relative">
-        <div className="w-full max-w-sm h-[65vh] max-h-[550px] relative flex items-center justify-center">
+        <div className="w-full max-w-sm h-[75vh] max-h-[700px] relative flex items-center justify-center">
           <AnimatePresence>
             {stack.length > 0 ? (
               stack.map((profile, index) => {
