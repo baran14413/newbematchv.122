@@ -24,8 +24,8 @@ export type Message = {
   audioUrl?: string;
 };
 
-export type UserProfile = {
-  id: number;
+export interface UserProfile {
+  id: string; // Changed to string for Firestore
   name: string;
   age: number;
   bio: string;
@@ -34,13 +34,13 @@ export type UserProfile = {
   videoUrl?: string;
   voiceNoteUrl?: string;
   prompts: Prompt[];
-  personalityTraits: PersonalityTrait[];
   zodiac: string;
-};
+  // personalityTraits are removed for simplification with firestore integration
+}
 
 export type Conversation = {
   id: number;
-  userId: number;
+  userId: string; // Changed to string for Firestore
   userName: string;
   avatarUrl: string;
   lastMessage: string;
@@ -61,9 +61,8 @@ export const currentUser = {
   ]
 };
 
-export const profiles: UserProfile[] = [
+export const profiles: Omit<UserProfile, 'id'>[] = [
   {
-    id: 1,
     name: 'Selin',
     age: 28,
     bio: 'Sanat yönetmeni. Sürrealist tablolara ve yağmurlu günlere bayılırım. Muhtemelen şu an makarnayı düşünüyorum. 🍝',
@@ -78,17 +77,9 @@ export const profiles: UserProfile[] = [
       { question: 'Kalbimin anahtarı...', answer: 'Mükemmel hazırlanmış bir Spotify çalma listesidir.' },
       { question: 'Şu konuda çok hırslanırım...', answer: 'Mario Kart. Bana bulaşma bile.' },
     ],
-    personalityTraits: [
-        { trait: 'Maceracı', userScore: 60, viewerScore: 80 },
-        { trait: 'Yaratıcı', userScore: 75, viewerScore: 90 },
-        { trait: 'İçedönük', userScore: 50, viewerScore: 40 },
-        { trait: 'Spontan', userScore: 85, viewerScore: 70 },
-        { trait: 'Mizahi', userScore: 90, viewerScore: 85 },
-    ],
     zodiac: 'Koç',
   },
   {
-    id: 2,
     name: 'Alex',
     age: 31,
     bio: 'Gündüzleri yazılım mühendisi, geceleri hevesli bir şef. Hayat boyu sous şefim olacak birini arıyorum.',
@@ -101,17 +92,9 @@ export const profiles: UserProfile[] = [
       { question: 'Hayattaki bir hedefim...', answer: 'Her kıtayı ziyaret etmek.' },
       { question: 'Aradığım kişi...', answer: 'Kendini çok ciddiye almayan biri.' },
     ],
-    personalityTraits: [
-        { trait: 'Maceracı', userScore: 90, viewerScore: 80 },
-        { trait: 'Yaratıcı', userScore: 50, viewerScore: 90 },
-        { trait: 'İçedönük', userScore: 30, viewerScore: 40 },
-        { trait: 'Spontan', userScore: 60, viewerScore: 70 },
-        { trait: 'Mizahi', userScore: 75, viewerScore: 85 },
-    ],
     zodiac: 'Terazi',
   },
     {
-    id: 3,
     name: 'Chloe',
     age: 26,
     bio: 'Plaj tutkunu, köpek annesi ve profesyonel gün batımı izleyicisi. Şehirdeki en iyi tacoları bulalım.',
@@ -122,7 +105,6 @@ export const profiles: UserProfile[] = [
     prompts: [
       { question: 'Yorum bırakmalısın eğer...', answer: 'İyi bir yürüyüş rotası biliyorsan.' },
     ],
-    personalityTraits: [],
     zodiac: 'Balık',
   },
 ];
@@ -130,7 +112,7 @@ export const profiles: UserProfile[] = [
 export const conversations: Conversation[] = [
   {
     id: 1,
-    userId: 1,
+    userId: '1',
     userName: 'Selin',
     avatarUrl: placeholderImages.find(p => p.id === 'user-1-avatar')?.imageUrl ?? '',
     lastMessage: 'Haha, bu cesur bir iddia! Meydan okumanı kabul ediyorum!',
@@ -147,7 +129,7 @@ export const conversations: Conversation[] = [
   },
   {
     id: 2,
-    userId: 2,
+    userId: '2',
     userName: 'Alex',
     avatarUrl: placeholderImages.find(p => p.id === 'user-2-avatar')?.imageUrl ?? '',
     lastMessage: 'Sous şef lafıyla beni tavladın.',
@@ -160,10 +142,10 @@ export const conversations: Conversation[] = [
 ];
 
 export const newMatches: Pick<UserProfile, 'id' | 'name' | 'avatarUrl'>[] = [
-    { id: 3, name: 'Chloe', avatarUrl: placeholderImages.find(p => p.id === 'user-3-avatar')?.imageUrl ?? '' },
-    { id: 4, name: 'Ben', avatarUrl: placeholderImages.find(p => p.id === 'user-4-avatar')?.imageUrl ?? '' },
-    { id: 5, name: 'Maya', avatarUrl: placeholderImages.find(p => p.id === 'user-5-avatar')?.imageUrl ?? '' },
-    { id: 6, name: 'Leo', avatarUrl: placeholderImages.find(p => p.id === 'user-6-avatar')?.imageUrl ?? '' },
+    { id: '3', name: 'Chloe', avatarUrl: placeholderImages.find(p => p.id === 'user-3-avatar')?.imageUrl ?? '' },
+    { id: '4', name: 'Ben', avatarUrl: placeholderImages.find(p => p.id === 'user-4-avatar')?.imageUrl ?? '' },
+    { id: '5', name: 'Maya', avatarUrl: placeholderImages.find(p => p.id === 'user-5-avatar')?.imageUrl ?? '' },
+    { id: '6', name: 'Leo', avatarUrl: placeholderImages.find(p => p.id === 'user-6-avatar')?.imageUrl ?? '' },
 ]
 
 export const zodiacSigns = [

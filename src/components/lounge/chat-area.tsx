@@ -10,7 +10,7 @@ import { cn } from "@/lib/utils";
 import VoiceNotePlayer from "./voice-note-player";
 import AiIcebreaker from "./ai-icebreaker";
 
-export default function ChatArea({ conversation, matchProfile }: { conversation: Conversation; matchProfile: UserProfile }) {
+export default function ChatArea({ conversation, matchProfile }: { conversation: Conversation; matchProfile: Omit<UserProfile, 'id'> }) {
   const isTyping = true; // Dummy data for typing indicator
 
   return (
@@ -90,7 +90,7 @@ export default function ChatArea({ conversation, matchProfile }: { conversation:
                     className="flex-1 bg-secondary border-none focus-visible:ring-0 focus-visible:ring-offset-0 h-11 rounded-full px-4 pr-12"
                 />
                  <div className="absolute right-2 flex items-center">
-                    <AiIcebreaker matchProfile={matchProfile} />
+                    {/* <AiIcebreaker matchProfile={matchProfile} /> */}
                 </div>
             </div>
             <Button size="icon" variant="ghost" className="text-muted-foreground">

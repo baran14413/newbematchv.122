@@ -9,7 +9,7 @@ import { Separator } from "@/components/ui/separator";
 
 export default function LoungePage() {
   const selectedConversation = conversations[0];
-  const matchProfile = profiles.find(p => p.id === selectedConversation.userId);
+  // const matchProfile = profiles.find(p => p.id === selectedConversation.userId);
   const { t } = useLanguage();
 
   return (
@@ -54,7 +54,7 @@ export default function LoungePage() {
 
       {/* Chat Area */}
       <div className="md:col-span-1 lg:col-span-1 hidden md:flex flex-col h-full">
-          {matchProfile && <ChatArea conversation={selectedConversation} matchProfile={matchProfile} />}
+          {/* {matchProfile && <ChatArea conversation={selectedConversation} matchProfile={matchProfile} />} */}
       </div>
     </div>
   );

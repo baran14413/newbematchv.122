@@ -12,23 +12,27 @@ import { AnimatePresence, motion } from 'framer-motion';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 export default function ProfilePage() {
-  const userProfile = profiles[1]; // Using Alex as a sample profile
+  // const userProfile = profiles[1]; // Using Alex as a sample profile
   const { t } = useLanguage();
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
 
   const handleNextImage = () => {
-    if (selectedImageIndex === null) return;
-    setSelectedImageIndex((prevIndex) => 
-        prevIndex === null ? 0 : (prevIndex + 1) % userProfile.imageUrls.length
-    );
+    // if (selectedImageIndex === null || !userProfile) return;
+    // setSelectedImageIndex((prevIndex) => 
+    //     prevIndex === null ? 0 : (prevIndex + 1) % userProfile.imageUrls.length
+    // );
   };
 
   const handlePrevImage = () => {
-    if (selectedImageIndex === null) return;
-    setSelectedImageIndex((prevIndex) =>
-      prevIndex === null ? 0 : (prevIndex - 1 + userProfile.imageUrls.length) % userProfile.imageUrls.length
-    );
+    // if (selectedImageIndex === null || !userProfile) return;
+    // setSelectedImageIndex((prevIndex) =>
+    //   prevIndex === null ? 0 : (prevIndex - 1 + userProfile.imageUrls.length) % userProfile.imageUrls.length
+    // );
   };
+
+  // if (!userProfile) {
+  //   return <div>Loading...</div>
+  // }
 
   return (
     <div className="h-full overflow-y-auto p-4 md:p-6 bg-gray-50 dark:bg-black">
@@ -61,13 +65,13 @@ export default function ProfilePage() {
                     </div>
                     <div className='absolute inset-2'>
                         <Avatar className="w-full h-full border-4 border-background">
-                        <AvatarImage src={userProfile.avatarUrl} alt={userProfile.name} className="object-cover"/>
-                        <AvatarFallback>{userProfile.name.charAt(0)}</AvatarFallback>
+                        {/* <AvatarImage src={userProfile.avatarUrl} alt={userProfile.name} className="object-cover"/>
+                        <AvatarFallback>{userProfile.name.charAt(0)}</AvatarFallback> */}
                         </Avatar>
                     </div>
                 </div>
                 <div className="text-center">
-                    <h1 className="text-3xl font-bold">{userProfile.name}, {userProfile.age}</h1>
+                    {/* <h1 className="text-3xl font-bold">{userProfile.name}, {userProfile.age}</h1> */}
                 </div>
             </div>
              <div className="flex-1 flex justify-end">
@@ -86,7 +90,7 @@ export default function ProfilePage() {
                 <h3 className="text-lg font-semibold">{t('profile.myPhotos')}</h3>
              </div>
              <div className="grid grid-cols-3 gap-3">
-                {userProfile.imageUrls.map((url, index) => (
+                {/* {userProfile.imageUrls.map((url, index) => (
                     <button 
                       key={index} 
                       className="relative aspect-square rounded-lg overflow-hidden group focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
@@ -94,7 +98,7 @@ export default function ProfilePage() {
                     >
                         <Image src={url} alt={`${t('profile.profilePhoto')} ${index + 1}`} fill className="object-cover transition-transform group-hover:scale-105" />
                     </button>
-                ))}
+                ))} */}
              </div>
           </CardContent>
         </Card>
@@ -120,10 +124,9 @@ export default function ProfilePage() {
           <Dialog open={selectedImageIndex !== null} onOpenChange={(open) => !open && setSelectedImageIndex(null)}>
             <DialogContent 
               className="bg-black/90 border-none p-0 w-screen h-screen max-w-none flex items-center justify-center"
-              onClick={() => setSelectedImageIndex(null)}
             >
-              <DialogHeader>
-                  <DialogTitle className="sr-only">Enlarged profile photo</DialogTitle>
+              <DialogHeader className="sr-only">
+                  <DialogTitle>Enlarged profile photo</DialogTitle>
               </DialogHeader>
               <Button
                 variant="ghost"
@@ -144,16 +147,16 @@ export default function ProfilePage() {
                       className="relative w-[90vw] h-[80vh]"
                       onClick={(e) => e.stopPropagation()}
                   >
-                      <Image
+                      {/* <Image
                           src={userProfile.imageUrls[selectedImageIndex]}
                           alt="Enlarged profile"
                           fill
                           className="object-contain"
-                      />
+                      /> */}
                   </motion.div>
               </AnimatePresence>
 
-              {userProfile.imageUrls.length > 1 && (
+              {/* {userProfile.imageUrls.length > 1 && (
                   <>
                       <Button
                           variant="ghost"
@@ -172,7 +175,7 @@ export default function ProfilePage() {
                           <ChevronRight className="w-10 h-10" />
                       </Button>
                   </>
-              )}
+              )} */}
             </DialogContent>
           </Dialog>
         )}

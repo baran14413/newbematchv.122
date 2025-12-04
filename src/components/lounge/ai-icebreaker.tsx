@@ -9,7 +9,7 @@ import type { UserProfile } from '@/lib/data';
 import { generateAiIcebreaker } from '@/app/actions';
 import { useLanguage } from '@/context/language-context';
 
-export default function AiIcebreaker({ matchProfile }: { matchProfile: UserProfile }) {
+export default function AiIcebreaker({ matchProfile }: { matchProfile: Omit<UserProfile, 'id'> }) {
   const [isPending, startTransition] = useTransition();
   const [icebreaker, setIcebreaker] = useState<string>('');
   const { toast } = useToast();

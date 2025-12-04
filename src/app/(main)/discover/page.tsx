@@ -1,27 +1,40 @@
 'use client';
-import { useState, useMemo, useEffect } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import type { PanInfo } from 'framer-motion';
-import { profiles } from '@/lib/data';
 import { Card, CardContent } from '@/components/ui/card';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { X, Star, Heart, Undo2, ChevronUp } from 'lucide-react';
+import { X, Star, Heart, Undo2, ChevronUp, Loader2, RefreshCw } from 'lucide-react';
 import type { UserProfile } from '@/lib/data';
 import { useLanguage } from '@/context/language-context';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import { Badge } from '@/components/ui/badge';
+import { useCollection } from '@/firebase';
+import { collection } from 'firebase/firestore';
 
 type SwipeDirection = 'left' | 'right' | 'up';
 
 export default function DiscoverPage() {
-  const [stack, setStack] = useState<UserProfile[]>(profiles);
+  const { data: profiles, loading, error } = useCollection<UserProfile>(collection, 'profiles');
+  const [stack, setStack] = useState<UserProfile[]>([]);
   const [history, setHistory] = useState<UserProfile[]>([]);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isDetailSheetOpen, setDetailSheetOpen] = useState(false);
   const [swipeDirection, setSwipeDirection] = useState<SwipeDirection | null>(null);
 
   const { t } = useLanguage();
+
+  const loadProfiles = useCallback(() => {
+    if (profiles) {
+      setStack(profiles);
+      setHistory([]);
+    }
+  }, [profiles]);
+
+  useEffect(() => {
+    loadProfiles();
+  }, [loadProfiles]);
 
   const activeProfile = useMemo(() => stack[stack.length - 1], [stack]);
 
@@ -56,6 +69,22 @@ export default function DiscoverPage() {
       setCurrentImageIndex(prev => Math.min(prev + 1, (activeProfile.imageUrls?.length || 1) - 1));
     }
   };
+
+  if (loading) {
+    return (
+      <div className="flex items-center justify-center h-full">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center h-full text-destructive">
+        Error loading profiles: {error.message}
+      </div>
+    )
+  }
 
   return (
     <div className="flex flex-col h-full bg-gray-50 dark:bg-black overflow-hidden">
@@ -169,8 +198,12 @@ export default function DiscoverPage() {
                 );
               })
               ) : (
-                 <div className="text-center text-muted-foreground">
+                 <div className="text-center text-muted-foreground flex flex-col items-center gap-4">
                     <p>{t('discover.noMoreProfiles')}</p>
+                    <Button onClick={loadProfiles}>
+                        <RefreshCw className="mr-2 h-4 w-4" />
+                        Tekrar Yükle
+                    </Button>
                 </div>
               )}
           </AnimatePresence>
