@@ -9,7 +9,7 @@ import Link from 'next/link';
 import { profiles } from '@/lib/data';
 import Image from 'next/image';
 import { useLanguage } from '@/context/language-context';
-import { Dialog, DialogContent } from '@/components/ui/dialog';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 export default function ProfilePage() {
   const profileCompletion = 75;
@@ -92,6 +92,9 @@ export default function ProfilePage() {
        {selectedImage && (
         <Dialog open={!!selectedImage} onOpenChange={(isOpen) => !isOpen && setSelectedImage(null)}>
           <DialogContent className="p-0 border-0 bg-transparent max-w-none w-auto h-auto shadow-none">
+            <DialogHeader>
+              <DialogTitle className="sr-only">Enlarged profile photo</DialogTitle>
+            </DialogHeader>
             <div className="relative w-[90vw] h-[80vh]">
               <Image 
                 src={selectedImage} 
