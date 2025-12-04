@@ -4,18 +4,32 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Progress } from '@/components/ui/progress';
-import { Crown, Settings, X } from 'lucide-react';
+import { Crown, Settings, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import { profiles } from '@/lib/data';
 import Image from 'next/image';
 import { useLanguage } from '@/context/language-context';
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { AnimatePresence, motion } from 'framer-motion';
 
 export default function ProfilePage() {
   const profileCompletion = 75;
   const userProfile = profiles[1]; // Using Alex as a sample profile
   const { t } = useLanguage();
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
+
+  const handleNextImage = () => {
+    if (selectedImageIndex === null) return;
+    setSelectedImageIndex((prevIndex) => 
+        prevIndex === null ? 0 : (prevIndex + 1) % userProfile.imageUrls.length
+    );
+  };
+
+  const handlePrevImage = () => {
+    if (selectedImageIndex === null) return;
+    setSelectedImageIndex((prevIndex) =>
+      prevIndex === null ? 0 : (prevIndex - 1 + userProfile.imageUrls.length) % userProfile.imageUrls.length
+    );
+  };
 
   return (
     <div className="h-full overflow-y-auto p-4 md:p-6 bg-gray-50 dark:bg-black">
@@ -66,7 +80,7 @@ export default function ProfilePage() {
                     <button 
                       key={index} 
                       className="relative aspect-square rounded-lg overflow-hidden group focus:outline-none focus:ring-2 focus:ring-primary focus:ring-offset-2"
-                      onClick={() => setSelectedImage(url)}
+                      onClick={() => setSelectedImageIndex(index)}
                     >
                         <Image src={url} alt={`${t('profile.profilePhoto')} ${index + 1}`} fill className="object-cover transition-transform group-hover:scale-105" />
                     </button>
@@ -89,23 +103,64 @@ export default function ProfilePage() {
         </Card>
       </div>
 
-       {selectedImage && (
-        <Dialog open={!!selectedImage} onOpenChange={(isOpen) => !isOpen && setSelectedImage(null)}>
-          <DialogContent className="p-0 border-0 bg-transparent max-w-none w-auto h-auto shadow-none">
-            <DialogHeader>
-              <DialogTitle className="sr-only">Enlarged profile photo</DialogTitle>
-            </DialogHeader>
-            <div className="relative w-[90vw] h-[80vh]">
-              <Image 
-                src={selectedImage} 
-                alt="Enlarged profile" 
-                fill 
-                className="object-contain"
-              />
-            </div>
-          </DialogContent>
-        </Dialog>
-      )}
+      <AnimatePresence>
+        {selectedImageIndex !== null && (
+          <motion.div
+            initial={{ opacity: 0 }}
+            animate={{ opacity: 1 }}
+            exit={{ opacity: 0 }}
+            className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center"
+          >
+            <Button
+              variant="ghost"
+              size="icon"
+              className="absolute top-4 right-4 text-white/70 hover:text-white"
+              onClick={() => setSelectedImageIndex(null)}
+            >
+              <X className="w-8 h-8" />
+            </Button>
+            
+            <AnimatePresence mode="wait">
+                 <motion.div
+                    key={selectedImageIndex}
+                    initial={{ opacity: 0.5, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    exit={{ opacity: 0.5, scale: 0.95 }}
+                    transition={{ duration: 0.2, ease: 'easeOut' }}
+                    className="relative w-[90vw] h-[80vh]"
+                >
+                    <Image
+                        src={userProfile.imageUrls[selectedImageIndex]}
+                        alt="Enlarged profile"
+                        fill
+                        className="object-contain"
+                    />
+                </motion.div>
+            </AnimatePresence>
+
+            {userProfile.imageUrls.length > 1 && (
+                <>
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="absolute left-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white hover:bg-white/10 rounded-full h-12 w-12"
+                        onClick={handlePrevImage}
+                    >
+                        <ChevronLeft className="w-10 h-10" />
+                    </Button>
+                    <Button
+                        variant="ghost"
+                        size="icon"
+                        className="absolute right-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white hover:bg-white/10 rounded-full h-12 w-12"
+                        onClick={handleNextImage}
+                    >
+                        <ChevronRight className="w-10 h-10" />
+                    </Button>
+                </>
+            )}
+          </motion.div>
+        )}
+      </AnimatePresence>
     </div>
   );
 }
