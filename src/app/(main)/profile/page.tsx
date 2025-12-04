@@ -117,65 +117,64 @@ export default function ProfilePage() {
 
       <AnimatePresence>
         {selectedImageIndex !== null && (
-          <motion.div
-            initial={{ opacity: 0 }}
-            animate={{ opacity: 1 }}
-            exit={{ opacity: 0 }}
-            className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center"
-            onClick={() => setSelectedImageIndex(null)}
-          >
-            <DialogHeader>
-                <DialogTitle className="sr-only">Enlarged profile photo</DialogTitle>
-            </DialogHeader>
-            <Button
-              variant="ghost"
-              size="icon"
-              className="absolute top-4 right-4 text-white/70 hover:text-white z-10"
+          <Dialog open={selectedImageIndex !== null} onOpenChange={(open) => !open && setSelectedImageIndex(null)}>
+            <DialogContent 
+              className="bg-black/90 border-none p-0 w-screen h-screen max-w-none flex items-center justify-center"
               onClick={() => setSelectedImageIndex(null)}
             >
-              <X className="w-8 h-8" />
-            </Button>
-            
-            <AnimatePresence mode="wait">
-                 <motion.div
-                    key={selectedImageIndex}
-                    initial={{ opacity: 0.5, scale: 0.95 }}
-                    animate={{ opacity: 1, scale: 1 }}
-                    exit={{ opacity: 0.5, scale: 0.95 }}
-                    transition={{ duration: 0.2, ease: 'easeOut' }}
-                    className="relative w-[90vw] h-[80vh]"
-                    onClick={(e) => e.stopPropagation()}
-                >
-                    <Image
-                        src={userProfile.imageUrls[selectedImageIndex]}
-                        alt="Enlarged profile"
-                        fill
-                        className="object-contain"
-                    />
-                </motion.div>
-            </AnimatePresence>
+              <DialogHeader>
+                  <DialogTitle className="sr-only">Enlarged profile photo</DialogTitle>
+              </DialogHeader>
+              <Button
+                variant="ghost"
+                size="icon"
+                className="absolute top-4 right-4 text-white/70 hover:text-white z-50"
+                onClick={() => setSelectedImageIndex(null)}
+              >
+                <X className="w-8 h-8" />
+              </Button>
+              
+              <AnimatePresence mode="wait">
+                  <motion.div
+                      key={selectedImageIndex}
+                      initial={{ opacity: 0.5, scale: 0.95 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      exit={{ opacity: 0.5, scale: 0.95 }}
+                      transition={{ duration: 0.2, ease: 'easeOut' }}
+                      className="relative w-[90vw] h-[80vh]"
+                      onClick={(e) => e.stopPropagation()}
+                  >
+                      <Image
+                          src={userProfile.imageUrls[selectedImageIndex]}
+                          alt="Enlarged profile"
+                          fill
+                          className="object-contain"
+                      />
+                  </motion.div>
+              </AnimatePresence>
 
-            {userProfile.imageUrls.length > 1 && (
-                <>
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        className="absolute left-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white hover:bg-white/10 rounded-full h-12 w-12"
-                        onClick={(e) => {e.stopPropagation(); handlePrevImage();}}
-                    >
-                        <ChevronLeft className="w-10 h-10" />
-                    </Button>
-                    <Button
-                        variant="ghost"
-                        size="icon"
-                        className="absolute right-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white hover:bg-white/10 rounded-full h-12 w-12"
-                        onClick={(e) => {e.stopPropagation(); handleNextImage();}}
-                    >
-                        <ChevronRight className="w-10 h-10" />
-                    </Button>
-                </>
-            )}
-          </motion.div>
+              {userProfile.imageUrls.length > 1 && (
+                  <>
+                      <Button
+                          variant="ghost"
+                          size="icon"
+                          className="absolute left-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white hover:bg-white/10 rounded-full h-12 w-12 z-50"
+                          onClick={(e) => {e.stopPropagation(); handlePrevImage();}}
+                      >
+                          <ChevronLeft className="w-10 h-10" />
+                      </Button>
+                      <Button
+                          variant="ghost"
+                          size="icon"
+                          className="absolute right-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white hover:bg-white/10 rounded-full h-12 w-12 z-50"
+                          onClick={(e) => {e.stopPropagation(); handleNextImage();}}
+                      >
+                          <ChevronRight className="w-10 h-10" />
+                      </Button>
+                  </>
+              )}
+            </DialogContent>
+          </Dialog>
         )}
       </AnimatePresence>
     </div>
