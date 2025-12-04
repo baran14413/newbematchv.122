@@ -3,13 +3,13 @@ import { useState } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Progress } from '@/components/ui/progress';
 import { Crown, Settings, X, ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import { profiles } from '@/lib/data';
 import Image from 'next/image';
 import { useLanguage } from '@/context/language-context';
 import { AnimatePresence, motion } from 'framer-motion';
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 
 export default function ProfilePage() {
   const profileCompletion = 75;
@@ -31,6 +31,10 @@ export default function ProfilePage() {
     );
   };
 
+  const CIRCLE_RADIUS = 74;
+  const CIRCLE_CIRCUMFERENCE = 2 * Math.PI * CIRCLE_RADIUS;
+  const progressOffset = CIRCLE_CIRCUMFERENCE * (1 - profileCompletion / 100);
+
   return (
     <div className="h-full overflow-y-auto p-4 md:p-6 bg-gray-50 dark:bg-black">
       <div className="max-w-2xl mx-auto space-y-8">
@@ -38,22 +42,34 @@ export default function ProfilePage() {
         <div className="flex items-start justify-between">
             <div className="flex-1" />
             <div className="flex flex-col items-center space-y-4 flex-1">
-                <div className="relative">
-                    <Progress
-                    value={profileCompletion}
-                    className="absolute -inset-2 w-[148px] h-[148px] [&>div]:bg-primary"
-                    style={
-                        {
-                        clipPath: 'circle(50% at 50% 50%)',
-                        transform: 'rotate(-90deg)',
-                        '--tw-shadow': '0 0 15px hsl(var(--primary) / 0.5)',
-                        filter: 'drop-shadow(var(--tw-shadow))',
-                        } as React.CSSProperties
-                    }
-                    />
-                    <Avatar className="w-36 h-36 border-4 border-background">
-                    <AvatarImage src={userProfile.avatarUrl} alt={userProfile.name} />
-                    <AvatarFallback>{userProfile.name.charAt(0)}</AvatarFallback>
+                <div className="relative w-36 h-36 flex items-center justify-center">
+                    <svg className="absolute w-full h-full" viewBox="0 0 160 160" style={{ transform: 'rotate(-90deg)' }}>
+                      <circle
+                        cx="80"
+                        cy="80"
+                        r={CIRCLE_RADIUS}
+                        stroke="hsl(var(--muted))"
+                        strokeWidth="8"
+                        fill="transparent"
+                      />
+                      <motion.circle
+                        cx="80"
+                        cy="80"
+                        r={CIRCLE_RADIUS}
+                        stroke="hsl(var(--primary))"
+                        strokeWidth="8"
+                        fill="transparent"
+                        strokeLinecap="round"
+                        strokeDasharray={CIRCLE_CIRCUMFERENCE}
+                        initial={{ strokeDashoffset: CIRCLE_CIRCUMFERENCE }}
+                        animate={{ strokeDashoffset: progressOffset }}
+                        transition={{ duration: 1.5, ease: "easeOut" }}
+                         style={{ filter: 'drop-shadow(0 0 5px hsl(var(--primary) / 0.7))' }}
+                      />
+                    </svg>
+                    <Avatar className="w-32 h-32 border-4 border-background">
+                      <AvatarImage src={userProfile.avatarUrl} alt={userProfile.name} className="object-cover"/>
+                      <AvatarFallback>{userProfile.name.charAt(0)}</AvatarFallback>
                     </Avatar>
                 </div>
                 <div className="text-center">
@@ -110,11 +126,12 @@ export default function ProfilePage() {
             animate={{ opacity: 1 }}
             exit={{ opacity: 0 }}
             className="fixed inset-0 z-50 bg-black/90 flex items-center justify-center"
+            onClick={() => setSelectedImageIndex(null)}
           >
             <Button
               variant="ghost"
               size="icon"
-              className="absolute top-4 right-4 text-white/70 hover:text-white"
+              className="absolute top-4 right-4 text-white/70 hover:text-white z-10"
               onClick={() => setSelectedImageIndex(null)}
             >
               <X className="w-8 h-8" />
@@ -128,6 +145,7 @@ export default function ProfilePage() {
                     exit={{ opacity: 0.5, scale: 0.95 }}
                     transition={{ duration: 0.2, ease: 'easeOut' }}
                     className="relative w-[90vw] h-[80vh]"
+                    onClick={(e) => e.stopPropagation()}
                 >
                     <Image
                         src={userProfile.imageUrls[selectedImageIndex]}
@@ -144,7 +162,7 @@ export default function ProfilePage() {
                         variant="ghost"
                         size="icon"
                         className="absolute left-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white hover:bg-white/10 rounded-full h-12 w-12"
-                        onClick={handlePrevImage}
+                        onClick={(e) => {e.stopPropagation(); handlePrevImage();}}
                     >
                         <ChevronLeft className="w-10 h-10" />
                     </Button>
@@ -152,7 +170,7 @@ export default function ProfilePage() {
                         variant="ghost"
                         size="icon"
                         className="absolute right-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white hover:bg-white/10 rounded-full h-12 w-12"
-                        onClick={handleNextImage}
+                        onClick={(e) => {e.stopPropagation(); handleNextImage();}}
                     >
                         <ChevronRight className="w-10 h-10" />
                     </Button>
