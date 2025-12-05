@@ -242,6 +242,7 @@
             "emailPlaceholder": "eposta@adresiniz.com",
             "password": "Şifre",
             "passwordPlaceholder": "Bir şifre oluşturun",
+            "passwordPolicy": "Şifreniz en az 8 karakter uzunluğunda olmalı, harf ve rakam içermelidir.",
             "confirmPassword": "Şifreyi Onayla",
             "confirmPasswordPlaceholder": "Şifrenizi doğrulayın",
             "passwordMismatch": "Şifreler eşleşmiyor."
@@ -319,5 +320,3 @@
         "volunteering": "Gönüllülük"
     }
 }
-
-    

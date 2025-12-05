@@ -1,4 +1,4 @@
-import React from 'react';
+'use client';
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/context/language-context';
 
@@ -21,9 +21,8 @@ const PasswordStrength: React.FC<PasswordStrengthProps> = ({ password = '' }) =>
     if (!password || password.length === 0) return '';
     const hasLetters = /[a-zA-Z]/.test(password);
     const hasNumbers = /\d/.test(password);
-    const hasSymbols = /[!@#$%^&*(),.?":{}|<>]/.test(password);
 
-    if (password.length >= 8 && hasLetters && hasNumbers && hasSymbols) {
+    if (password.length >= 8 && hasLetters && hasNumbers) {
       return strengthLevels.strong as StrengthLevel;
     }
     if (password.length >= 6 && (hasLetters || hasNumbers)) {

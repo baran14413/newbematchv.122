@@ -242,6 +242,7 @@
             "emailPlaceholder": "email@youraddress.com",
             "password": "Password",
             "passwordPlaceholder": "Create a password",
+            "passwordPolicy": "Your password must be at least 8 characters long and contain letters and numbers.",
             "confirmPassword": "Confirm Password",
             "confirmPasswordPlaceholder": "Confirm your password",
             "passwordMismatch": "Passwords do not match."
@@ -319,5 +320,3 @@
         "volunteering": "Volunteering"
     }
 }
-
-    

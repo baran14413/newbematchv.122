@@ -21,9 +21,11 @@ const RuleItem = ({ title, description }: { title: string; description: string }
 
 interface StepWelcomeProps {
     onRegisterSuccess: () => void;
+    onSwitchView: (view: 'login' | 'register') => void;
+    resetOnboarding: () => void;
 }
 
-export default function StepWelcome({ onRegisterSuccess }: StepWelcomeProps) {
+export default function StepWelcome({ onRegisterSuccess, resetOnboarding }: StepWelcomeProps) {
   const { t } = useLanguage();
   const { formData } = useOnboardingContext();
   const auth = useAuth();

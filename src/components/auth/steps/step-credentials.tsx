@@ -7,27 +7,30 @@ import { Eye, EyeOff } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import PasswordStrength from '@/components/auth/password-strength';
 import { useLanguage } from '@/context/language-context';
+import { cn } from '@/lib/utils';
 
 export default function StepCredentials() {
   const { formData, updateFormData, setStepValid } = useOnboardingContext();
   const { t } = useLanguage();
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [isConfirmTouched, setIsConfirmTouched] = useState(false);
 
   useEffect(() => {
     const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email);
     const hasLetters = /[a-zA-Z]/.test(formData.password);
     const hasNumbers = /\d/.test(formData.password);
-    const hasSymbols = /[!@#$%^&*(),.?":{}|<>]/.test(formData.password);
-    const isPasswordValid = formData.password.length >= 8 && hasLetters && hasNumbers && hasSymbols;
+    const isPasswordStrongEnough = formData.password.length >= 8 && hasLetters && hasNumbers;
     const isPasswordMatch = formData.password === formData.confirmPassword;
-    setStepValid(isEmailValid && isPasswordValid && isPasswordMatch);
+    setStepValid(isEmailValid && isPasswordStrongEnough && isPasswordMatch);
   }, [formData.email, formData.password, formData.confirmPassword, setStepValid]);
   
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     updateFormData({ [name]: value });
   };
+
+  const passwordsDontMatch = isConfirmTouched && formData.confirmPassword && formData.password !== formData.confirmPassword;
 
   return (
     <div className="space-y-6">
@@ -47,7 +50,7 @@ export default function StepCredentials() {
       <div className="space-y-2 relative">
           <Label htmlFor="password">{t('onboarding.credentials.password')}</Label>
           <p className="text-xs text-muted-foreground -mt-1 mb-2">
-              Şifreniz en az 8 karakter uzunluğunda olmalı, harf, rakam ve sembol içermelidir.
+              {t('onboarding.credentials.passwordPolicy')}
           </p>
           <Input 
           id="password" 
@@ -78,11 +81,8 @@ export default function StepCredentials() {
           placeholder={t('onboarding.credentials.confirmPasswordPlaceholder')}
           value={formData.confirmPassword}
           onChange={handleChange}
-          className={`h-12 text-base ${
-              formData.confirmPassword && formData.password !== formData.confirmPassword
-              ? 'border-destructive'
-              : ''
-          }`}
+          onBlur={() => setIsConfirmTouched(true)}
+          className={cn('h-12 text-base', passwordsDontMatch && 'border-destructive')}
           />
           <Button
           type="button"
@@ -93,7 +93,7 @@ export default function StepCredentials() {
           >
           {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
           </Button>
-          {formData.confirmPassword && formData.password !== formData.confirmPassword && (
+          {passwordsDontMatch && (
               <p className="text-xs text-destructive">{t('onboarding.credentials.passwordMismatch')}</p>
           )}
       </div>
