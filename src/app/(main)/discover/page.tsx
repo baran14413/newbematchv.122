@@ -1,40 +1,25 @@
 'use client';
-import { useState, useMemo, useEffect, useCallback } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import type { PanInfo } from 'framer-motion';
 import { Card, CardContent } from '@/components/ui/card';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
-import { X, Star, Heart, Undo2, ChevronUp, Loader2, RefreshCw } from 'lucide-react';
-import type { UserProfile } from '@/lib/data';
+import { X, Star, Heart, Undo2, ChevronUp } from 'lucide-react';
+import { profiles, type UserProfile } from '@/lib/data';
 import { useLanguage } from '@/context/language-context';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
-import { useCollection } from '@/firebase';
+import { Badge } from '@/components/ui/badge';
 
 type SwipeDirection = 'left' | 'right' | 'up';
 
 export default function DiscoverPage() {
-  const { data: profiles, loading, error } = useCollection<UserProfile>('profiles');
-  const [stack, setStack] = useState<UserProfile[]>([]);
+  const [stack, setStack] = useState<UserProfile[]>(profiles);
   const [history, setHistory] = useState<UserProfile[]>([]);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const [isDetailSheetOpen, setDetailSheetOpen] = useState(false);
-  const [swipeDirection, setSwipeDirection] = useState<SwipeDirection | null>(null);
 
   const { t } = useLanguage();
-
-  const loadProfiles = useCallback(() => {
-    if (profiles) {
-      setStack(profiles);
-      setHistory([]);
-    }
-  }, [profiles]);
-
-  useEffect(() => {
-    if (profiles && stack.length === 0 && history.length === 0) {
-      loadProfiles();
-    }
-  }, [profiles, stack.length, history.length, loadProfiles]);
 
   const activeProfile = useMemo(() => stack[stack.length - 1], [stack]);
 
@@ -44,7 +29,6 @@ export default function DiscoverPage() {
 
   const handleSwipe = (direction: SwipeDirection) => {
     if (!activeProfile) return;
-    setSwipeDirection(direction);
     setHistory(prev => [activeProfile, ...prev]);
     setStack(prev => prev.slice(0, prev.length - 1));
   };
@@ -70,26 +54,11 @@ export default function DiscoverPage() {
     }
   };
 
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-full">
-        <Loader2 className="w-8 h-8 animate-spin text-primary" />
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="flex items-center justify-center h-full text-destructive">
-        Error loading profiles: {error.message}
-      </div>
-    )
-  }
 
   return (
-    <div className="flex flex-col h-full bg-gray-50 dark:bg-black overflow-hidden">
-      <div className="flex-1 flex flex-col items-center justify-center p-4 relative">
-        <div className="w-full max-w-sm h-[75vh] max-h-[700px] relative flex items-center justify-center">
+    <div className="h-screen w-screen flex flex-col bg-gray-50 dark:bg-black">
+      <div className="flex-1 flex flex-col items-center justify-center p-4">
+        <div className="w-full max-w-sm h-[65vh] max-h-[550px] relative flex items-center justify-center">
           <AnimatePresence>
             {stack.length > 0 ? (
               stack.map((profile, index) => {
@@ -97,23 +66,18 @@ export default function DiscoverPage() {
                 
                 return (
                   <motion.div
-                    key={`${profile.id}-${index}`}
+                    key={profile.id}
                     drag={isTop}
                     dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
                     onDragEnd={(e, info: PanInfo) => {
-                        const { offset, velocity } = info;
-                        let direction: SwipeDirection | null = null;
-                        const SWIPE_THRESHOLD = 100;
-
-                        if (Math.abs(offset.x) > SWIPE_THRESHOLD || Math.abs(velocity.x) > 500) {
-                            direction = offset.x > 0 ? 'right' : 'left';
-                        } else if (offset.y < -SWIPE_THRESHOLD || velocity.y < -500) {
-                            direction = 'up';
-                        }
-                        
-                        if (direction) {
-                            handleSwipe(direction);
-                        }
+                      const { offset } = info;
+                      if (offset.x > 100) {
+                        handleSwipe('right');
+                      } else if (offset.x < -100) {
+                        handleSwipe('left');
+                      } else if (offset.y < -100) {
+                        handleSwipe('up');
+                      }
                     }}
                     initial={{
                         y: 0,
@@ -126,11 +90,10 @@ export default function DiscoverPage() {
                         opacity: index >= stack.length - 2 ? 1 : 0
                     }}
                     exit={{
-                        x: swipeDirection === 'left' ? -300 : swipeDirection === 'right' ? 300 : 0,
-                        y: swipeDirection === 'up' ? -500 : 0,
-                        opacity: 0,
-                        scale: 0.9,
-                        transition: { duration: 0.3 }
+                      x: info => (info.offset.x > 0 ? 300 : -300),
+                      opacity: 0,
+                      scale: 0.9,
+                      transition: { duration: 0.3 }
                     }}
                     style={{
                       position: 'absolute',
@@ -138,14 +101,14 @@ export default function DiscoverPage() {
                       height: '100%',
                       zIndex: index,
                     }}
-                    className={isTop ? "cursor-grab active:cursor-grabbing" : "pointer-events-none"}
+                    className={isTop ? "cursor-grab active:cursor-grabbing" : ""}
                   >
-                    <Card className="w-full h-full rounded-2xl overflow-hidden shadow-2xl">
+                    <Card className="w-full h-full rounded-2xl overflow-hidden shadow-lg">
                       <CardContent className="p-0 h-full relative" onClick={isTop ? handleTapOnCard : undefined}>
                         {profile.imageUrls && profile.imageUrls.length > 0 ?
                         <AnimatePresence initial={false}>
                              <motion.div
-                                key={`${profile.id}-${currentImageIndex}`}
+                                key={currentImageIndex}
                                 initial={{ opacity: 0 }}
                                 animate={{ opacity: 1 }}
                                 exit={{ opacity: 0 }}
@@ -156,7 +119,7 @@ export default function DiscoverPage() {
                                     src={profile.imageUrls[isTop ? currentImageIndex : 0]}
                                     alt={profile.name}
                                     fill
-                                    className="object-cover pointer-events-none"
+                                    className="object-cover"
                                     priority={isTop}
                                 />
                             </motion.div>
@@ -166,9 +129,9 @@ export default function DiscoverPage() {
                         }
 
                         {profile.imageUrls && profile.imageUrls.length > 1 &&
-                          <div className="absolute top-2 left-2 right-2 flex gap-1 z-20 pointer-events-none">
+                          <div className="absolute top-2 left-2 right-2 flex gap-1 z-10">
                               {profile.imageUrls.map((_, imgIndex) => (
-                                  <div key={imgIndex} className="flex-1 h-1 rounded-full bg-white/50">
+                                  <div key={imgIndex} className="flex-1 h-1 rounded-full bg-black/30">
                                       <div 
                                           className="h-full rounded-full bg-white transition-all duration-300"
                                           style={{ width: imgIndex === currentImageIndex ? '100%' : '0%' }}
@@ -178,55 +141,46 @@ export default function DiscoverPage() {
                           </div>
                         }
 
-                        <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-black/80 to-transparent p-6 flex flex-col justify-end pointer-events-none z-10">
-                          <h2 className="text-3xl font-bold text-white">
-                            {profile.name}, {profile.age}
-                          </h2>
-                          <p className="text-white/80 text-lg">{profile.bio.split('. ')[0]}</p>
+                        <div className="absolute bottom-0 left-0 right-0 p-4 flex justify-between items-end">
+                          <div>
+                            <h2 className="text-2xl font-bold text-white">
+                              {profile.name}, {profile.age}
+                            </h2>
+                            <p className="text-white/80">{t('discover.job')}</p>
+                          </div>
+                          
+                           <Button 
+                            variant="ghost" 
+                            size="icon" 
+                            className="text-white/80 hover:text-white"
+                            onClick={() => setDetailSheetOpen(true)}
+                          >
+                            <ChevronUp className="w-6 h-6" />
+                          </Button>
                         </div>
-
-                        {isTop && (
-                             <Button 
-                                variant="ghost" 
-                                size="icon" 
-                                className="absolute bottom-4 right-4 z-20 text-white/80 hover:text-white hover:bg-white/20 rounded-full"
-                                onClick={(e) => {
-                                    e.stopPropagation();
-                                    setDetailSheetOpen(true);
-                                }}
-                            >
-                                <ChevronUp className="w-6 h-6" />
-                            </Button>
-                        )}
                       </CardContent>
                     </Card>
                   </motion.div>
                 );
               })
-              ) : (
-                 <div className="text-center text-muted-foreground flex flex-col items-center gap-4">
-                    <p>{t('discover.noMoreProfiles')}</p>
-                    <Button onClick={loadProfiles}>
-                        <RefreshCw className="mr-2 h-4 w-4" />
-                        {t('common.reload', { default: 'Tekrar Yükle' })}
-                    </Button>
-                </div>
-              )}
+            ) : (
+              <p className="text-center text-muted-foreground">{t('discover.noMoreProfiles')}</p>
+            )}
           </AnimatePresence>
         </div>
 
-        <div className="flex justify-center items-center gap-4 mt-8">
-          <Button variant="outline" size="icon" className="w-12 h-12 rounded-full bg-white shadow-lg border-gray-200" onClick={undoSwipe} disabled={history.length === 0}>
-            <Undo2 className="w-6 h-6 text-yellow-500" />
+        <div className="flex justify-center items-center gap-4 mt-4">
+          <Button variant="outline" className="p-3 rounded-full bg-white shadow" onClick={undoSwipe} disabled={history.length === 0}>
+            <Undo2 className="w-5 h-5 text-yellow-500" />
           </Button>
-          <Button variant="outline" size="icon" className="w-16 h-16 rounded-full bg-white shadow-lg border-gray-200" onClick={() => handleSwipe('left')} disabled={stack.length === 0}>
-            <X className="w-8 h-8 text-red-500" />
+          <Button variant="outline" className="p-4 rounded-full bg-white shadow" onClick={() => handleSwipe('left')}>
+            <X className="w-6 h-6 text-red-500" />
           </Button>
-          <Button variant="outline" size="icon" className="w-12 h-12 rounded-full bg-white shadow-lg border-gray-200" onClick={() => handleSwipe('up')} disabled={stack.length === 0}>
-            <Star className="w-6 h-6 text-blue-500" fill="currentColor" />
+          <Button variant="outline" className="p-3 rounded-full bg-white shadow" onClick={() => handleSwipe('up')}>
+            <Star className="w-5 h-5 text-blue-500" />
           </Button>
-          <Button variant="outline" size="icon" className="w-16 h-16 rounded-full bg-white shadow-lg border-gray-200" onClick={() => handleSwipe('right')} disabled={stack.length === 0}>
-            <Heart className="w-8 h-8 text-primary" fill="currentColor" />
+          <Button variant="outline" className="p-4 rounded-full bg-white shadow" onClick={() => handleSwipe('right')}>
+            <Heart className="w-6 h-6 text-green-500" />
           </Button>
         </div>
       </div>

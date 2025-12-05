@@ -8,8 +8,8 @@ import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
 
 const FeatureListItem = ({ children }: { children: React.ReactNode }) => (
-    <li className="flex items-center gap-3">
-        <CheckCircle2 className="w-5 h-5 text-green-500" />
+    <li className="flex items-start gap-3">
+        <CheckCircle2 className="w-5 h-5 text-green-500 mt-1 flex-shrink-0" />
         <span className="text-muted-foreground">{children}</span>
     </li>
 );
@@ -67,7 +67,7 @@ export default function SubscriptionsPage() {
                 </div>
             </header>
 
-            <div className="md:p-8 md:pt-0 grid gap-8 md:grid-cols-3">
+            <div className="md:p-8 md:pt-0 grid gap-8 md:grid-cols-1 lg:grid-cols-3">
                 {packages.map((pkg, index) => (
                     <Card key={index} className={cn("flex flex-col", pkg.isPopular && "border-primary ring-2 ring-primary shadow-lg")}>
                         {pkg.isPopular && (

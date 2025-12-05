@@ -9,13 +9,13 @@ import { Separator } from "@/components/ui/separator";
 
 export default function LoungePage() {
   const selectedConversation = conversations[0];
-  // const matchProfile = profiles.find(p => p.id === selectedConversation.userId);
+  const matchProfile = profiles.find(p => p.id === selectedConversation.userId);
   const { t } = useLanguage();
 
   return (
-    <div className="h-full flex flex-col md:grid md:grid-cols-[300px_1fr] lg:grid-cols-[350px_1fr] bg-background text-foreground overflow-hidden">
+    <div className="h-full md:grid md:grid-cols-[300px_1fr] lg:grid-cols-[350px_1fr] bg-background text-foreground">
       {/* Conversation List */}
-      <div className="md:col-span-1 lg:col-span-1 border-r border-border flex flex-col h-full">
+      <div className="border-r border-border flex flex-col h-full">
           <header className="p-4 border-b">
             <h1 className="text-2xl font-bold text-foreground">{t('lounge.conversations')}</h1>
           </header>
@@ -53,8 +53,8 @@ export default function LoungePage() {
       </div>
 
       {/* Chat Area */}
-      <div className="md:col-span-1 lg:col-span-1 hidden md:flex flex-col h-full">
-          {/* {matchProfile && <ChatArea conversation={selectedConversation} matchProfile={matchProfile} />} */}
+      <div className="hidden md:flex flex-col h-full">
+          {matchProfile && <ChatArea conversation={selectedConversation} matchProfile={matchProfile} />}
       </div>
     </div>
   );

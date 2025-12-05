@@ -61,8 +61,9 @@ export const currentUser = {
   ]
 };
 
-export const profiles: Omit<UserProfile, 'id'>[] = [
+export const profiles: UserProfile[] = [
   {
+    id: '1',
     name: 'Selin',
     age: 28,
     bio: 'Sanat yönetmeni. Sürrealist tablolara ve yağmurlu günlere bayılırım. Muhtemelen şu an makarnayı düşünüyorum. 🍝',
@@ -80,6 +81,7 @@ export const profiles: Omit<UserProfile, 'id'>[] = [
     zodiac: 'Koç',
   },
   {
+    id: '2',
     name: 'Alex',
     age: 31,
     bio: 'Gündüzleri yazılım mühendisi, geceleri hevesli bir şef. Hayat boyu sous şefim olacak birini arıyorum.',
@@ -95,6 +97,7 @@ export const profiles: Omit<UserProfile, 'id'>[] = [
     zodiac: 'Terazi',
   },
     {
+    id: '3',
     name: 'Chloe',
     age: 26,
     bio: 'Plaj tutkunu, köpek annesi ve profesyonel gün batımı izleyicisi. Şehirdeki en iyi tacoları bulalım.',

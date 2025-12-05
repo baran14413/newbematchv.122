@@ -9,7 +9,7 @@ import { useLanguage } from "@/context/language-context";
 const SettingsSection = ({ title, children }: { title: string, children: React.ReactNode }) => (
     <div className="space-y-4">
         <h2 className="px-4 text-lg font-semibold text-muted-foreground">{title}</h2>
-        <Card className="shadow-none border-0 md:border md:shadow-sm">
+        <Card>
             <CardContent className="p-0">
                 <ul className="divide-y">
                     {children}
@@ -23,9 +23,7 @@ const SettingsItem = ({ icon: Icon, label, href = "#" }: { icon: React.ElementTy
     <li className="list-none">
         <Link href={href} passHref>
             <div className="flex items-center p-4 hover:bg-secondary cursor-pointer">
-                <div className="w-10 h-10 mr-4 rounded-full flex items-center justify-center bg-primary/10 text-primary">
-                    <Icon className="w-5 h-5" />
-                </div>
+                <Icon className="w-6 h-6 mr-4 text-primary" />
                 <span className="flex-1 font-medium">{label}</span>
                 <ChevronRight className="w-5 h-5 text-muted-foreground" />
             </div>
@@ -66,7 +64,7 @@ export default function SettingsPage() {
 
             <SettingsSection title={t('settings.session')}>
                 <SettingsItem icon={LogOut} label={t('settings.logout')} />
-            </SettingsSection>
+            </Settingse>
         </div>
     </div>
   );
