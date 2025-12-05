@@ -3,12 +3,11 @@ import { useState, useMemo } from 'react';
 import { motion, useMotionValue, useTransform, PanInfo } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { X, Star, Heart, Undo2 } from 'lucide-react';
-import type { UserProfile } from '@/lib/data';
+import { UserProfile, profiles as staticProfiles } from '@/lib/data';
 import { useLanguage } from '@/context/language-context';
 import { useIsMobile } from '@/hooks/use-mobile';
 import ProfileCard from '@/components/discover/profile-card';
-import { useCollection, useFirestore, useUser, useMemoFirebase } from '@/firebase';
-import { collection, query, where } from 'firebase/firestore';
+import { useUser } from '@/firebase';
 import { Skeleton } from '@/components/ui/skeleton';
 import LikesYou from '@/components/discover/likes-you';
 
@@ -77,17 +76,12 @@ const DesktopProfileSkeleton = () => (
 
 export default function DiscoverPage() {
   const { user } = useUser();
-  const firestore = useFirestore();
-
-  const usersCollection = useMemoFirebase(() => {
-    if (!firestore) return null;
-    return collection(firestore, 'users');
-  }, [firestore]);
   
-  const { data: profiles, isLoading } = useCollection<UserProfile>(usersCollection);
+  // Using static data for now as requested
+  const [profiles, setProfiles] = useState<UserProfile[]>(staticProfiles);
+  const isLoading = false;
 
   const filteredProfiles = useMemo(() => {
-    if (!profiles) return [];
     if (!user) return profiles;
     return profiles.filter(p => p.id !== user.uid);
   }, [profiles, user]);
@@ -143,7 +137,7 @@ export default function DiscoverPage() {
 
   if (!isMobile) {
     return (
-      <div className="h-full w-full flex flex-col items-center bg-gray-50 dark:bg-black p-4 md:p-8 space-y-8">
+      <div className="w-full flex flex-col items-center bg-gray-50 dark:bg-black p-4 md:p-8 space-y-8">
         <LikesYou />
         <div className="w-full max-w-md space-y-8">
           {filteredProfiles.map((profile) => (
