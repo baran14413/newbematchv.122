@@ -1,16 +1,16 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { useLanguage } from "@/context/language-context";
-import { Card } from "../ui/card";
+import { Card } from "@/components/ui/card";
 import { Star, Heart } from "lucide-react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 import { collection, doc, getDoc } from 'firebase/firestore';
 import type { UserProfile } from '@/lib/data';
-import { Skeleton } from '../ui/skeleton';
+import { Skeleton } from '@/components/ui/skeleton';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
-import ProfileDetails from './profile-details';
+import ProfileDetails from '@/components/discover/profile-details';
 
 type LikeInfo = {
     id: string; // liker's ID
