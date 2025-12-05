@@ -1,0 +1,173 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    /**
+     * Core Philosophy: This ruleset enforces a security model centered on user privacy
+     * and controlled collaboration. User data is strictly owned by the user, while
+     * shared data (like matches and messages) is accessible only to the involved
+     * participants. Publicly available data, such as prompts, is read-only.
+     *
+     * Data Structure:
+     * - /users/{userId}/...: All user-specific private data (profile, prompt answers)
+     *   is nested under a path containing their unique user ID.
+     * - /matches/{matchId}/...: Collaborative data representing a match between two users,
+     *   including the subcollection for messages.
+     * - /prompts/{promptId}: A top-level collection for public, read-only data.
+     * - /compatibilityRadarCharts/{chartId}: Top-level collection for user-specific data.
+     *
+     * Key Security Decisions:
+     * - Default Deny: All paths are closed by default. Access must be explicitly granted.
+     * - No User Listing: Global listing of user profiles at the root `/users` path is
+     *   disallowed to protect user privacy.
+     * - Strict Ownership: A user can only access and modify documents within their
+     *   own `/users/{userId}` data tree.
+     * - Shared Access via Denormalization: The `/matches/{matchId}` documents contain
+     *   `user1Id` and `user2Id` fields. These are used to grant access to the match
+     *   document and its `messages` subcollection, avoiding complex queries.
+     * - Public Data is Read-Only: The `/prompts` collection is readable by any signed-in
+     *   user but cannot be modified by clients, ensuring data integrity.
+     */
+
+    // -------------------------------------------------------------------------
+    // Helper Functions
+    // -------------------------------------------------------------------------
+
+    /**
+     * Checks if the user is authenticated.
+     */
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    /**
+     * Checks if the currently authenticated user's UID matches the provided userId.
+     * This is the foundation of the user-ownership model.
+     */
+    function isOwner(userId) {
+      return isSignedIn() && request.auth.uid == userId;
+    }
+
+    /**
+     * Verifies that a document already exists in Firestore.
+     * Crucial for update and delete operations to prevent acting on non-existent data.
+     */
+    function isExistingDocument() {
+      return resource != null;
+    }
+
+    /**
+     * Checks if the requesting user is a participant in a given match document.
+     * The match document's data must be passed in as an argument.
+     */
+    function isMatchParticipant(matchData) {
+      return isSignedIn() && (request.auth.uid == matchData.user1Id || request.auth.uid == matchData.user2Id);
+    }
+
+    /**
+     * Checks if the requesting user is a participant in the PARENT match document.
+     * Used to secure subcollections like `/messages`. Requires a `get()` call.
+     */
+    function isParentMatchParticipant(matchId) {
+      let matchDoc = get(/databases/$(database)/documents/matches/$(matchId)).data;
+      return isMatchParticipant(matchDoc);
+    }
+
+    // -------------------------------------------------------------------------
+    // Collection Rules
+    // -------------------------------------------------------------------------
+
+    /**
+     * @description Manages user profile data. A user can only read and write their own profile.
+     * @path /users/{userId}
+     * @allow (get, update, delete) A user with auth.uid 'user123' to get or modify their own document at /users/user123.
+     * @allow (create) A new user with auth.uid 'user123' to create their own profile document at /users/user123.
+     * @deny (get) A user with auth.uid 'user456' from reading /users/user123.
+     * @deny (list) Any user from listing all documents in the /users collection.
+     * @principle Restricts access to a user's own data tree (Path-based Ownership).
+     */
+    match /users/{userId} {
+      allow get: if isOwner(userId);
+      allow list: if false;
+      allow create: if isOwner(userId) && request.resource.data.id == userId;
+      allow update: if isOwner(userId) && isExistingDocument() && request.resource.data.id == resource.data.id;
+      allow delete: if isOwner(userId) && isExistingDocument();
+    }
+
+    /**
+     * @description Manages a user's answers to profile prompts. Only the owner can manage them.
+     * @path /users/{userId}/promptAnswers/{promptAnswerId}
+     * @allow (get, list, create, update, delete) User 'user123' can manage any prompt answer under /users/user123/promptAnswers/.
+     * @deny (get) User 'user456' cannot read any document under /users/user123/promptAnswers/.
+     * @principle Enforces inherited document ownership from the parent user document.
+     */
+    match /users/{userId}/promptAnswers/{promptAnswerId} {
+      allow get, list: if isOwner(userId);
+      allow create: if isOwner(userId);
+      allow update, delete: if isOwner(userId) && isExistingDocument();
+    }
+
+    /**
+     * @description Stores match data between two users. Only the two matched users can access it.
+     * @path /matches/{matchId}
+     * @allow (get) User 'user123' reads a match where resource.data.user1Id == 'user123'.
+     * @allow (create) User 'user123' creates a match where request.resource.data.user1Id == 'user123'.
+     * @deny (get) User 'user789' attempts to read a match between 'user123' and 'user456'.
+     * @deny (list) Any user from listing all matches in the system.
+     * @principle Enforces shared access for a closed set of collaborators.
+     */
+    match /matches/{matchId} {
+      allow get: if isMatchParticipant(resource.data);
+      allow list: if false;
+      allow create: if isMatchParticipant(request.resource.data);
+      allow update: if isMatchParticipant(resource.data) && isExistingDocument() && request.resource.data.user1Id == resource.data.user1Id && request.resource.data.user2Id == resource.data.user2Id;
+      allow delete: if isMatchParticipant(resource.data) && isExistingDocument();
+    }
+
+    /**
+     * @description Stores chat messages within a match. Only the two matched users can read or send messages.
+     * @path /matches/{matchId}/messages/{messageId}
+     * @allow (list, create) User 'user123', a participant in match 'matchABC', lists or creates a message in /matches/matchABC/messages.
+     * @deny (get) User 'user789' attempts to read a message in a match they are not part of.
+     * @principle Inherits access control from the parent document using a `get()` call.
+     */
+    match /matches/{matchId}/messages/{messageId} {
+      allow get, list: if isParentMatchParticipant(matchId);
+      allow create: if isParentMatchParticipant(matchId) && request.resource.data.senderId == request.auth.uid;
+      allow update: if isParentMatchParticipant(matchId) && isExistingDocument() && request.resource.data.senderId == resource.data.senderId;
+      allow delete: if isParentMatchParticipant(matchId) && isExistingDocument() && resource.data.senderId == request.auth.uid;
+    }
+
+    /**
+     * @description Stores predefined prompt questions. This data is public and read-only for all signed-in users.
+     * @path /prompts/{promptId}
+     * @allow (get, list) Any authenticated user can read the list of prompts or a specific prompt.
+     * @deny (create, update, delete) Any user from modifying the prompts.
+     * @principle Provides public read-only access to application configuration data.
+     */
+    match /prompts/{promptId} {
+      allow get, list: if isSignedIn();
+      allow create: if false;
+      allow update: if false;
+      allow delete: if false;
+    }
+
+    /**
+     * @description Stores compatibility radar chart data. Access is currently denied pending schema update.
+     * @path /compatibilityRadarCharts/{compatibilityRadarChartId}
+     * @allow (all) None. The rules are locked down.
+     * @deny (all) All users, until the schema is updated.
+     * @principle Enforces a secure-by-default posture for ambiguous data models.
+     */
+    match /compatibilityRadarCharts/{compatibilityRadarChartId} {
+      // CRITICAL: Cannot implement secure rules for this collection. The 'CompatibilityRadarChart'
+      // entity is missing an 'ownerId' or 'userId' field to link it to a user.
+      // To enable access, update the schema to include an ownership field.
+      allow get: if false; // TODO: Add owner validation once the schema is updated.
+      allow list: if false; // TODO: Add owner validation once the schema is updated.
+      allow create: if false; // TODO: Add owner validation once the schema is updated.
+      allow update: if false; // TODO: Add owner validation once the schema is updated.
+      allow delete: if false; // TODO: Add owner validation once the schema is updated.
+    }
+  }
+}
