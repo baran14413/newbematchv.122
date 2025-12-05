@@ -84,7 +84,7 @@ export const OnboardingProvider = ({ children }: { children: ReactNode }) => {
   const storage = useStorage();
   const { toast } = useToast();
 
-  const isLastStep = currentStep === 9; // 10 steps total, index 9 is the last
+  const isLastStep = currentStep === 9; 
 
   const updateFormData = (data: Partial<FormData>) => {
     setFormData((prev) => ({ ...prev, ...data }));
@@ -177,8 +177,10 @@ export const OnboardingProvider = ({ children }: { children: ReactNode }) => {
   };
 
   const prevStep = () => {
-    setCurrentStep((prev) => prev - 1);
-    setStepValid(true);
+    if (currentStep > 0) {
+        setCurrentStep((prev) => prev - 1);
+        setStepValid(true);
+    }
   };
 
   const resetOnboarding = () => {
