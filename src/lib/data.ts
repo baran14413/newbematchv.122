@@ -15,13 +15,14 @@ export type Prompt = {
 };
 
 export type Message = { 
-  id: string; // Changed to string
+  id: string;
+  senderId: string;
   text: string; 
-  sender: 'me' | 'them' | string; // Allow for user ID 
-  timestamp: string; // Or Date
+  timestamp: any; // Can be Date or Firestore Timestamp
   type?: 'text' | 'image' | 'voice';
   imageUrl?: string;
   audioUrl?: string;
+  isAiGenerated: boolean;
 };
 
 export interface UserProfile {
@@ -66,6 +67,5 @@ export const zodiacSigns = [
   "Koç", "Boğa", "İkizler", "Yengeç", "Aslan", "Başak",
   "Terazi", "Akrep", "Yay", "Oğlak", "Kova", "Balık"
 ];
-
     
     

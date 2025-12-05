@@ -2,13 +2,17 @@
 import { useState, useEffect } from 'react';
 import { useLanguage } from "@/context/language-context";
 import { Card } from "../ui/card";
-import { Star, Heart, Lock } from "lucide-react";
+import { Star, Heart } from "lucide-react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
-import { collection, doc, getDoc, getDocs, query, QueryDocumentSnapshot, DocumentData } from 'firebase/firestore';
+import { collection, doc, getDoc } from 'firebase/firestore';
 import type { UserProfile } from '@/lib/data';
 import { Skeleton } from '../ui/skeleton';
+import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import ProfileDetails from './profile-details';
+import { Button } from '../ui/button';
+import { useRouter } from 'next/navigation';
 
 type LikeInfo = {
     id: string; // liker's ID
@@ -31,9 +35,11 @@ export default function LikesGrid() {
     const { t } = useLanguage();
     const { user, isUserLoading } = useUser();
     const firestore = useFirestore();
+    const router = useRouter();
 
     const [likedByProfiles, setLikedByProfiles] = useState<LikedByProfile[]>([]);
     const [isLoading, setIsLoading] = useState(true);
+    const [selectedProfile, setSelectedProfile] = useState<LikedByProfile | null>(null);
 
     const likedByQuery = useMemoFirebase(() => {
         if (!user) return null;
@@ -80,6 +86,12 @@ export default function LikesGrid() {
         }
 
     }, [likes, firestore, isLoadingLikes, likedByProfiles]);
+
+    const handleStartChat = (profile: LikedByProfile) => {
+        if (!user) return;
+        const matchId = [user.uid, profile.id].sort().join('_');
+        router.push(`/lounge/${matchId}`);
+    }
     
     if (isLoading || isUserLoading || isLoadingLikes) {
         return <LikesGridSkeleton />;
@@ -94,24 +106,45 @@ export default function LikesGrid() {
     }
     
     return (
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
-            {likedByProfiles.map((like) => (
-                <Card key={like.id} className="aspect-[3/4] rounded-lg overflow-hidden relative group">
-                   <Image src={like.avatarUrl} alt={like.name} fill className="object-cover"/>
-                   
-                   <div className="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/70 to-transparent">
-                      <p className="text-white font-bold truncate">{like.name}</p>
-                   </div>
+        <>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
+                {likedByProfiles.map((like) => (
+                    <Card 
+                        key={like.id} 
+                        className="aspect-[3/4] rounded-lg overflow-hidden relative group cursor-pointer"
+                        onClick={() => setSelectedProfile(like)}
+                    >
+                       <Image src={like.avatarUrl} alt={like.name} fill className="object-cover"/>
+                       
+                       <div className="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/70 to-transparent">
+                          <p className="text-white font-bold truncate">{like.name}</p>
+                       </div>
 
-                   <div className={cn("absolute top-1.5 right-1.5 p-1.5 rounded-full",
-                     like.likeType === 'superlike' && "bg-blue-500/80",
-                     like.likeType === 'like' && "bg-red-500/80",
-                   )}>
-                    {like.likeType === 'superlike' && <Star className="w-4 h-4 text-white fill-white"/>}
-                    {like.likeType === 'like' && <Heart className="w-4 h-4 text-white fill-white"/>}
-                   </div>
-                </Card>
-            ))}
-        </div>
+                       <div className={cn("absolute top-1.5 right-1.5 p-1.5 rounded-full",
+                         like.likeType === 'superlike' && "bg-blue-500/80",
+                         like.likeType === 'like' && "bg-red-500/80",
+                       )}>
+                        {like.likeType === 'superlike' && <Star className="w-4 h-4 text-white fill-white"/>}
+                        {like.likeType === 'like' && <Heart className="w-4 h-4 text-white fill-white"/>}
+                       </div>
+                    </Card>
+                ))}
+            </div>
+
+            <Sheet open={!!selectedProfile} onOpenChange={(isOpen) => !isOpen && setSelectedProfile(null)}>
+                <SheetContent side="bottom" className="h-[90vh] rounded-t-2xl flex flex-col p-0">
+                   {selectedProfile && (
+                       <>
+                         <div className="flex-1 overflow-hidden">
+                           <ProfileDetails profile={selectedProfile} />
+                         </div>
+                         <div className="p-4 border-t bg-background">
+                            <Button className="w-full h-14 text-lg" onClick={() => handleStartChat(selectedProfile)}>Hadi İlk Adımı At!</Button>
+                         </div>
+                       </>
+                   )}
+                </SheetContent>
+            </Sheet>
+        </>
     )
 }

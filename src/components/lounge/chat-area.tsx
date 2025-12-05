@@ -1,17 +1,43 @@
 'use client';
+import { useState } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
-import type { Conversation, UserProfile } from "@/lib/data";
+import type { Conversation, UserProfile, Message } from "@/lib/data";
 import { Button } from "../ui/button";
 import { Send, Plus, Mic, Video, Phone, CheckCheck } from "lucide-react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import VoiceNotePlayer from "./voice-note-player";
 import AiIcebreaker from "./ai-icebreaker";
+import { useUser, useFirestore } from '@/firebase';
+import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
 
 export default function ChatArea({ conversation, matchProfile }: { conversation: Conversation; matchProfile: UserProfile }) {
+  const { user } = useUser();
+  const firestore = useFirestore();
+  const [newMessage, setNewMessage] = useState('');
   const isTyping = true; // Dummy data for typing indicator
+
+  const handleSendMessage = async (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!newMessage.trim() || !user || !firestore) return;
+
+    const messagesRef = collection(firestore, 'matches', conversation.id, 'messages');
+    
+    try {
+      await addDoc(messagesRef, {
+        senderId: user.uid,
+        text: newMessage,
+        timestamp: serverTimestamp(),
+        isAiGenerated: false,
+      });
+      setNewMessage('');
+    } catch (error) {
+      console.error("Error sending message: ", error);
+      // Optionally show a toast notification for the error
+    }
+  };
 
   return (
     <div className="flex flex-col h-full bg-secondary/20">
@@ -41,9 +67,9 @@ export default function ChatArea({ conversation, matchProfile }: { conversation:
           {conversation.messages.map((message) => (
             <div
               key={message.id}
-              className={cn("flex items-end gap-2", message.sender === 'me' ? 'justify-end' : 'justify-start')}
+              className={cn("flex items-end gap-2", message.senderId === user?.uid ? 'justify-end' : 'justify-start')}
             >
-              {message.sender === 'them' && (
+              {message.senderId !== user?.uid && (
                 <Avatar className="h-8 w-8 self-end">
                   <AvatarImage src={conversation.avatarUrl} alt={conversation.userName} />
                   <AvatarFallback>{conversation.userName.charAt(0)}</AvatarFallback>
@@ -52,7 +78,7 @@ export default function ChatArea({ conversation, matchProfile }: { conversation:
                <div
                 className={cn(
                     "max-w-md p-3 rounded-2xl flex flex-col",
-                    message.sender === 'me'
+                    message.senderId === user?.uid
                     ? 'bg-primary text-primary-foreground rounded-br-none'
                     : 'bg-background text-foreground rounded-bl-none'
                 )}
@@ -66,7 +92,7 @@ export default function ChatArea({ conversation, matchProfile }: { conversation:
                     <VoiceNotePlayer src={message.audioUrl} />
                 )}
                 <p>{message.text}</p>
-                 {message.sender === 'me' && (
+                 {message.senderId === user?.uid && (
                     <div className="flex items-center justify-end gap-1.5 self-end mt-1">
                         <span className="text-xs text-primary-foreground/70">{message.timestamp}</span>
                         <CheckCheck className="w-4 h-4 text-blue-400" />
@@ -80,23 +106,28 @@ export default function ChatArea({ conversation, matchProfile }: { conversation:
 
       {/* Input Bar */}
       <footer className="p-2 border-t bg-background">
-        <div className="flex items-center gap-2">
-            <Button size="icon" variant="ghost" className="text-muted-foreground">
+        <form onSubmit={handleSendMessage} className="flex items-center gap-2">
+            <Button type="button" size="icon" variant="ghost" className="text-muted-foreground">
                 <Plus className="w-6 h-6" />
             </Button>
             <div className="flex-1 relative flex items-center">
                  <Input
-                    placeholder="Message..."
-                    className="flex-1 bg-secondary border-none focus-visible:ring-0 focus-visible:ring-offset-0 h-11 rounded-full px-4 pr-12"
+                    placeholder="Mesaj yaz..."
+                    className="flex-1 bg-secondary border-none focus-visible:ring-0 focus-visible:ring-offset-0 h-11 rounded-full px-4 pr-20"
+                    value={newMessage}
+                    onChange={(e) => setNewMessage(e.target.value)}
                 />
-                 <div className="absolute right-2 flex items-center">
+                 <div className="absolute right-10 flex items-center">
                     <AiIcebreaker matchProfile={matchProfile} />
                 </div>
+                <Button type="submit" size="icon" variant="ghost" className="absolute right-1 text-primary w-9 h-9">
+                    <Send className="w-5 h-5" />
+                </Button>
             </div>
-            <Button size="icon" variant="ghost" className="text-muted-foreground">
+            <Button type="button" size="icon" variant="ghost" className="text-muted-foreground">
                 <Mic className="w-6 h-6" />
             </Button>
-        </div>
+        </form>
       </footer>
     </div>
   );

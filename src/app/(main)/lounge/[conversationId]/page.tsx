@@ -1,37 +1,37 @@
 'use client';
-import { conversations, profiles } from "@/lib/data";
+import { useUser, useDoc, useMemoFirebase, useFirestore, useCollection } from "@/firebase";
 import ChatArea from "@/components/lounge/chat-area";
-import { notFound } from "next/navigation";
-import { useDoc, useMemoFirebase, useFirestore } from "@/firebase";
-import { doc } from "firebase/firestore";
-import type { UserProfile, Conversation } from "@/lib/data";
+import { notFound, useParams } from "next/navigation";
+import { collection, doc, query } from "firebase/firestore";
+import type { UserProfile, Conversation, Message } from "@/lib/data";
 import { Skeleton } from "@/components/ui/skeleton";
+import { useEffect, useState } from "react";
 
-export default function ConversationPage({ params }: { params: { conversationId: string } }) {
-  const { conversationId } = params;
+export default function ConversationPage() {
+  const { user } = useUser();
+  const params = useParams();
+  const conversationId = params.conversationId as string;
   const firestore = useFirestore();
-
-  // This is a placeholder for how you might fetch conversation and match data.
-  // In a real app, you'd fetch the conversation doc, get the other user's ID,
-  // and then fetch that user's profile.
-  const matchId = conversationId; // Assuming conversationId is the matchId for now
-
-  // Let's assume the match document contains the user IDs.
-  // This is a simplified example. You'd need a proper data model.
-  const DUMMY_OTHER_USER_ID = "user-1"; // Replace with actual logic to get other user's ID from the match doc
-
-  const matchProfileRef = useMemoFirebase(() => {
-      if (!firestore || !DUMMY_OTHER_USER_ID) return null;
-      return doc(firestore, 'users', DUMMY_OTHER_USER_ID);
-  }, [firestore, DUMMY_OTHER_USER_ID]);
-
-  const {data: matchProfile, isLoading: isProfileLoading} = useDoc<UserProfile>(matchProfileRef);
   
-  // Dummy conversation data for layout purposes.
-  // Replace with real message fetching from `/matches/{matchId}/messages`
-  const selectedConversation: Conversation | undefined = undefined;
+  // Extract the other user's ID from the conversationId
+  const otherUserId = conversationId.split('_').find(id => id !== user?.uid);
 
-  if (isProfileLoading) {
+  // Fetch the other user's profile
+  const matchProfileRef = useMemoFirebase(() => {
+      if (!firestore || !otherUserId) return null;
+      return doc(firestore, 'users', otherUserId);
+  }, [firestore, otherUserId]);
+  const { data: matchProfile, isLoading: isProfileLoading } = useDoc<UserProfile>(matchProfileRef);
+
+  // Fetch messages for this conversation
+  const messagesQuery = useMemoFirebase(() => {
+    if (!firestore) return null;
+    return query(collection(firestore, 'matches', conversationId, 'messages'));
+  }, [firestore, conversationId]);
+  const { data: messages, isLoading: areMessagesLoading } = useCollection<Message>(messagesQuery);
+
+
+  if (isProfileLoading || areMessagesLoading) {
       return (
         <div className="h-full flex flex-col">
           <div className="flex items-center gap-4 p-3 border-b bg-background">
@@ -61,21 +61,21 @@ export default function ConversationPage({ params }: { params: { conversationId:
     notFound();
   }
 
-  // You will replace this dummy conversation with real data from Firestore
-  const dummyConversation: Conversation = {
+  // Combine data into the Conversation format expected by ChatArea
+  const selectedConversation: Conversation = {
     id: conversationId,
     userId: matchProfile.id,
     userName: matchProfile.name,
     avatarUrl: matchProfile.avatarUrl,
-    lastMessage: '...',
-    timestamp: '',
+    lastMessage: messages?.[messages.length - 1]?.text || '...',
+    timestamp: '', // You can format the last message's timestamp here
     unreadCount: 0,
-    messages: [] // Fetch messages from the subcollection
-  }
+    messages: messages || [], // Pass the fetched messages
+  };
 
   return (
     <div className="h-full flex flex-col">
-      <ChatArea conversation={dummyConversation} matchProfile={matchProfile} />
+      <ChatArea conversation={selectedConversation} matchProfile={matchProfile} />
     </div>
   );
 }
