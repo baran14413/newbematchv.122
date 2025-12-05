@@ -1,8 +1,8 @@
 'use client';
 import { useOnboardingContext } from '@/context/onboarding-context';
 import { useLanguage } from '@/context/language-context';
-import { differenceInYears, subYears, isValid } from 'date-fns';
-import { useEffect, useMemo } from 'react';
+import { differenceInYears, isValid } from 'date-fns';
+import { useEffect, useMemo, useRef } from 'react';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 
@@ -10,10 +10,19 @@ export default function StepAge() {
   const { formData, updateFormData, setStepValid } = useOnboardingContext();
   const { t } = useLanguage();
 
+  const dayRef = useRef<HTMLInputElement>(null);
+  const monthRef = useRef<HTMLInputElement>(null);
+  const yearRef = useRef<HTMLInputElement>(null);
+
   const handleDateChange = (part: 'day' | 'month' | 'year', value: string) => {
     const numericValue = value.replace(/[^0-9]/g, '');
-    const newFormData = { ...formData, [part]: numericValue };
-    updateFormData(newFormData);
+    updateFormData({ ...formData, [part]: numericValue });
+
+    if (part === 'day' && numericValue.length === 2) {
+      monthRef.current?.focus();
+    } else if (part === 'month' && numericValue.length === 2) {
+      yearRef.current?.focus();
+    }
   };
 
   const { age, isValidDate, isUnderage, date } = useMemo(() => {
@@ -22,11 +31,10 @@ export default function StepAge() {
       return { age: 0, isValidDate: false, isUnderage: false, date: null };
     }
 
-    // Month is 0-indexed in JS Date, so subtract 1
     const parsedDate = new Date(parseInt(year, 10), parseInt(month, 10) - 1, parseInt(day, 10));
-    const isValidDate = isValid(parsedDate) && parsedDate.getFullYear() === parseInt(year, 10) && (parsedDate.getMonth() + 1) === parseInt(month, 10);
+    const isValidDateCheck = isValid(parsedDate) && parsedDate.getFullYear() === parseInt(year, 10) && (parsedDate.getMonth() + 1) === parseInt(month, 10) && parsedDate.getDate() === parseInt(day, 10);
     
-    if (isValidDate) {
+    if (isValidDateCheck) {
       const calculatedAge = differenceInYears(new Date(), parsedDate);
       const isUnderage = calculatedAge < 18;
       return { age: calculatedAge, isValidDate: true, isUnderage, date: parsedDate };
@@ -37,7 +45,6 @@ export default function StepAge() {
 
   useEffect(() => {
     if (isValidDate && !isUnderage) {
-        // Only update if the values have actually changed
         if (formData.age !== age || formData.dateOfBirth?.getTime() !== date?.getTime()) {
            updateFormData({ dateOfBirth: date!, age });
         }
@@ -54,6 +61,7 @@ export default function StepAge() {
         <div className="space-y-2">
           <Label htmlFor="day" className="text-muted-foreground">{t('common.day')}</Label>
           <Input
+            ref={dayRef}
             id="day"
             type="tel"
             placeholder={t('common.dayPlaceholder')}
@@ -67,6 +75,7 @@ export default function StepAge() {
         <div className="space-y-2">
           <Label htmlFor="month" className="text-muted-foreground">{t('common.month')}</Label>
           <Input
+            ref={monthRef}
             id="month"
             type="tel"
             placeholder={t('common.monthPlaceholder')}
@@ -79,6 +88,7 @@ export default function StepAge() {
         <div className="space-y-2">
           <Label htmlFor="year" className="text-muted-foreground">{t('common.year')}</Label>
           <Input
+            ref={yearRef}
             id="year"
             type="tel"
             placeholder={t('common.yearPlaceholder')}
