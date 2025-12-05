@@ -39,7 +39,7 @@ export interface UserProfile {
 }
 
 export type Conversation = {
-  id: number;
+  id: string;
   userId: string; // Changed to string for Firestore
   userName: string;
   avatarUrl: string;
@@ -114,7 +114,7 @@ export const profiles: UserProfile[] = [
 
 export const conversations: Conversation[] = [
   {
-    id: 1,
+    id: '1',
     userId: '1',
     userName: 'Selin',
     avatarUrl: placeholderImages.find(p => p.id === 'user-1-avatar')?.imageUrl ?? '',
@@ -131,7 +131,7 @@ export const conversations: Conversation[] = [
     ],
   },
   {
-    id: 2,
+    id: '2',
     userId: '2',
     userName: 'Alex',
     avatarUrl: placeholderImages.find(p => p.id === 'user-2-avatar')?.imageUrl ?? '',

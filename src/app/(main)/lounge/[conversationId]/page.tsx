@@ -4,7 +4,7 @@ import ChatArea from "@/components/lounge/chat-area";
 import { notFound } from "next/navigation";
 
 export default function ConversationPage({ params }: { params: { conversationId: string } }) {
-  const conversationId = parseInt(params.conversationId, 10);
+  const { conversationId } = params;
   const selectedConversation = conversations.find(c => c.id === conversationId);
   
   if (!selectedConversation) {
