@@ -11,7 +11,14 @@ import { cn } from "@/lib/utils";
 import VoiceNotePlayer from "./voice-note-player";
 import AiIcebreaker from "./ai-icebreaker";
 import { useUser, useFirestore } from '@/firebase';
-import { collection, addDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, addDoc, serverTimestamp, Timestamp } from 'firebase/firestore';
+
+function formatMessageTimestamp(timestamp: any) {
+    if (!timestamp) return '';
+    const date = timestamp instanceof Timestamp ? timestamp.toDate() : new Date(timestamp);
+    return date.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+}
+
 
 export default function ChatArea({ conversation, matchProfile }: { conversation: Conversation; matchProfile: UserProfile }) {
   const { user } = useUser();
@@ -94,7 +101,7 @@ export default function ChatArea({ conversation, matchProfile }: { conversation:
                 <p>{message.text}</p>
                  {message.senderId === user?.uid && (
                     <div className="flex items-center justify-end gap-1.5 self-end mt-1">
-                        <span className="text-xs text-primary-foreground/70">{message.timestamp}</span>
+                        <span className="text-xs text-primary-foreground/70">{formatMessageTimestamp(message.timestamp)}</span>
                         <CheckCheck className="w-4 h-4 text-blue-400" />
                     </div>
                  )}

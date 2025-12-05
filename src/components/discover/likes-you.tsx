@@ -94,24 +94,26 @@ export default function LikesGrid() {
         const matchRef = doc(firestore, 'matches', matchId);
 
         try {
-            // Create a match document so the chat page can load
             const batch = writeBatch(firestore);
 
+            // Create a match document with the correct 'users' array
             batch.set(matchRef, {
                 id: matchId,
-                users: [user.uid, profile.id],
-                user1Id: user.uid,
-                user2Id: profile.id,
+                users: [user.uid, profile.id], // THIS IS THE CRITICAL FIX
                 matchDate: serverTimestamp(),
                 lastMessage: null,
             });
 
             // Also record that the current user "liked" back
             const currentUserSwipeRef = doc(firestore, 'users', user.uid, 'swipes', profile.id);
-             batch.set(currentUserSwipeRef, {
+            batch.set(currentUserSwipeRef, {
                 type: 'like',
                 timestamp: serverTimestamp()
             });
+
+            // Remove the 'likedBy' notification from the current user
+            const likedByRef = doc(firestore, 'users', user.uid, 'likedBy', profile.id);
+            batch.delete(likedByRef);
 
             await batch.commit();
             
