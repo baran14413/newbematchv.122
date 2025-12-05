@@ -4,7 +4,6 @@ import type { UserProfile } from '@/lib/data';
 import Image from 'next/image';
 import VoiceNote from './voice-note';
 import { Heart, MapPin } from 'lucide-react';
-import { ScrollArea } from '@/components/ui/scroll-area';
 
 type ProfileCardProps = {
   profile: UserProfile;
@@ -55,7 +54,7 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
   };
 
   return (
-    <ScrollArea className="w-full h-full bg-card rounded-2xl shadow-lg overflow-hidden">
+    <div className="w-full h-full bg-card rounded-2xl shadow-lg overflow-hidden">
       <div className="flex flex-col snap-y snap-mandatory">
         <div className="relative w-full aspect-[3/4] snap-center">
           <Image 
@@ -131,6 +130,6 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
           )}
       </div>
       </div>
-    </ScrollArea>
+    </div>
   );
 }

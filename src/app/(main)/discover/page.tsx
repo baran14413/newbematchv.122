@@ -95,7 +95,7 @@ export default function DiscoverPage() {
   // Populate stack when profiles are loaded
   useMemo(() => {
     if (filteredProfiles.length > 0) {
-        setStack(filteredProfiles.reverse())
+        setStack([...filteredProfiles].reverse())
     } else {
         setStack([])
     }
@@ -139,15 +139,13 @@ export default function DiscoverPage() {
 
   if (!isMobile) {
     return (
-      <ScrollArea className="h-full w-full">
-        <div className="w-full flex flex-col items-center p-4 md:p-8 space-y-8">
-            <div className="w-full max-w-md space-y-8">
-            {filteredProfiles.length > 0 ? filteredProfiles.map((profile) => (
-                <ProfileCard key={profile.id} profile={profile} />
-            )) : <p className="text-center text-muted-foreground">{t('discover.noMoreProfiles')}</p>}
-            </div>
-        </div>
-      </ScrollArea>
+      <div className="w-full flex flex-col items-center p-4 md:p-8 space-y-8">
+          <div className="w-full max-w-md space-y-8">
+          {filteredProfiles.length > 0 ? filteredProfiles.map((profile) => (
+              <ProfileCard key={profile.id} profile={profile} />
+          )) : <p className="text-center text-muted-foreground">{t('discover.noMoreProfiles')}</p>}
+          </div>
+      </div>
     );
   }
 
