@@ -6,7 +6,7 @@ import { Star, Heart } from "lucide-react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
-import { collection, doc, getDoc } from 'firebase/firestore';
+import { collection, doc, getDoc, writeBatch, serverTimestamp } from 'firebase/firestore';
 import type { UserProfile } from '@/lib/data';
 import { Skeleton } from '../ui/skeleton';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
@@ -87,10 +87,41 @@ export default function LikesGrid() {
 
     }, [likes, firestore, isLoadingLikes, likedByProfiles]);
 
-    const handleStartChat = (profile: LikedByProfile) => {
-        if (!user) return;
+    const handleStartChat = async (profile: LikedByProfile) => {
+        if (!user || !firestore) return;
+        
         const matchId = [user.uid, profile.id].sort().join('_');
-        router.push(`/lounge/${matchId}`);
+        const matchRef = doc(firestore, 'matches', matchId);
+
+        try {
+            // Create a match document so the chat page can load
+            const batch = writeBatch(firestore);
+
+            batch.set(matchRef, {
+                id: matchId,
+                users: [user.uid, profile.id],
+                user1Id: user.uid,
+                user2Id: profile.id,
+                matchDate: serverTimestamp(),
+                lastMessage: null,
+            });
+
+            // Also record that the current user "liked" back
+            const currentUserSwipeRef = doc(firestore, 'users', user.uid, 'swipes', profile.id);
+             batch.set(currentUserSwipeRef, {
+                type: 'like',
+                timestamp: serverTimestamp()
+            });
+
+            await batch.commit();
+            
+            // Now navigate to the chat
+            router.push(`/lounge/${matchId}`);
+
+        } catch (error) {
+            console.error("Error creating match and starting chat: ", error);
+            // Optionally show an error toast
+        }
     }
     
     if (isLoading || isUserLoading || isLoadingLikes) {
