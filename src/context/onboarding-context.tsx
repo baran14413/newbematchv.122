@@ -38,7 +38,7 @@ interface OnboardingContextType {
 const OnboardingContext = createContext<OnboardingContextType | undefined>(undefined);
 
 export const OnboardingProvider = ({ children }: { children: ReactNode }) => {
-  const [currentStep, setCurrentStep] = useState(1); // Start from step 1 (Name)
+  const [currentStep, setCurrentStep] = useState(0); // Start from step 0 (Name)
   const [formData, setFormData] = useState<FormData>({
     firstName: '',
     lastName: '',

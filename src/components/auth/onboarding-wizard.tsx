@@ -28,7 +28,6 @@ export default function OnboardingWizard({ onSwitchView, onRegisterSuccess }: On
   const { t } = useLanguage();
 
   const steps = [
-    { component: StepWelcome, title: t('onboarding.stepWelcomeTitle') },
     { component: StepName, title: t("onboarding.stepNameTitle") },
     { component: StepAge, title: t('onboarding.stepAgeTitle') },
     { component: StepGender, title: t('onboarding.stepGenderTitle') },
@@ -38,12 +37,13 @@ export default function OnboardingWizard({ onSwitchView, onRegisterSuccess }: On
     { component: StepBio, title: t('onboarding.stepBioTitle') },
     { component: StepPhotos, title: t('onboarding.stepPhotosTitle') },
     { component: StepCredentials, title: t('onboarding.stepCredentialsTitle') },
+    { component: StepWelcome, title: t('onboarding.stepWelcomeTitle') },
   ];
 
   const CurrentStepComponent = steps[currentStep].component;
 
-  const isExpandedStep = [0, 7, 8].includes(currentStep);
-  const hideControls = currentStep === 0;
+  const isExpandedStep = [6, 7, 9].includes(currentStep);
+  const hideControls = currentStep === steps.length -1;
 
   return (
     <div className="w-full h-full flex flex-col bg-background">

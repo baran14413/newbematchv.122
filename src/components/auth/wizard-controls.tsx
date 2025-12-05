@@ -12,11 +12,11 @@ export default function WizardControls({ totalSteps }: WizardControlsProps) {
   const { currentStep, prevStep, nextStep, isStepValid } = useOnboardingContext();
   const { t } = useLanguage();
 
-  const isLastStepBeforeWelcome = currentStep === totalSteps - 1;
+  const isLastStepBeforeWelcome = currentStep === totalSteps - 2;
 
   return (
     <div className="flex items-center justify-between gap-4">
-       {currentStep > 1 && ( // Hide back button on the first real step (step index 1)
+       {currentStep > 0 && ( // Hide back button on the first real step (step index 0)
          <Button
             variant="outline"
             onClick={prevStep}
