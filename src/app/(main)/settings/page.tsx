@@ -64,7 +64,7 @@ export default function SettingsPage() {
 
             <SettingsSection title={t('settings.session')}>
                 <SettingsItem icon={LogOut} label={t('settings.logout')} />
-            </Settingse>
+            </SettingsSection>
         </div>
     </div>
   );
