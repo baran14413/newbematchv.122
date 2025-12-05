@@ -133,18 +133,26 @@ export default function ChatPage() {
     return <ChatSkeleton />;
   }
 
-  if (!matchData || !user) {
+  if (!matchData) {
     return (
         <div className="flex items-center justify-center h-full">
-            <p>DEBUG: Chat not found or user not logged in. Chat ID: {chatId}</p>
+            <p>Sohbet bulunamadı. ID: {chatId}</p>
         </div>
     );
   }
   
+  if (!user) {
+     return (
+        <div className="flex items-center justify-center h-full">
+            <p>Sisteme giriş yapmanız gerekiyor.</p>
+        </div>
+    );
+  }
+
   if (!otherUser) {
       return (
          <div className="flex items-center justify-center h-full">
-            <p>DEBUG: Could not load the other user's profile for this chat.</p>
+            <p>Sohbet edilecek kullanıcı bulunamadı.</p>
         </div>
       )
   }
