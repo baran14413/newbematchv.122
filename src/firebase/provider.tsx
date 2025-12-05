@@ -156,13 +156,17 @@ export const useFirebaseApp = (): FirebaseApp => {
 
 type MemoFirebase <T> = T & {__memo?: boolean};
 
-export function useMemoFirebase<T>(factory: () => T, deps: DependencyList): T | (MemoFirebase<T>) {
-  const memoized = useMemo(factory, deps);
-  
-  if(typeof memoized !== 'object' || memoized === null) return memoized;
-  (memoized as MemoFirebase<T>).__memo = true;
-  
-  return memoized;
+export function useMemoFirebase<T>(factory: () => T, deps: DependencyList): T {
+    const memoized = useMemo(factory, deps);
+    if (typeof memoized !== 'object' || memoized === null) return memoized;
+
+    // This is a hack to ensure that the memoized value is not a new object instance on every render.
+    // It's not a perfect solution, but it's a good enough heuristic for now.
+    // We can't use Object.is because it will always be false for new object instances.
+    // So we add a property to the object to mark it as memoized.
+    (memoized as MemoFirebase<T>).__memo = true;
+    
+    return memoized;
 }
 
 /**

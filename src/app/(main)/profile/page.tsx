@@ -10,9 +10,11 @@ import Image from 'next/image';
 import { useLanguage } from '@/context/language-context';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
+import { useUser } from '@/firebase';
 
 export default function ProfilePage() {
-  const userProfile = profiles[1]; // Using Alex as a sample profile
+  const { user } = useUser();
+  const userProfile = profiles[1]; // Using Alex as a sample profile, will be replaced with logged in user data
   const { t } = useLanguage();
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
 
@@ -35,7 +37,7 @@ export default function ProfilePage() {
   }
 
   return (
-    <div className="h-full overflow-y-auto p-4 md:p-6 bg-gray-50 dark:bg-black">
+    <div className="h-full p-4 md:p-6 bg-gray-50 dark:bg-black">
       <div className="max-w-2xl mx-auto space-y-8">
         {/* Header */}
         <div className="flex items-center justify-between">
@@ -44,12 +46,12 @@ export default function ProfilePage() {
             <div className="relative">
               <div className="absolute -inset-1 rounded-full bg-gradient-to-r from-primary via-yellow-400 to-orange-500 opacity-75 blur-lg animate-spin-slow"></div>
               <Avatar className="relative w-32 h-32 border-4 border-background">
-                <AvatarImage src={userProfile.avatarUrl} alt={userProfile.name} className="object-cover"/>
-                <AvatarFallback>{userProfile.name.charAt(0)}</AvatarFallback>
+                <AvatarImage src={user?.photoURL ?? userProfile.avatarUrl} alt={user?.displayName ?? userProfile.name} className="object-cover"/>
+                <AvatarFallback>{user?.displayName?.charAt(0) ?? userProfile.name.charAt(0)}</AvatarFallback>
               </Avatar>
             </div>
             <div className="text-center pt-2">
-              <h1 className="text-3xl font-bold">{userProfile.name}, {userProfile.age}</h1>
+              <h1 className="text-3xl font-bold">{user?.displayName ?? userProfile.name}, {userProfile.age}</h1>
             </div>
           </div>
           <div className="flex-1 flex justify-end">

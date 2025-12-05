@@ -3,10 +3,13 @@ import { useState, useMemo } from 'react';
 import { motion, useMotionValue, useTransform, PanInfo } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { X, Star, Heart, Undo2 } from 'lucide-react';
-import { profiles, type UserProfile } from '@/lib/data';
+import type { UserProfile } from '@/lib/data';
 import { useLanguage } from '@/context/language-context';
 import { useIsMobile } from '@/hooks/use-mobile';
 import ProfileCard from '@/components/discover/profile-card';
+import { useCollection, useFirestore, useUser, useMemoFirebase } from '@/firebase';
+import { collection, query, where } from 'firebase/firestore';
+import { Skeleton } from '@/components/ui/skeleton';
 
 type SwipeDirection = 'left' | 'right' | 'up';
 
@@ -60,12 +63,45 @@ const SwipeableCard = ({ profile, onSwipe, isTop }: { profile: UserProfile, onSw
   );
 };
 
+const DesktopProfileSkeleton = () => (
+    <div className="w-full max-w-md space-y-4">
+        <Skeleton className="h-[500px] w-full rounded-2xl" />
+        <div className="space-y-2">
+            <Skeleton className="h-4 w-3/4" />
+            <Skeleton className="h-4 w-1/2" />
+        </div>
+    </div>
+)
+
 
 export default function DiscoverPage() {
-  const [stack, setStack] = useState<UserProfile[]>(profiles);
+  const { user } = useUser();
+  const firestore = useFirestore();
+
+  const usersCollection = useMemoFirebase(() => {
+    if (!firestore) return null;
+    return collection(firestore, 'users');
+  }, [firestore]);
+  
+  const { data: profiles, isLoading } = useCollection<UserProfile>(usersCollection);
+
+  const filteredProfiles = useMemo(() => {
+    if (!profiles) return [];
+    if (!user) return profiles;
+    return profiles.filter(p => p.id !== user.uid);
+  }, [profiles, user]);
+
+  const [stack, setStack] = useState<UserProfile[]>([]);
   const [history, setHistory] = useState<UserProfile[]>([]);
   const { t } = useLanguage();
   const isMobile = useIsMobile();
+
+  // Populate stack when profiles are loaded
+  useMemo(() => {
+    if (filteredProfiles.length > 0) {
+        setStack(filteredProfiles)
+    }
+  }, [filteredProfiles]);
 
   const activeProfile = useMemo(() => stack[stack.length - 1], [stack]);
 
@@ -87,11 +123,28 @@ export default function DiscoverPage() {
     return null; // or a loading skeleton
   }
 
+  if (isLoading) {
+     return (
+         <div className="h-full w-full flex justify-center bg-gray-50 dark:bg-black p-4 md:p-8">
+            {isMobile ? 
+                <div className="w-full max-w-sm h-[65vh] max-h-[550px] relative flex items-center justify-center">
+                     <Skeleton className="w-full h-full rounded-2xl" />
+                </div>
+                : 
+                <div className='flex flex-col gap-8'>
+                    <DesktopProfileSkeleton />
+                    <DesktopProfileSkeleton />
+                </div>
+            }
+         </div>
+     )
+  }
+
   if (!isMobile) {
     return (
       <div className="h-full w-full flex justify-center bg-gray-50 dark:bg-black p-4 md:p-8">
         <div className="w-full max-w-md space-y-8">
-          {profiles.map((profile) => (
+          {filteredProfiles.map((profile) => (
             <ProfileCard key={profile.id} profile={profile} />
           ))}
         </div>
