@@ -18,8 +18,8 @@ export default function LoungePage() {
           <header className="p-4 border-b">
             <h1 className="text-2xl font-bold text-foreground">{t('lounge.conversations')}</h1>
           </header>
-          <ScrollArea className="flex-1 p-4">
-              <div className="flex flex-col gap-3">
+          <ScrollArea className="flex-1">
+              <div className="flex flex-col gap-3 p-4">
                 {conversations.map((convo) => (
                     <div key={convo.id} className={cn(
                         "p-3 flex items-center gap-4 cursor-pointer rounded-full border-2 border-transparent",
