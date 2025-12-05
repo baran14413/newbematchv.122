@@ -16,18 +16,17 @@ export default function StepLocation() {
 
   const getCityFromCoordinates = async (latitude: number, longitude: number) => {
     setIsLocating(true);
-    // NOTE: This uses a free, public API. For production, use a reliable, authenticated service like Google Maps Geocoding API.
+    // Using OpenStreetMap's Nominatim API, which is more reliable and doesn't require an API key for moderate usage.
     try {
-        const response = await fetch(`https://geocode.maps.co/reverse?lat=${latitude}&lon=${longitude}`);
+        const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
         if (!response.ok) throw new Error('Failed to fetch city.');
         const data = await response.json();
-        // Try to find a city-level name, fallback to county or other large administrative areas.
         const city = data.address.city || data.address.town || data.address.county || 'Bilinmeyen Konum';
         const countryCode = data.address.country_code.toUpperCase();
         return `${city}, ${countryCode}`;
     } catch (error) {
         console.error("Reverse geocoding error:", error);
-        toast({ variant: 'destructive', title: 'Konum alınamadı', description: 'Koordinatlar şehir adına çevrilemedi.' });
+        toast({ variant: 'destructive', title: 'Konum alınamadı', description: 'Konum bilgisi alınamadı. Lütfen internet bağlantınızı kontrol edip tekrar deneyin.' });
         return null;
     } finally {
         setIsLocating(false);
@@ -49,7 +48,7 @@ export default function StepLocation() {
         updateFormData(newFormData);
         setStepValid(true);
       }
-      setIsLocating(false);
+      // setIsLocating(false) is handled in getCityFromCoordinates's finally block
     }, (error) => {
       console.error("Geolocation error: ", error);
       toast({ variant: 'destructive', title: t('locationPage.permissionDenied') });
