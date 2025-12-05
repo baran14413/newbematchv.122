@@ -202,14 +202,12 @@
         "gender": {
             "yourGender": "Cinsiyetiniz",
             "woman": "Kadın",
-            "man": "Erkek",
-            "other": "Diğer"
+            "man": "Erkek"
         },
         "interestedIn": {
             "showMe": "Bana şunları göster",
             "men": "Erkekler",
-            "women": "Kadınlar",
-            "everyone": "Herkes"
+            "women": "Kadınlar"
         },
         "stepGoalsTitle": "Burada ne arıyorsunuz?",
         "goals": {
@@ -248,6 +246,9 @@
             "confirmPassword": "Şifreyi Onayla",
             "confirmPasswordPlaceholder": "Şifrenizi doğrulayın",
             "passwordMismatch": "Şifreler eşleşmiyor."
+        },
+        "welcome": {
+            "legal_agreement": "Hesabı oluşturarak, <terms>Kullanım Koşullarımızı</terms> ve <privacy>Gizlilik Politikamızı</privacy> kabul etmiş olursunuz."
         },
         "haveAccount": "Zaten bir hesabın var mı?",
         "login": "Giriş Yap",

@@ -202,14 +202,12 @@
         "gender": {
             "yourGender": "Your Gender",
             "woman": "Woman",
-            "man": "Man",
-            "other": "Other"
+            "man": "Man"
         },
         "interestedIn": {
             "showMe": "Show me",
             "men": "Men",
-            "women": "Women",
-            "everyone": "Everyone"
+            "women": "Women"
         },
         "stepGoalsTitle": "What are you looking for here?",
         "goals": {
@@ -248,6 +246,9 @@
             "confirmPassword": "Confirm Password",
             "confirmPasswordPlaceholder": "Confirm your password",
             "passwordMismatch": "Passwords do not match."
+        },
+        "welcome": {
+            "legal_agreement": "By creating an account, you agree to our <terms>Terms of Use</terms> and <privacy>Privacy Policy</privacy>."
         },
         "haveAccount": "Already have an account?",
         "login": "Log In",

@@ -34,6 +34,10 @@ export default function StepCredentials() {
 
   const passwordsDontMatch = isConfirmTouched && formData.confirmPassword && formData.password !== formData.confirmPassword;
 
+  const legalText = t('onboarding.welcome.legal_agreement');
+  const parts = legalText.split(/<terms>|<\/terms>|<privacy>|<\/privacy>/);
+
+
   return (
     <div className="flex flex-col h-full">
       <div className="flex-1 space-y-6">
@@ -99,11 +103,11 @@ export default function StepCredentials() {
       </div>
       <div className="mt-auto">
           <div className="text-center text-xs text-muted-foreground mb-4">
-            {t('onboarding.welcome.legal_prefix')}{' '}
-            <button onClick={() => setSheetContent('terms')} className="underline hover:text-primary">{t('onboarding.welcome.terms')}</button>
-            {' '}{t('onboarding.welcome.legal_and')}{' '}
-            <button onClick={() => setSheetContent('privacy')} className="underline hover:text-primary">{t('onboarding.welcome.privacy')}</button>
-            {t('onboarding.welcome.legal_suffix')}
+            {parts[0]}
+            <button onClick={() => setSheetContent('terms')} className="underline hover:text-primary">{parts[1]}</button>
+            {parts[2]}
+            <button onClick={() => setSheetContent('privacy')} className="underline hover:text-primary">{parts[3]}</button>
+            {parts[4]}
         </div>
       </div>
       <PolicySheet
