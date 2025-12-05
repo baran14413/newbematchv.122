@@ -21,15 +21,13 @@ export default function StepBio() {
 
   return (
     <div className="space-y-4 flex flex-col h-full">
-        <div className="flex-1">
-            <Textarea
-                placeholder={t('onboarding.bio.placeholder')}
-                value={formData.bio}
-                onChange={handleChange}
-                className="h-full resize-none text-base"
-                autoFocus
-            />
-        </div>
+        <Textarea
+            placeholder={t('onboarding.bio.placeholder')}
+            value={formData.bio}
+            onChange={handleChange}
+            className="flex-1 resize-none text-base"
+            autoFocus
+        />
       <p className="text-right text-sm text-muted-foreground">
         {t('onboarding.bio.remaining', { count: remainingChars })}
       </p>

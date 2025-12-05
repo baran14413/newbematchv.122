@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Flame, Loader2, X } from 'lucide-react';
+import { Flame, Loader2 } from 'lucide-react';
 import { useLanguage } from '@/context/language-context';
 import { useOnboardingContext } from '@/context/onboarding-context';
 import { useAuth, useFirestore, useStorage } from '@/firebase';
@@ -25,7 +25,7 @@ interface StepWelcomeProps {
 
 export default function StepWelcome({ onRegisterSuccess }: StepWelcomeProps) {
   const { t } = useLanguage();
-  const { formData, resetOnboarding } = useOnboardingContext();
+  const { formData } = useOnboardingContext();
   const auth = useAuth();
   const firestore = useFirestore();
   const storage = useStorage();
@@ -121,14 +121,6 @@ export default function StepWelcome({ onRegisterSuccess }: StepWelcomeProps) {
 
   return (
     <div className="flex flex-col h-full relative">
-        <Button 
-            variant="ghost" 
-            size="icon" 
-            className="absolute top-0 right-0"
-            onClick={resetOnboarding}
-        >
-            <X className="w-5 h-5 text-muted-foreground" />
-        </Button>
         <motion.div 
             className="flex-1"
             initial={{ opacity: 0, y: 20 }}
