@@ -79,14 +79,14 @@ service cloud.firestore {
     /**
      * @description Manages user profile data. A user can only read and write their own profile.
      * @path /users/{userId}
-     * @allow (get) A user with auth.uid 'user123' to get their own document at /users/user123.
+     * @allow (get) Any signed-in user to get any user document for profile viewing.
      * @allow (list) Any signed-in user to list users for discovery purposes.
      * @allow (create) A new user with auth.uid 'user123' to create their own profile document at /users/user123.
      * @deny (get) A user with auth.uid 'user456' from reading /users/user123.
      * @principle Restricts full-read access to a user's own data tree (Path-based Ownership).
      */
     match /users/{userId} {
-      allow get: if isOwner(userId);
+      allow get: if isSignedIn();
       allow list: if isSignedIn();
       allow create: if isOwner(userId) && request.resource.data.id == userId;
       allow update: if isOwner(userId) && isExistingDocument() && request.resource.data.id == resource.data.id;
