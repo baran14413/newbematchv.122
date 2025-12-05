@@ -39,7 +39,7 @@ function formatLastSeen(timestamp: any, locale: Locale) {
     return formatDistanceToNowStrict(date, { addSuffix: true, locale });
 }
 
-const ReactionTooltip = ({ children, onReaction, onEdit, onDelete }: { children: React.ReactNode, onReaction: (emoji: string) => void, onEdit: () => void; onDelete: () => void; }) => {
+const ReactionTooltip = ({ children, onReaction }: { children: React.ReactNode, onReaction: (emoji: string) => void }) => {
     const popularEmojis = ['👍', '❤️', '😂', '😮', '😢', '🙏'];
     const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
 
@@ -75,6 +75,31 @@ const ReactionTooltip = ({ children, onReaction, onEdit, onDelete }: { children:
         </TooltipProvider>
     )
 }
+
+const MessageOptions = ({ onEdit, onDelete }: { onEdit: () => void; onDelete: () => void; }) => {
+    return (
+        <Popover>
+            <PopoverTrigger asChild>
+                <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity">
+                    <MoreHorizontal className="w-5 h-5"/>
+                </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-1">
+                 <div className="flex flex-col">
+                    <Button variant="ghost" onClick={onEdit} className="justify-start px-2 py-1 h-auto">
+                        <Pencil className="w-4 h-4 mr-2"/>
+                        Düzenle
+                    </Button>
+                    <Button variant="ghost" onClick={onDelete} className="justify-start px-2 py-1 h-auto text-red-500 hover:text-red-500 hover:bg-red-500/10">
+                        <Trash2 className="w-4 h-4 mr-2"/>
+                        Sil
+                    </Button>
+                </div>
+            </PopoverContent>
+        </Popover>
+    )
+}
+
 
 const ChatSkeleton = () => (
     <div className="flex flex-col h-screen bg-zinc-900">
@@ -305,44 +330,47 @@ export default function ChatPage() {
                 <div className="space-y-1">
                 {messages?.map((message) => (
                     <div
-                    key={message.id}
-                    className={cn("flex items-center w-full group py-1", message.senderId === user?.uid ? 'justify-end' : 'justify-start')}
+                        key={message.id}
+                        className={cn("flex items-center w-full group py-1", message.senderId === user?.uid ? 'justify-end' : 'justify-start')}
                     >
-                    <div className={cn("flex items-end gap-2", message.senderId === user?.uid ? 'flex-row-reverse' : 'flex-row')}>
-                        <ReactionTooltip onReaction={(emoji) => handleReaction(message.id, emoji)} onEdit={() => handleEditMessage(message)} onDelete={() => handleDeleteMessage(message.id)}>
-                            <div
-                                className={cn(
-                                    "max-w-[70%] p-3 rounded-2xl flex flex-col relative",
-                                    message.senderId === user?.uid
-                                    ? 'bg-primary text-primary-foreground rounded-br-sm'
-                                    : 'bg-zinc-800 text-white rounded-bl-sm'
-                                )}
-                            >
-                                {message.text && <p className='break-words'>{message.text}</p>}
-                                <div className="flex items-center justify-end gap-1.5 self-end mt-1 -mb-1">
-                                    {message.isEdited && <span className="text-xs text-muted-foreground italic mr-1">(düzenlendi)</span>}
-                                    <span className={cn("text-xs", message.senderId === user?.uid ? "text-primary-foreground/70" : "text-zinc-400")}>
-                                        {formatMessageTimestamp(message.timestamp)}
-                                    </span>
-                                    {message.senderId === user?.uid && (
-                                        <CheckCheck className="w-4 h-4 text-blue-300" />
+                        <div className={cn("flex items-end gap-2", message.senderId === user?.uid ? 'flex-row-reverse' : 'flex-row')}>
+                            <ReactionTooltip onReaction={(emoji) => handleReaction(message.id, emoji)}>
+                                <div
+                                    className={cn(
+                                        "max-w-[70%] p-3 rounded-2xl flex flex-col relative",
+                                        message.senderId === user?.uid
+                                        ? 'bg-primary text-primary-foreground rounded-br-sm'
+                                        : 'bg-zinc-800 text-white rounded-bl-sm'
+                                    )}
+                                >
+                                    {message.text && <p className='break-words pr-12'>{message.text}</p>}
+                                    <div className="flex items-center justify-end gap-1.5 self-end mt-1 -mb-1">
+                                        {message.isEdited && (
+                                             <span className="text-xs text-primary-foreground/70 dark:text-zinc-400 italic mr-1">(düzenlendi)</span>
+                                        )}
+                                        <span className={cn("text-xs", message.senderId === user?.uid ? "text-primary-foreground/70" : "text-zinc-400")}>
+                                            {formatMessageTimestamp(message.timestamp)}
+                                        </span>
+                                        {message.senderId === user?.uid && message.isRead && (
+                                            <CheckCheck className="w-4 h-4 text-blue-300" />
+                                        )}
+                                    </div>
+                                    {message.reactions && Object.keys(message.reactions).length > 0 && (
+                                        <div className="absolute -bottom-4 right-0 flex items-center gap-1">
+                                            {Object.entries(message.reactions).map(([emoji, users]) => (
+                                                (users as string[]).length > 0 && (
+                                                    <div key={emoji} className="flex items-center bg-zinc-700/80 backdrop-blur-sm rounded-full p-0.5 pr-1.5 border border-zinc-600">
+                                                        <span className="text-xs">{emoji}</span>
+                                                        {(users as string[]).length > 1 && <span className="text-xs font-bold text-zinc-300 ml-1">{(users as string[]).length}</span>}
+                                                    </div>
+                                                )
+                                            ))}
+                                        </div>
                                     )}
                                 </div>
-                                {message.reactions && Object.keys(message.reactions).length > 0 && (
-                                     <div className="absolute -bottom-4 right-0 flex items-center gap-1">
-                                        {Object.entries(message.reactions).map(([emoji, users]) => (
-                                            (users as string[]).length > 0 && (
-                                                <div key={emoji} className="flex items-center bg-zinc-700/80 backdrop-blur-sm rounded-full p-0.5 pr-1.5 border border-zinc-600">
-                                                    <span className="text-xs">{emoji}</span>
-                                                    {(users as string[]).length > 1 && <span className="text-xs font-bold text-zinc-300 ml-1">{(users as string[]).length}</span>}
-                                                </div>
-                                            )
-                                        ))}
-                                    </div>
-                                )}
-                            </div>
-                        </ReactionTooltip>
-                    </div>
+                            </ReactionTooltip>
+                             <MessageOptions onEdit={() => handleEditMessage(message)} onDelete={() => handleDeleteMessage(message.id)} />
+                        </div>
                     </div>
                 ))}
                 </div>
