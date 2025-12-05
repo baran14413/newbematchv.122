@@ -123,7 +123,10 @@ export default function DiscoverPage() {
   const { data: currentUserProfile } = useDoc<UserProfile>(currentUserDocRef);
 
   const usersQuery = useMemoFirebase(() => {
-    if (!firestore || !currentUserProfile) return null;
+    // Wait until firestore, the user profile, and the preference are loaded
+    if (!firestore || !currentUserProfile || !currentUserProfile.interestedIn) {
+      return null;
+    }
 
     const baseQuery = collection(firestore, 'users');
     const interestedIn = currentUserProfile.interestedIn;
@@ -369,5 +372,3 @@ export default function DiscoverPage() {
     </div>
   );
 }
-
-    
