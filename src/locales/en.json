@@ -191,6 +191,7 @@
         "stepAgeTitle": "What is your date of birth?",
         "ageInfo": "You must be 18 or older to continue.",
         "currentAge": "Your Age: {age}",
+        "invalidDate": "Please enter a valid date.",
         "stepGoalsTitle": "What are you looking for here?",
         "goals": {
             "longTerm": "Long-term relationship",
@@ -252,7 +253,13 @@
         "reload": "Reload",
         "daysAgo": "days ago",
         "nowActive": "Active now",
-        "edit": "Edit"
+        "edit": "Edit",
+        "day": "Day",
+        "month": "Month",
+        "year": "Year",
+        "dayPlaceholder": "DD",
+        "monthPlaceholder": "MM",
+        "yearPlaceholder": "YYYY"
     },
     "interests": {
         "music": "Music",

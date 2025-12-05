@@ -191,6 +191,7 @@
         "stepAgeTitle": "Doğum tarihin nedir?",
         "ageInfo": "Devam etmek için 18 yaşında veya daha büyük olmalısın.",
         "currentAge": "Yaşın: {age}",
+        "invalidDate": "Lütfen geçerli bir tarih girin.",
         "stepGoalsTitle": "Burada ne arıyorsunuz?",
         "goals": {
             "longTerm": "Uzun süreli ilişki",
@@ -252,7 +253,13 @@
         "reload": "Tekrar Yükle",
         "daysAgo": "gün önce",
         "nowActive": "Şimdi aktif",
-        "edit": "Düzenle"
+        "edit": "Düzenle",
+        "day": "Gün",
+        "month": "Ay",
+        "year": "Yıl",
+        "dayPlaceholder": "GG",
+        "monthPlaceholder": "AA",
+        "yearPlaceholder": "YYYY"
     },
     "interests": {
         "music": "Müzik",

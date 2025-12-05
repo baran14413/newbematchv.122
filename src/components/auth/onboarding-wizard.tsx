@@ -35,12 +35,14 @@ export default function OnboardingWizard({ onSwitchView, onRegisterSuccess }: On
 
   const CurrentStepComponent = steps[currentStep].component;
 
+  const isExpandedStep = currentStep === 5 || currentStep === 6;
+
   return (
     <div className="w-full h-full flex flex-col bg-background">
-        <div className="p-6">
+        <div className="p-4">
             <StepIndicator currentStep={currentStep} totalSteps={steps.length} />
         </div>
-        <div className="flex-1 flex flex-col overflow-hidden">
+        <div className="flex-1 flex flex-col overflow-hidden px-6">
            <AnimatePresence mode="wait">
              <motion.div
                 key={currentStep}
@@ -50,14 +52,16 @@ export default function OnboardingWizard({ onSwitchView, onRegisterSuccess }: On
                 transition={{ duration: 0.3, ease: 'easeInOut' }}
                 className="w-full flex-1 flex flex-col"
               >
-                <div className="px-6 pb-8 flex-1">
-                    <h2 className="text-3xl font-bold mb-8 text-center">{steps[currentStep].title}</h2>
+                <div className="text-center pt-2 pb-6">
+                    <h2 className="text-3xl font-bold">{steps[currentStep].title}</h2>
+                </div>
+                <div className={isExpandedStep ? "flex-1" : ""}>
                     <CurrentStepComponent />
                 </div>
               </motion.div>
            </AnimatePresence>
         </div>
-        <div className="p-6 space-y-4">
+        <div className="p-4 space-y-3">
           <WizardControls totalSteps={steps.length} onRegisterSuccess={onRegisterSuccess} />
            <p className="text-sm text-muted-foreground text-center">
                 {t('onboarding.haveAccount')}{' '}

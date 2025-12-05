@@ -39,19 +39,21 @@ export default function StepPhotos() {
   };
 
   return (
-    <div className="space-y-4">
-      <p className="text-center text-muted-foreground text-sm">
-        {t('onboarding.photos.info')}
-      </p>
-      <p className="text-center text-muted-foreground text-xs italic">
-        {t('onboarding.photos.profilePhotoHint')}
-      </p>
-      <div className="grid grid-cols-3 gap-3">
+    <div className="space-y-4 flex flex-col h-full">
+      <div className="text-center space-y-1">
+        <p className="text-muted-foreground text-sm">
+          {t('onboarding.photos.info')}
+        </p>
+        <p className="text-muted-foreground text-xs italic">
+          {t('onboarding.photos.profilePhotoHint')}
+        </p>
+      </div>
+      <div className="grid grid-cols-3 gap-3 flex-1">
         {Array.from({ length: MAX_PHOTOS }).map((_, index) => {
           const photo = formData.photos[index];
           if (photo) {
             return (
-              <div key={index} className="relative aspect-square">
+              <div key={index} className="relative aspect-[3/4]">
                 {index === 0 && (
                   <div className="absolute top-1 left-1 bg-black/60 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full z-10">{t('profile.title')}</div>
                 )}
@@ -77,17 +79,17 @@ export default function StepPhotos() {
               <button
                 key={index}
                 onClick={triggerFileInput}
-                className="aspect-square flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-primary/50 text-primary hover:bg-primary/5 transition-colors"
+                className="aspect-[3/4] flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-primary/50 text-primary hover:bg-primary/5 transition-colors"
               >
                 <Plus className="w-8 h-8" />
-                <span className="text-xs font-semibold">{t('onboarding.photos.addButton')}</span>
+                <span className="text-xs font-semibold mt-1">{t('onboarding.photos.addButton')}</span>
               </button>
             );
           }
           return (
             <div
               key={index}
-              className="aspect-square flex items-center justify-center rounded-lg bg-gray-100 border-2 border-dashed border-gray-200"
+              className="aspect-[3/4] flex items-center justify-center rounded-lg bg-gray-100 dark:bg-card border-2 border-dashed border-gray-200 dark:border-gray-700"
             />
           );
         })}
