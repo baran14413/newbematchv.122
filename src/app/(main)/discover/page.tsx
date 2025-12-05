@@ -1,5 +1,5 @@
 'use client';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useCallback } from 'react';
 import { motion, useMotionValue, useTransform, PanInfo } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { X, Star, Heart, Undo2 } from 'lucide-react';
@@ -14,6 +14,8 @@ import { Sheet, SheetContent } from '@/components/ui/sheet';
 import ProfileDetails from '@/components/discover/profile-details';
 
 type SwipeDirection = 'left' | 'right' | 'up';
+
+const MAX_VISIBLE_CARDS = 3;
 
 const SwipeableCard = ({
   profile,
@@ -90,13 +92,14 @@ export default function DiscoverPage() {
   const { t } = useLanguage();
   const isMobile = useIsMobile();
   
-  const [stack, setStack] = useState<UserProfile[]>([]);
-  const [history, setHistory] = useState<UserProfile[]>([]);
   const [detailsProfile, setDetailsProfile] = useState<UserProfile | null>(null);
+
+  const [profileIndex, setProfileIndex] = useState(0);
+  const [visibleStack, setVisibleStack] = useState<UserProfile[]>([]);
+  const [history, setHistory] = useState<UserProfile[]>([]);
 
   const usersQuery = useMemoFirebase(() => {
     if (!firestore) return null;
-    // Basic query: fetch all users. In a real app, you'd filter by location, preferences, and exclude swiped users.
     return query(collection(firestore, 'users'));
   }, [firestore]);
 
@@ -104,7 +107,6 @@ export default function DiscoverPage() {
 
   const filteredProfiles = useMemo(() => {
     if (!profiles) return [];
-    // Add a random distance to each profile for demo purposes
     const profilesWithDistance = profiles.map(p => ({
         ...p,
         distance: Math.floor(Math.random() * 50) + 1
@@ -113,30 +115,65 @@ export default function DiscoverPage() {
     return profilesWithDistance.filter(p => p.id !== user.uid);
   }, [profiles, user]);
 
-  // Populate stack when profiles are loaded
-  useMemo(() => {
+  
+  useEffect(() => {
     if (filteredProfiles.length > 0) {
-        setStack([...filteredProfiles].reverse());
-    } else {
-        setStack([])
+      const initialStack = filteredProfiles.slice(profileIndex, profileIndex + MAX_VISIBLE_CARDS).reverse();
+      setVisibleStack(initialStack);
     }
-  }, [filteredProfiles]);
+  }, [filteredProfiles, profileIndex]);
 
-  const activeProfile = useMemo(() => stack[stack.length - 1], [stack]);
 
-  const handleSwipe = (direction: SwipeDirection) => {
-    if (!activeProfile) return;
-    setHistory(prev => [activeProfile, ...prev]);
-    setStack(prev => prev.slice(0, prev.length - 1));
-  };
+  const handleSwipe = useCallback(() => {
+    if (visibleStack.length === 0) return;
+
+    // Add current profile to history
+    const swipedProfile = visibleStack[visibleStack.length - 1];
+    setHistory(prev => [swipedProfile, ...prev]);
+
+    // Move to the next profile in the main list
+    const nextIndex = profileIndex + 1;
+    setProfileIndex(nextIndex);
+
+    // Update visible stack: remove swiped, add next one if available
+    setVisibleStack(prev => {
+        const newStack = prev.slice(0, prev.length - 1);
+        const nextProfile = filteredProfiles[nextIndex + MAX_VISIBLE_CARDS - 1];
+        if (nextProfile) {
+            // Add to the "bottom" of the stack (beginning of the array)
+            return [nextProfile, ...newStack];
+        }
+        return newStack;
+    });
+
+  }, [visibleStack, profileIndex, filteredProfiles]);
 
   const undoSwipe = () => {
     if (history.length > 0) {
       const lastSwipedProfile = history[0];
       setHistory(prev => prev.slice(1));
-      setStack(prev => [...stack, lastSwipedProfile]);
+      
+      const newProfileIndex = profileIndex - 1;
+      setProfileIndex(newProfileIndex);
+
+      setVisibleStack(prev => {
+        // Add the undone profile to the top of the stack
+        const newStack = [...prev];
+        if (newStack.length >= MAX_VISIBLE_CARDS) {
+            newStack.shift(); // Remove card from the bottom
+        }
+        newStack.push(lastSwipedProfile);
+        return newStack;
+      });
     }
   };
+
+  const manualSwipe = (direction: SwipeDirection) => {
+    if (visibleStack.length > 0) {
+      handleSwipe();
+    }
+  }
+
 
   if (isMobile === undefined) {
     return null; // or a loading skeleton
@@ -179,24 +216,24 @@ export default function DiscoverPage() {
     <div className="h-full w-full flex flex-col bg-gray-50 dark:bg-black overflow-hidden">
       <div className="flex-1 flex flex-col items-center justify-center px-4">
         <div className="w-full max-w-sm h-[70vh] max-h-[600px] relative flex items-center justify-center">
-          {stack.length > 0 ? (
-            stack.map((profile, index) => {
-              const isTop = index === stack.length - 1;
+          {visibleStack.length > 0 ? (
+            visibleStack.map((profile, index) => {
+              const isTop = index === visibleStack.length - 1;
+              const stackIndex = visibleStack.length - 1 - index;
               return (
                 <motion.div
                   key={profile.id}
                   initial={{
                     y: 0,
-                    scale: 1 - (stack.length - 1 - index) * 0.05,
-                    opacity: index === stack.length - 1 ? 1 : 0
+                    scale: 1 - stackIndex * 0.05,
+                    opacity: index === visibleStack.length - 1 ? 1 : 0
                   }}
                   animate={{
-                    y: (stack.length - 1 - index) * -10,
-                    scale: 1 - (stack.length - 1 - index) * 0.05,
-                    opacity: index >= stack.length - 2 ? 1 : 0
+                    y: stackIndex * -10,
+                    scale: 1 - stackIndex * 0.05,
+                    opacity: stackIndex < MAX_VISIBLE_CARDS -1 ? 1 : (isTop ? 1 : 0),
                   }}
                   exit={{
-                    x: (info) => (info.offset.x > 0 ? 300 : -300),
                     opacity: 0,
                     scale: 0.9,
                     transition: { duration: 0.3 }
@@ -226,13 +263,13 @@ export default function DiscoverPage() {
           <Button variant="outline" className="p-4 rounded-full bg-white shadow" onClick={undoSwipe} disabled={history.length === 0}>
             <Undo2 className="w-6 h-6 text-yellow-500" />
           </Button>
-          <Button variant="outline" className="p-5 rounded-full bg-white shadow" onClick={() => handleSwipe('left')}>
+          <Button variant="outline" className="p-5 rounded-full bg-white shadow" onClick={() => manualSwipe('left')}>
             <X className="w-8 h-8 text-destructive" />
           </Button>
-          <Button variant="outline" className="p-4 rounded-full bg-white shadow" onClick={() => handleSwipe('up')}>
+          <Button variant="outline" className="p-4 rounded-full bg-white shadow" onClick={() => manualSwipe('up')}>
             <Star className="w-6 h-6 text-blue-500" />
           </Button>
-          <Button variant="outline" className="p-5 rounded-full bg-white shadow" onClick={() => handleSwipe('right')}>
+          <Button variant="outline" className="p-5 rounded-full bg-white shadow" onClick={() => manualSwipe('right')}>
             <Heart className="w-8 h-8 text-green-500" />
           </Button>
         </div>
@@ -245,3 +282,5 @@ export default function DiscoverPage() {
     </div>
   );
 }
+
+    
