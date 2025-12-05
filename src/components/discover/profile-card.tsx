@@ -2,9 +2,11 @@
 import { useState } from 'react';
 import type { UserProfile } from '@/lib/data';
 import Image from 'next/image';
-import { MapPin, Info } from 'lucide-react';
+import { MapPin, Info, Music, Dumbbell, Plane, Clapperboard, Gamepad2, BookOpen, Utensils, Camera, Mountain, PartyPopper } from 'lucide-react';
 import { Button } from '../ui/button';
+import { Badge } from '../ui/badge';
 import { cn } from '@/lib/utils';
+import { useLanguage } from '@/context/language-context';
 
 type ProfileCardProps = {
   profile: UserProfile;
@@ -12,8 +14,23 @@ type ProfileCardProps = {
   isTopCard: boolean;
 };
 
+const interestIcons: { [key: string]: React.ElementType } = {
+  music: Music,
+  sports: Dumbbell,
+  travel: Plane,
+  movies: Clapperboard,
+  gaming: Gamepad2,
+  reading: BookOpen,
+  cooking: Utensils,
+  photography: Camera,
+  hiking: Mountain,
+  dancing: PartyPopper,
+  // Add other interests with their icons here
+};
+
 export default function ProfileCard({ profile, onShowDetails, isTopCard }: ProfileCardProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const { t } = useLanguage();
   const totalImages = profile.imageUrls?.length || 1;
 
   const navigateImages = (e: React.MouseEvent, direction: 'next' | 'prev') => {
@@ -27,6 +44,8 @@ export default function ProfileCard({ profile, onShowDetails, isTopCard }: Profi
       setCurrentImageIndex((prev) => Math.max(prev - 1, 0));
     }
   };
+
+  const displayedInterests = profile.interests?.slice(0, 2) || [];
 
   return (
     <div className="w-full h-full bg-card rounded-2xl shadow-lg overflow-hidden relative group">
@@ -61,15 +80,33 @@ export default function ProfileCard({ profile, onShowDetails, isTopCard }: Profi
           </>
         )}
 
-        <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
+        <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/30 to-transparent"></div>
         <div className="absolute bottom-0 left-0 p-6 text-white w-full">
             <h2 className="text-4xl font-bold">{profile.name}, {profile.age}</h2>
             <div className="flex items-center gap-2 mt-1">
                 <MapPin className="w-5 h-5" />
                 <p>{profile.location}</p>
             </div>
-            {profile.distance && (
+            {profile.distance !== undefined && (
                  <p className="text-sm mt-1">{profile.distance} km uzaklıkta</p>
+            )}
+
+            {displayedInterests.length > 0 && (
+              <div className="flex flex-wrap gap-2 mt-4">
+                {displayedInterests.map((interest) => {
+                  const Icon = interestIcons[interest] || null;
+                  return (
+                    <Badge
+                      key={interest}
+                      variant="secondary"
+                      className="bg-black/40 text-white border-white/30 backdrop-blur-sm"
+                    >
+                      {Icon && <Icon className="w-4 h-4 mr-1.5" />}
+                      {t(`interests.${interest}`)}
+                    </Badge>
+                  );
+                })}
+              </div>
             )}
         </div>
          <Button 
@@ -87,5 +124,3 @@ export default function ProfileCard({ profile, onShowDetails, isTopCard }: Profi
     </div>
   );
 }
-
-    
