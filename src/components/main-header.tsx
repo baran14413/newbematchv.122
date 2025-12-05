@@ -17,7 +17,7 @@ const MainHeader = () => {
     ];
     
     return (
-        <header className="flex items-center justify-between p-4 h-16 border-b border-border bg-background z-10">
+        <header className={cn("flex items-center justify-between p-4 h-16 border-b border-border bg-background z-10", "pt-[env(safe-area-inset-top)]")}>
             <Link href="/discover">
                 <h1 className="text-2xl font-bold text-primary tracking-tight">BeMatch</h1>
             </Link>

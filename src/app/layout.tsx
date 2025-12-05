@@ -16,6 +16,18 @@ const poppins = Poppins({
 export const metadata: Metadata = {
   title: 'BeMatch',
   description: 'Mükemmel eşini bul.',
+  viewport: {
+    width: 'device-width',
+    initialScale: 1,
+    maximumScale: 1,
+    userScalable: false,
+    viewportFit: 'cover',
+  },
+  appleWebApp: {
+    capable: true,
+    statusBarStyle: 'black-translucent',
+    title: 'BeMatch',
+  },
 };
 
 export default function RootLayout({
@@ -31,10 +43,6 @@ export default function RootLayout({
           defaultTheme="system"
           enableSystem
           disableTransitionOnChange
-          style={{ 
-            paddingTop: 'env(safe-area-inset-top)',
-            paddingBottom: 'env(safe-area-inset-bottom)',
-          }}
         >
           <LanguageProvider>
             <OnboardingProvider>
