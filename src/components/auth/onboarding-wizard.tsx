@@ -6,6 +6,7 @@ import StepAge from '@/components/auth/steps/step-age';
 import StepGoals from '@/components/auth/steps/step-goals';
 import StepInterests from '@/components/auth/steps/step-interests';
 import StepLocation from '@/components/auth/steps/step-location';
+import StepBio from '@/components/auth/steps/step-bio';
 import StepPhotos from '@/components/auth/steps/step-photos';
 import StepCredentials from '@/components/auth/steps/step-credentials';
 import WizardControls from '@/components/auth/wizard-controls';
@@ -29,13 +30,14 @@ export default function OnboardingWizard({ onSwitchView, onRegisterSuccess }: On
     { component: StepGoals, title: t('onboarding.stepGoalsTitle') },
     { component: StepInterests, title: t('onboarding.stepInterestsTitle') },
     { component: StepLocation, title: t('onboarding.stepLocationTitle') },
+    { component: StepBio, title: t('onboarding.stepBioTitle') },
     { component: StepPhotos, title: t('onboarding.stepPhotosTitle') },
     { component: StepCredentials, title: t('onboarding.stepCredentialsTitle') },
   ];
 
   const CurrentStepComponent = steps[currentStep].component;
 
-  const isExpandedStep = currentStep === 5 || currentStep === 6;
+  const isExpandedStep = [5, 6, 7].includes(currentStep);
 
   return (
     <div className="w-full h-full flex flex-col bg-background">

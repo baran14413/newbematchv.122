@@ -14,6 +14,7 @@ interface FormData {
   location: string;
   locationEnabled: boolean;
   maxDistance: number;
+  bio: string;
   photos: string[];
   email: string;
   password: string;
@@ -47,6 +48,7 @@ export const OnboardingProvider = ({ children }: { children: ReactNode }) => {
     location: '',
     locationEnabled: false,
     maxDistance: 25,
+    bio: '',
     photos: [],
     email: '',
     password: '',

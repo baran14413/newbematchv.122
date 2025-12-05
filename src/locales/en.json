@@ -206,6 +206,11 @@
             "currentCity": "Your current city",
             "maxDistance": "Maximum Distance"
         },
+        "stepBioTitle": "Tell us about yourself",
+        "bio": {
+            "placeholder": "Write a few sentences about yourself...",
+            "remaining": "{count} characters remaining"
+        },
         "stepPhotosTitle": "Add your best photos",
         "photos": {
             "info": "Add at least 1 photo to continue. You can add up to 6 photos.",

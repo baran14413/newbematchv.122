@@ -64,7 +64,7 @@ export default function WizardControls({ totalSteps, onRegisterSuccess }: Wizard
           name: `${formData.firstName} ${formData.lastName}`, // For easy display
           age: formData.age,
           dateOfBirth: formData.dateOfBirth ? Timestamp.fromDate(formData.dateOfBirth) : null,
-          bio: "", // Add a bio step later if needed
+          bio: formData.bio,
           location: formData.location,
           interests: formData.interests,
           goal: formData.goal,

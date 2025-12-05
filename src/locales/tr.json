@@ -206,6 +206,11 @@
             "currentCity": "Şu anki şehrin",
             "maxDistance": "Maksimum Mesafe"
         },
+        "stepBioTitle": "Bize kendinden bahset",
+        "bio": {
+            "placeholder": "Kendin hakkında bir şeyler yaz...",
+            "remaining": "{count} karakter kaldı"
+        },
         "stepPhotosTitle": "En iyi fotoğraflarını ekle",
         "photos": {
             "info": "Devam etmek için en az 1 fotoğraf ekle. En fazla 6 fotoğraf ekleyebilirsin.",
