@@ -5,9 +5,7 @@
         "job": "Yazılım Mühendisi"
     },
     "likes": {
-        "title": "Beğeniler",
-        "likesYou": "Seni Beğenenler",
-        "superLikes": "Süper Beğeniler"
+        "title": "Beğeniler"
     },
     "lounge": {
         "title": "Sohbet",
@@ -68,7 +66,13 @@
         }
     },
     "galleryPage": {
-        "description": "Fotoğraflarını ekle, çıkar veya yeniden sırala."
+        "description": "Fotoğraflarını ekle, çıkar veya yeniden sırala.",
+        "uploading": "Yükleniyor...",
+        "photoAdded": "Fotoğraf başarıyla eklendi!",
+        "errorAddingPhoto": "Fotoğraf eklenirken hata oluştu.",
+        "photoRemoved": "Fotoğraf başarıyla kaldırıldı.",
+        "errorRemovingPhoto": "Fotoğraf kaldırılırken hata oluştu.",
+        "errorLastPhoto": "Son fotoğrafını silemezsin."
     },
     "personalInfoPage": {
         "title": "Kişisel Bilgiler",
@@ -103,8 +107,14 @@
         "currentLocation": "Mevcut Konum",
         "infoText": "BeMatch, sana daha iyi öneriler sunmak için cihazının konumunu kullanır. Konumunu sadece eşleşme potansiyeli olan kişilere yaklaşık bir mesafede göstermek için kullanırız.",
         "updateLocation": "Konumu Güncelle",
+        "updatingLocation": "Güncelleniyor...",
         "updateToastTitle": "Konum Güncellendi!",
-        "updateToastDescription": "Yeni konumun başarıyla ayarlandı."
+        "updateToastDescription": "Yeni konumun başarıyla ayarlandı.",
+        "newLocation": "Yeni konum",
+        "noSupport": "Bu tarayıcı konum servisini desteklemiyor.",
+        "permissionDenied": "Konum izni reddedildi. Lütfen tarayıcı ayarlarından izin verin.",
+        "errorUpdating": "Profildeki konum güncellenemedi.",
+        "findingLocation": "Konum bulunuyor..."
     },
     "preferencesPage": {
         "title": "Tercihler",

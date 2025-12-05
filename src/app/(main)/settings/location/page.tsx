@@ -1,22 +1,81 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { MapPin, ArrowLeft } from "lucide-react";
+import { MapPin, ArrowLeft, Loader2 } from "lucide-react";
 import { useToast } from '@/hooks/use-toast';
 import Link from 'next/link';
 import { useLanguage } from '@/context/language-context';
+import { useUser, useFirestore, useDoc, useMemoFirebase } from '@/firebase';
+import { doc, updateDoc } from 'firebase/firestore';
 
 export default function LocationPage() {
-    const [currentLocation, setCurrentLocation] = useState("İstanbul, TR");
-    const { toast } = useToast();
     const { t } = useLanguage();
+    const { user } = useUser();
+    const firestore = useFirestore();
+    const { toast } = useToast();
+    
+    const userDocRef = useMemoFirebase(() => {
+        if (!user) return null;
+        return doc(firestore, 'users', user.uid);
+    }, [firestore, user]);
+
+    const { data: userProfile } = useDoc(userDocRef);
+
+    const [currentLocation, setCurrentLocation] = useState("...");
+    const [isUpdating, setIsUpdating] = useState(false);
+
+    useEffect(() => {
+        if (userProfile?.location) {
+            setCurrentLocation(userProfile.location);
+        }
+    }, [userProfile]);
+
+    const getCityFromCoordinates = async (latitude: number, longitude: number) => {
+        // NOTE: This uses a free, public API. For production, use a reliable, authenticated service like Google Maps Geocoding API.
+        try {
+            const response = await fetch(`https://geocode.maps.co/reverse?lat=${latitude}&lon=${longitude}`);
+            if (!response.ok) throw new Error('Failed to fetch city.');
+            const data = await response.json();
+            const city = data.address.city || data.address.town || data.address.county || 'Bilinmeyen Konum';
+            const countryCode = data.address.country_code.toUpperCase();
+            return `${city}, ${countryCode}`;
+        } catch (error) {
+            console.error("Reverse geocoding error:", error);
+            toast({ variant: 'destructive', title: 'Konum alınamadı', description: 'Koordinatlar şehir adına çevrilemedi.' });
+            return null;
+        }
+    };
+
 
     const handleUpdateLocation = () => {
-        // Mock function for location update
-        toast({
-            title: t('locationPage.updateToastTitle'),
-            description: t('locationPage.updateToastDescription'),
+        if (!navigator.geolocation) {
+             toast({ variant: 'destructive', title: t('locationPage.noSupport') });
+             return;
+        }
+        
+        setIsUpdating(true);
+        navigator.geolocation.getCurrentPosition(async (position) => {
+            const { latitude, longitude } = position.coords;
+            const locationString = await getCityFromCoordinates(latitude, longitude);
+
+            if (locationString && userDocRef) {
+                try {
+                    await updateDoc(userDocRef, { location: locationString });
+                    setCurrentLocation(locationString);
+                    toast({
+                        title: t('locationPage.updateToastTitle'),
+                        description: `${t('locationPage.newLocation')}: ${locationString}`,
+                    });
+                } catch (error) {
+                     toast({ variant: 'destructive', title: t('locationPage.errorUpdating') });
+                }
+            }
+             setIsUpdating(false);
+        }, (error) => {
+            console.error("Geolocation error: ", error);
+             toast({ variant: 'destructive', title: t('locationPage.permissionDenied') });
+             setIsUpdating(false);
         });
     };
 
@@ -47,8 +106,9 @@ export default function LocationPage() {
                         <p className="text-sm text-muted-foreground">
                             {t('locationPage.infoText')}
                         </p>
-                        <Button onClick={handleUpdateLocation} className="w-full md:w-auto">
-                            {t('locationPage.updateLocation')}
+                        <Button onClick={handleUpdateLocation} className="w-full md:w-auto" disabled={isUpdating}>
+                            {isUpdating ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                            {isUpdating ? t('locationPage.updatingLocation') : t('locationPage.updateLocation')}
                         </Button>
                     </CardContent>
                 </Card>

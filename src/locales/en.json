@@ -5,9 +5,7 @@
         "job": "Software Engineer"
     },
     "likes": {
-        "title": "Likes",
-        "likesYou": "Likes You",
-        "superLikes": "Super Likes"
+        "title": "Likes"
     },
     "lounge": {
         "title": "Lounge",
@@ -68,7 +66,13 @@
         }
     },
     "galleryPage": {
-        "description": "Add, remove, or reorder your photos."
+        "description": "Add, remove, or reorder your photos.",
+        "uploading": "Uploading...",
+        "photoAdded": "Photo added successfully!",
+        "errorAddingPhoto": "Error adding photo.",
+        "photoRemoved": "Photo removed successfully.",
+        "errorRemovingPhoto": "Error removing photo.",
+        "errorLastPhoto": "You cannot delete your last photo."
     },
     "personalInfoPage": {
         "title": "Personal Info",
@@ -103,8 +107,14 @@
         "currentLocation": "Current Location",
         "infoText": "BeMatch uses your device's location to provide better suggestions. We only use your location to show you an approximate distance to potential matches.",
         "updateLocation": "Update Location",
+        "updatingLocation": "Updating...",
         "updateToastTitle": "Location Updated!",
-        "updateToastDescription": "Your new location has been set successfully."
+        "updateToastDescription": "Your new location has been set successfully.",
+        "newLocation": "New location",
+        "noSupport": "Geolocation is not supported by this browser.",
+        "permissionDenied": "Location permission denied. Please enable it in your browser settings.",
+        "errorUpdating": "Failed to update location in profile.",
+        "findingLocation": "Getting location..."
     },
     "preferencesPage": {
         "title": "Preferences",

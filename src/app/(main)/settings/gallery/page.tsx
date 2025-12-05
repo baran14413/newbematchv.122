@@ -1,37 +1,114 @@
 'use client';
-import React, { useRef, useState } from 'react';
-import { Plus, X, ArrowLeft } from 'lucide-react';
+import React, { useRef, useState, useEffect } from 'react';
+import { Plus, X, ArrowLeft, Loader2 } from 'lucide-react';
 import Image from 'next/image';
 import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/context/language-context';
-import { profiles } from '@/lib/data';
 import Link from 'next/link';
+import { useUser, useFirestore, useStorage, useDoc, useMemoFirebase } from '@/firebase';
+import { doc, updateDoc } from 'firebase/firestore';
+import { ref, uploadString, getDownloadURL, deleteObject } from 'firebase/storage';
+import { v4 as uuidv4 } from 'uuid';
+import { useToast } from '@/hooks/use-toast';
+import { Skeleton } from '@/components/ui/skeleton';
 
 const MAX_PHOTOS = 6;
 
 export default function GallerySettingsPage() {
   const { t } = useLanguage();
-  const [userPhotos, setUserPhotos] = useState(profiles[1].imageUrls);
+  const { user, isUserLoading } = useUser();
+  const firestore = useFirestore();
+  const storage = useStorage();
+  const { toast } = useToast();
+
+  const userDocRef = useMemoFirebase(() => {
+    if (!user) return null;
+    return doc(firestore, 'users', user.uid);
+  }, [firestore, user]);
+
+  const { data: userProfile, isLoading: isProfileLoading } = useDoc(userDocRef);
+
+  const [localPhotos, setLocalPhotos] = useState<string[]>([]);
+  const [isUploading, setIsUploading] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && userPhotos.length < MAX_PHOTOS) {
+  useEffect(() => {
+    if (userProfile?.imageUrls) {
+      setLocalPhotos(userProfile.imageUrls);
+    }
+  }, [userProfile]);
+
+  const handleFileChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && localPhotos.length < MAX_PHOTOS) {
       const file = e.target.files[0];
-      const reader = new FileReader();
-      reader.onloadend = () => {
-        setUserPhotos(prevPhotos => [...prevPhotos, reader.result as string]);
-      };
-      reader.readAsDataURL(file);
+      if (!file) return;
+
+      setIsUploading(true);
+      try {
+        const reader = new FileReader();
+        reader.onloadend = async () => {
+          const dataUrl = reader.result as string;
+          const photoId = uuidv4();
+          const storageRef = ref(storage, `users/${user!.uid}/photos/${photoId}.jpg`);
+          
+          await uploadString(storageRef, dataUrl, 'data_url');
+          const downloadURL = await getDownloadURL(storageRef);
+
+          const updatedPhotos = [...localPhotos, downloadURL];
+          await updateDoc(userDocRef!, { imageUrls: updatedPhotos });
+
+          setLocalPhotos(updatedPhotos);
+          toast({ title: t('galleryPage.photoAdded') });
+        };
+        reader.readAsDataURL(file);
+      } catch (error) {
+        console.error("Error uploading photo: ", error);
+        toast({ variant: 'destructive', title: t('galleryPage.errorAddingPhoto') });
+      } finally {
+        setIsUploading(false);
+      }
     }
   };
 
-  const handleRemovePhoto = (index: number) => {
-    setUserPhotos(prevPhotos => prevPhotos.filter((_, i) => i !== index));
+  const handleRemovePhoto = async (photoUrl: string) => {
+    // Prevent deleting the last photo
+    if (localPhotos.length <= 1) {
+      toast({ variant: 'destructive', title: t('galleryPage.errorLastPhoto') });
+      return;
+    }
+    
+    try {
+      // Delete from Storage
+      const photoRef = ref(storage, photoUrl);
+      await deleteObject(photoRef);
+
+      // Delete from Firestore
+      const updatedPhotos = localPhotos.filter(url => url !== photoUrl);
+      await updateDoc(userDocRef!, { imageUrls: updatedPhotos });
+      
+      setLocalPhotos(updatedPhotos);
+      toast({ title: t('galleryPage.photoRemoved') });
+
+    } catch (error: any) {
+        // If file doesn't exist in storage, it might be an old placeholder. Just remove from firestore.
+        if (error.code === 'storage/object-not-found') {
+             const updatedPhotos = localPhotos.filter(url => url !== photoUrl);
+             await updateDoc(userDocRef!, { imageUrls: updatedPhotos });
+             setLocalPhotos(updatedPhotos);
+             toast({ title: t('galleryPage.photoRemoved') });
+        } else {
+            console.error("Error removing photo: ", error);
+            toast({ variant: 'destructive', title: t('galleryPage.errorRemovingPhoto') });
+        }
+    }
   };
 
   const triggerFileInput = () => {
+    if (isUploading) return;
     fileInputRef.current?.click();
   };
+  
+  const isLoading = isUserLoading || isProfileLoading;
 
   return (
     <div className="h-full overflow-y-auto bg-gray-50 dark:bg-black">
@@ -55,50 +132,61 @@ export default function GallerySettingsPage() {
           {t('onboarding.photos.profilePhotoHint')}
         </p>
         <div className="grid grid-cols-3 gap-3 max-w-2xl mx-auto">
-          {Array.from({ length: MAX_PHOTOS }).map((_, index) => {
-            const photo = userPhotos[index];
-            if (photo) {
-              return (
-                <div key={index} className="relative aspect-square">
-                   {index === 0 && (
-                    <div className="absolute top-1 left-1 bg-black/60 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full z-10">{t('profile.title')}</div>
-                  )}
-                  <Image
-                    src={photo}
-                    alt={`${t('onboarding.photos.previewAlt')} ${index + 1}`}
-                    fill
-                    className="object-cover rounded-lg border-2 border-gray-200"
-                  />
-                  <Button
-                    size="icon"
-                    variant="destructive"
-                    className="absolute -top-2 -right-2 w-6 h-6 rounded-full"
-                    onClick={() => handleRemovePhoto(index)}
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                </div>
-              );
-            }
-            if (index === userPhotos.length) {
-              return (
-                <button
-                  key={index}
-                  onClick={triggerFileInput}
-                  className="aspect-square flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-primary/50 text-primary hover:bg-primary/5 transition-colors"
-                >
-                  <Plus className="w-8 h-8" />
-                  <span className="text-xs font-semibold">{t('onboarding.photos.addButton')}</span>
-                </button>
-              );
-            }
-            return (
-              <div
-                key={index}
-                className="aspect-square flex items-center justify-center rounded-lg bg-gray-100 border-2 border-dashed border-gray-200"
-              />
-            );
-          })}
+          {isLoading ? (
+            Array.from({ length: MAX_PHOTOS }).map((_, index) => (
+                <Skeleton key={index} className="aspect-square rounded-lg" />
+            ))
+          ) : (
+            <>
+            {Array.from({ length: MAX_PHOTOS }).map((_, index) => {
+                const photo = localPhotos[index];
+                if (photo) {
+                return (
+                    <div key={index} className="relative aspect-square">
+                    {index === 0 && (
+                        <div className="absolute top-1 left-1 bg-black/60 text-white text-[10px] font-bold px-1.5 py-0.5 rounded-full z-10">{t('profile.title')}</div>
+                    )}
+                    <Image
+                        src={photo}
+                        alt={`${t('onboarding.photos.previewAlt')} ${index + 1}`}
+                        fill
+                        className="object-cover rounded-lg border-2 border-gray-200"
+                    />
+                    <Button
+                        size="icon"
+                        variant="destructive"
+                        className="absolute -top-2 -right-2 w-6 h-6 rounded-full"
+                        onClick={() => handleRemovePhoto(photo)}
+                    >
+                        <X className="h-4 w-4" />
+                    </Button>
+                    </div>
+                );
+                }
+                if (index === localPhotos.length) {
+                return (
+                    <button
+                    key={index}
+                    onClick={triggerFileInput}
+                    disabled={isUploading}
+                    className="aspect-square flex flex-col items-center justify-center rounded-lg border-2 border-dashed border-primary/50 text-primary hover:bg-primary/5 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+                    >
+                    {isUploading ? <Loader2 className="w-8 h-8 animate-spin" /> : <Plus className="w-8 h-8" />}
+                    <span className="text-xs font-semibold mt-1">
+                        {isUploading ? t('galleryPage.uploading') : t('onboarding.photos.addButton')}
+                    </span>
+                    </button>
+                );
+                }
+                return (
+                <div
+                    key={index}
+                    className="aspect-square flex items-center justify-center rounded-lg bg-gray-100 dark:bg-card border-2 border-dashed border-gray-200 dark:border-gray-700"
+                />
+                );
+            })}
+            </>
+          )}
         </div>
         <input
           type="file"
@@ -106,10 +194,8 @@ export default function GallerySettingsPage() {
           onChange={handleFileChange}
           className="hidden"
           accept="image/png, image/jpeg"
+          disabled={isUploading}
         />
-        <div className="flex justify-center pt-4">
-             <Button>{t('common.save')}</Button>
-        </div>
       </div>
     </div>
   );
