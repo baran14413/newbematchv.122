@@ -8,13 +8,15 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import ProfileCard from '@/components/discover/profile-card';
 import { useUser, useFirestore, useCollection, useMemoFirebase, useDoc } from '@/firebase';
 import { Skeleton } from '@/components/ui/skeleton';
-import { collection, query, where, doc } from 'firebase/firestore';
+import { collection, query, where, doc, writeBatch, getDoc, serverTimestamp } from 'firebase/firestore';
 import type { UserProfile } from '@/lib/data';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
 import ProfileDetails from '@/components/discover/profile-details';
 import TutorialOverlay from '@/components/discover/tutorial-overlay';
+import ItIsAMatch from '@/components/discover/it-is-a-match';
 
 type SwipeDirection = 'left' | 'right' | 'up';
+type SwipeType = 'like' | 'nope' | 'superlike';
 
 const MAX_VISIBLE_CARDS = 3;
 
@@ -112,8 +114,9 @@ export default function DiscoverPage() {
 
   const [profileIndex, setProfileIndex] = useState(0);
   const [visibleStack, setVisibleStack] = useState<UserProfile[]>([]);
-  const [history, setHistory] = useState<UserProfile[]>([]);
+  const [history, setHistory] = useState<{profile: UserProfile, type: SwipeType}[]>([]);
   const [showTutorial, setShowTutorial] = useState(false);
+  const [matchData, setMatchData] = useState<{currentUser: UserProfile, matchedUser: UserProfile} | null>(null);
 
   // Fetch current user's profile to get their coordinates and preferences
   const currentUserDocRef = useMemoFirebase(() => {
@@ -211,33 +214,90 @@ export default function DiscoverPage() {
   }, [isMobile, profiles]);
 
 
-  const handleSwipe = useCallback(() => {
-    if (visibleStack.length === 0) return;
+  const handleSwipe = useCallback(async (direction: SwipeDirection) => {
+    if (visibleStack.length === 0 || !user || !firestore || !currentUserProfile) return;
 
-    // Add current profile to history
     const swipedProfile = visibleStack[visibleStack.length - 1];
-    setHistory(prev => [swipedProfile, ...prev]);
+    const swipeType: SwipeType = direction === 'right' ? 'like' : direction === 'up' ? 'superlike' : 'nope';
 
-    // Move to the next profile in the main list
+    // 1. Move to the next profile in the UI
+    setHistory(prev => [{profile: swipedProfile, type: swipeType}, ...prev]);
     const nextIndex = profileIndex + 1;
     setProfileIndex(nextIndex);
 
-    // Update visible stack: remove swiped, add next one if available
     setVisibleStack(prev => {
         const newStack = prev.slice(0, prev.length - 1);
         const nextProfile = filteredAndSortedProfiles[nextIndex + MAX_VISIBLE_CARDS - 1];
         if (nextProfile) {
-            // Add to the "bottom" of the stack (beginning of the array)
             return [nextProfile, ...newStack];
         }
         return newStack;
     });
 
-  }, [visibleStack, profileIndex, filteredAndSortedProfiles]);
+    // 2. Record the swipe in the database (like, nope, superlike)
+    try {
+      const batch = writeBatch(firestore);
+
+      // Record swipe for current user
+      const currentUserSwipeRef = doc(firestore, 'users', user.uid, 'swipes', swipedProfile.id);
+      batch.set(currentUserSwipeRef, {
+        type: swipeType,
+        timestamp: serverTimestamp()
+      });
+
+      // If it's a like or superlike, record it for the other user too
+      if (swipeType === 'like' || swipeType === 'superlike') {
+        const targetUserLikedByRef = doc(firestore, 'users', swipedProfile.id, 'likedBy', user.uid);
+        batch.set(targetUserLikedByRef, {
+          type: swipeType,
+          timestamp: serverTimestamp()
+        });
+      }
+
+      await batch.commit();
+
+      // 3. Check for a match if it was a 'like' or 'superlike'
+      if (swipeType === 'like' || swipeType === 'superlike') {
+        const targetUserSwipeRef = doc(firestore, 'users', swipedProfile.id, 'swipes', user.uid);
+        const targetUserSwipeDoc = await getDoc(targetUserSwipeRef);
+
+        if (targetUserSwipeDoc.exists()) {
+          const swipeData = targetUserSwipeDoc.data();
+          if (swipeData.type === 'like' || swipeData.type === 'superlike') {
+            // It's a MATCH!
+            const matchBatch = writeBatch(firestore);
+            const matchId = [user.uid, swipedProfile.id].sort().join('_');
+            const matchRef = doc(firestore, 'matches', matchId);
+            
+            matchBatch.set(matchRef, {
+              id: matchId,
+              users: [user.uid, swipedProfile.id],
+              user1Id: user.uid,
+              user2Id: swipedProfile.id,
+              matchDate: serverTimestamp(),
+              lastMessage: null,
+            });
+
+            await matchBatch.commit();
+            
+            // Trigger the "It's a Match!" UI
+            setMatchData({ currentUser: currentUserProfile, matchedUser: swipedProfile });
+          }
+        }
+      }
+
+    } catch (error) {
+      console.error("Error processing swipe: ", error);
+      // Optionally: toast an error to the user
+    }
+
+  }, [visibleStack, profileIndex, filteredAndSortedProfiles, user, firestore, currentUserProfile]);
 
   const undoSwipe = () => {
     if (history.length > 0) {
-      const lastSwipedProfile = history[0];
+      const lastSwiped = history[0];
+      // In a real app, you'd also need to delete the swipe/match record from Firestore.
+      // This is a premium feature, so we'll just handle the UI for now.
       setHistory(prev => prev.slice(1));
       
       const newProfileIndex = profileIndex - 1;
@@ -249,7 +309,7 @@ export default function DiscoverPage() {
         if (newStack.length >= MAX_VISIBLE_CARDS) {
             newStack.shift(); // Remove card from the bottom
         }
-        newStack.push(lastSwipedProfile);
+        newStack.push(lastSwiped.profile);
         return newStack;
       });
     }
@@ -257,13 +317,21 @@ export default function DiscoverPage() {
 
   const manualSwipe = (direction: SwipeDirection) => {
     if (visibleStack.length > 0) {
-      handleSwipe();
+      handleSwipe(direction);
     }
   }
 
 
   if (isMobile === undefined) {
     return null; // or a loading skeleton
+  }
+  
+  if (matchData) {
+    return <ItIsAMatch 
+            currentUser={matchData.currentUser} 
+            matchedUser={matchData.matchedUser}
+            onContinue={() => setMatchData(null)}
+           />
   }
 
   if (isLoading) {

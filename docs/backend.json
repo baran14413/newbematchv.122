@@ -19,9 +19,21 @@
           "type": "string",
           "description": "Phone number of the user."
         },
-        "displayName": {
+        "firstName": {
           "type": "string",
-          "description": "User's display name."
+          "description": "User's first name."
+        },
+        "lastName": {
+          "type": "string",
+          "description": "User's last name."
+        },
+        "name": {
+            "type": "string",
+            "description": "User's full display name."
+        },
+        "age": {
+            "type": "number",
+            "description": "Age of the user."
         },
         "dateOfBirth": {
           "type": "string",
@@ -40,6 +52,14 @@
           "type": "string",
           "description": "The user's current location (e.g., city, state)."
         },
+        "latitude": {
+            "type": "number",
+            "description": "The latitude of the user's location."
+        },
+        "longitude": {
+            "type": "number",
+            "description": "The longitude of the user's location."
+        },
         "bio": {
           "type": "string",
           "description": "User's biography or 'about me' section."
@@ -48,10 +68,18 @@
           "type": "string",
           "description": "User's Instagram handle."
         },
-        "profilePictureUrl": {
+        "avatarUrl": {
           "type": "string",
-          "description": "URL of the user's profile picture.",
+          "description": "URL of the user's primary profile picture.",
           "format": "uri"
+        },
+        "imageUrls": {
+            "type": "array",
+            "description": "An array of URLs for the user's gallery images.",
+            "items": {
+                "type": "string",
+                "format": "uri"
+            }
         },
         "videoUrl": {
           "type": "string",
@@ -73,10 +101,25 @@
         "compatibilityRadarChartId": {
           "type": "string",
           "description": "Reference to CompatibilityRadarChart. (Relationship: User 1:1 CompatibilityRadarChart)"
+        },
+        "globalMode": {
+            "type": "boolean",
+            "description": "Whether the user wants to see profiles from all over the world, sorted by distance."
+        },
+        "maxDistance": {
+            "type": "number",
+            "description": "The maximum distance in kilometers for discovery."
+        },
+        "ageRange": {
+            "type": "array",
+            "description": "The preferred age range for discovery.",
+            "items": {
+                "type": "number"
+            }
         }
       },
       "required": [
-        "id"
+        "id", "firstName", "lastName", "name", "email", "age", "dateOfBirth", "gender", "interestedIn"
       ]
     },
     "Match": {
@@ -88,6 +131,13 @@
         "id": {
           "type": "string",
           "description": "Unique identifier for the Match entity."
+        },
+        "users": {
+          "type": "array",
+          "description": "Array containing the UIDs of both matched users.",
+          "items": {
+            "type": "string"
+          }
         },
         "user1Id": {
           "type": "string",
@@ -105,10 +155,28 @@
       },
       "required": [
         "id",
-        "user1Id",
-        "user2Id",
+        "users",
         "matchDate"
       ]
+    },
+    "Swipe": {
+       "$schema": "http://json-schema.org/draft-07/schema#",
+       "title": "Swipe",
+       "type": "object",
+       "description": "Represents a swipe action (like, nope, superlike) from one user to another.",
+       "properties": {
+         "type": {
+            "type": "string",
+            "enum": ["like", "nope", "superlike"],
+            "description": "The type of swipe action."
+         },
+         "timestamp": {
+            "type": "string",
+            "format": "date-time",
+            "description": "When the swipe occurred."
+         }
+       },
+       "required": ["type", "timestamp"]
     },
     "Message": {
       "$schema": "http://json-schema.org/draft-07/schema#",
@@ -259,23 +327,31 @@
           ]
         }
       },
-      {
-        "path": "/users/{userId}/promptAnswers/{promptAnswerId}",
+       {
+        "path": "/users/{userId}/swipes/{targetUserId}",
         "definition": {
-          "entityName": "PromptAnswer",
+          "entityName": "Swipe",
           "schema": {
-            "$ref": "#/backend/entities/PromptAnswer"
+            "$ref": "#/backend/entities/Swipe"
           },
-          "description": "Stores prompt answers for a specific user. Access controlled by path-based ownership.",
+          "description": "Stores the current user's swipe actions on other users.",
           "params": [
-            {
-              "name": "userId",
-              "description": "The unique identifier of the user."
-            },
-            {
-              "name": "promptAnswerId",
-              "description": "The unique identifier of the prompt answer."
-            }
+            { "name": "userId", "description": "The UID of the user performing the swipe." },
+            { "name": "targetUserId", "description": "The UID of the user being swiped on." }
+          ]
+        }
+      },
+      {
+        "path": "/users/{userId}/likedBy/{likerId}",
+        "definition": {
+          "entityName": "Swipe",
+          "schema": {
+            "$ref": "#/backend/entities/Swipe"
+          },
+          "description": "Stores who has liked the current user. Used for the 'Likes You' screen.",
+          "params": [
+            { "name": "userId", "description": "The UID of the user who is being liked." },
+            { "name": "likerId", "description": "The UID of the user who performed the like." }
           ]
         }
       },
@@ -348,6 +424,6 @@
         }
       }
     ],
-    "reasoning": "This Firestore structure is designed to support the Nexus dating app's core features while adhering to the principles of Authorization Independence, Clarity of Intent, DBAC (Database-Based Access Control), and QAPs (Rules are not Filters). It prioritizes security, scalability, and debuggability.\n\n**Authorization Independence via Denormalization:**\n*   User profiles are stored under `/users/{userId}`. Data needing authorization context from the user profile is denormalized to avoid `get()` calls in security rules. For example, prompt answers created by a user are stored in a subcollection `/users/{userId}/promptAnswers/{promptAnswerId}`. The prompt answer documents do not require any authorization data copied because access is solely based on path and `request.auth.uid`.\n*   Matches between users are stored in a top-level `/matches/{matchId}` collection, which contains `user1Id` and `user2Id`. Messages sent within a match are stored in a subcollection `/matches/{matchId}/messages/{messageId}`.  The message documents do not require any authorization data copied because access is solely based on path and `request.auth.uid`.\n\n**Structural Segregation (Homogeneous Security Posture):**\n*   Private user data (profiles, prompt answers, matches, and messages) is kept separate from potentially public data. This separation ensures that each collection has a clear and consistent security posture, avoiding the need for complex logic within security rules.\n\n**Access Modeling (Standardization and Consistency):**\n*   **Private Data:** User profiles and their associated data (prompt answers) utilize the path-based ownership pattern `/users/{userId}/*`. This approach allows straightforward security rules based on `request.auth.uid == userId`.\n*   **Collaborative Data:** Matches and messages could potentially benefit from a membership map (`members: {uid1: "
+    "reasoning": "This Firestore structure is designed to support the Nexus dating app's core features while adhering to the principles of Authorization Independence, Clarity of Intent, DBAC (Database-Based Access Control), and QAPs (Rules are not Filters). It prioritizes security, scalability, and debuggability.\\n\\n**Authorization Independence via Denormalization:**\\n*   User profiles are stored under `/users/{userId}`. Data needing authorization context from the user profile is denormalized to avoid `get()` calls in security rules. For example, prompt answers created by a user are stored in a subcollection `/users/{userId}/promptAnswers/{promptAnswerId}`. The prompt answer documents do not require any authorization data copied because access is solely based on path and `request.auth.uid`.\\n*   Matches between users are stored in a top-level `/matches/{matchId}` collection, which contains an array of `users`. Messages sent within a match are stored in a subcollection `/matches/{matchId}/messages/{messageId}`.  The message documents do not require any authorization data copied because access is solely based on path and `request.auth.uid`.\\n\\n**Structural Segregation (Homogeneous Security Posture):**\\n*   Private user data (profiles, prompt answers, matches, and messages) is kept separate from potentially public data. This separation ensures that each collection has a clear and consistent security posture, avoiding the need for complex logic within security rules.\\n\\n**Access Modeling (Standardization and Consistency):**\\n*   **Private Data:** User profiles and their associated data (prompt answers, swipes) utilize the path-based ownership pattern `/users/{userId}/*`. This approach allows straightforward security rules based on `request.auth.uid == userId`.\\n*   **Collaborative Data:** Matches and messages are secured using the `users` array in the parent match document."
   }
 }
