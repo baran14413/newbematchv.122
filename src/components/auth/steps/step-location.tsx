@@ -66,9 +66,9 @@ export default function StepLocation() {
   }, [formData.locationEnabled, setStepValid]);
 
   return (
-    <div className="space-y-8 text-center h-full flex flex-col justify-center">
+    <div className="space-y-8 h-full flex flex-col justify-center">
       {!formData.locationEnabled ? (
-        <div className='space-y-4'>
+        <div className='space-y-4 text-center'>
             <div className='flex justify-center'>
                 <div className='w-24 h-24 rounded-full bg-primary/10 flex items-center justify-center'>
                     <MapPin className="w-12 h-12 text-primary" />
@@ -84,7 +84,7 @@ export default function StepLocation() {
         </div>
       ) : (
         <div className="space-y-6">
-          <div>
+          <div className="text-center">
              <Label className='text-muted-foreground'>{t('onboarding.location.currentCity')}</Label>
              <p className='font-bold text-lg'>{formData.location}</p>
           </div>

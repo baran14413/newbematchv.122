@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Flame, Loader2 } from 'lucide-react';
+import { Flame, Loader2, X } from 'lucide-react';
 import { useLanguage } from '@/context/language-context';
 import { useOnboardingContext } from '@/context/onboarding-context';
 import { useAuth, useFirestore, useStorage } from '@/firebase';
@@ -21,9 +21,11 @@ const RuleItem = ({ title, description }: { title: string; description: string }
 
 interface StepWelcomeProps {
     onRegisterSuccess: () => void;
+    onSwitchView: (view: 'login' | 'register') => void;
+    resetOnboarding: () => void;
 }
 
-export default function StepWelcome({ onRegisterSuccess }: StepWelcomeProps) {
+export default function StepWelcome({ onRegisterSuccess, resetOnboarding }: StepWelcomeProps) {
   const { t } = useLanguage();
   const { formData } = useOnboardingContext();
   const auth = useAuth();
