@@ -1,3 +1,4 @@
+'use client';
 import type { ImagePlaceholder } from './placeholder-images';
 import { PlaceHolderImages } from './placeholder-images';
 
@@ -19,6 +20,8 @@ export type Message = {
   senderId: string;
   text: string;
   timestamp: any; // Can be Date or Firestore Timestamp
+  updatedAt?: any;
+  isEdited?: boolean;
   type?: 'text' | 'image' | 'voice';
   imageUrl?: string;
   audioUrl?: string;
@@ -45,6 +48,7 @@ export interface UserProfile {
   goal?: string;
   interests?: string[];
   distance?: number;
+  lastSeen?: any;
   // User Preferences
   interestedIn?: 'man' | 'woman' | 'everyone';
   globalMode?: boolean;
@@ -57,5 +61,3 @@ export type Conversation = {
   otherUser: UserProfile;
   messages: Message[];
 };
-
-    
