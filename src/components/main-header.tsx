@@ -1,5 +1,5 @@
 'use client';
-import { Flame, MessagesSquare, UserCircle } from 'lucide-react';
+import { Flame, MessagesSquare, UserCircle, Video } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from './ui/button';
 import { usePathname } from 'next/navigation';
@@ -12,12 +12,13 @@ const MainHeader = () => {
 
     const navLinks = [
         { href: '/discover', icon: Flame, label: t('discover.title') },
+        { href: '/reels', icon: Video, label: t('reels.title') },
         { href: '/lounge', icon: MessagesSquare, label: t('lounge.title') },
         { href: '/profile', icon: UserCircle, label: t('profile.title') },
     ];
     
     return (
-        <header className={cn("flex items-center justify-between p-4 h-16 border-b border-border bg-background z-10", "pt-[env(safe-area-inset-top)]")}>
+        <header className={cn("flex items-center justify-between px-4 py-2 h-14 border-b border-border bg-background z-10", "pt-[env(safe-area-inset-top)]")}>
             <Link href="/discover">
                 <h1 className="text-2xl font-bold text-primary tracking-tight">BeMatch</h1>
             </Link>
