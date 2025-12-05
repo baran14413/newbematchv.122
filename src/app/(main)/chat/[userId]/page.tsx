@@ -1,170 +1,143 @@
 'use client';
-import { useState, useMemo } from 'react';
-import { useRouter, useParams, notFound } from 'next/navigation';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { ArrowLeft, Send } from 'lucide-react';
-import { cn } from '@/lib/utils';
-import { useUser, useFirestore, useDoc, useCollection, useMemoFirebase } from '@/firebase';
-import { doc, collection, addDoc, serverTimestamp, query, orderBy, Timestamp } from 'firebase/firestore';
-import type { UserProfile, Message } from '@/lib/data';
-import { Skeleton } from '@/components/ui/skeleton';
+import { useState, useEffect } from 'react';
+import { useLanguage } from "@/context/language-context";
+import { Card } from "../ui/card";
+import { Star, Heart } from "lucide-react";
+import Image from "next/image";
+import { cn } from "@/lib/utils";
+import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
+import { collection, doc, getDoc } from 'firebase/firestore';
+import type { UserProfile } from '@/lib/data';
+import { Skeleton } from '../ui/skeleton';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
+import ProfileDetails from './profile-details';
 
+type LikeInfo = {
+    id: string; // liker's ID
+    type: 'like' | 'superlike';
+};
 
-function formatMessageTimestamp(timestamp: any) {
-    if (!timestamp) return '';
-    const date = timestamp instanceof Timestamp ? timestamp.toDate() : new Date(timestamp);
-    return date.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
-}
+type LikedByProfile = UserProfile & {
+    likeType: 'like' | 'superlike';
+};
 
+const LikesGridSkeleton = () => (
+    <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
+        {Array.from({ length: 8 }).map((_, index) => (
+            <Skeleton key={index} className="aspect-[3/4] rounded-lg" />
+        ))}
+    </div>
+);
 
-export default function ChatPage() {
-    const router = useRouter();
-    const params = useParams();
-    const otherUserId = params.userId as string;
-
-    const { user, isUserLoading: isCurrentUserLoading } = useUser();
+export default function LikesGrid() {
+    const { t } = useLanguage();
+    const { user, isUserLoading } = useUser();
     const firestore = useFirestore();
 
-    const [newMessage, setNewMessage] = useState('');
+    const [likedByProfiles, setLikedByProfiles] = useState<LikedByProfile[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const [selectedProfile, setSelectedProfile] = useState<LikedByProfile | null>(null);
 
-    const otherUserDocRef = useMemoFirebase(() => {
-        if (!firestore || !otherUserId) return null;
-        return doc(firestore, 'users', otherUserId);
-    }, [firestore, otherUserId]);
-    const { data: otherUser, isLoading: isOtherUserLoading } = useDoc<UserProfile>(otherUserDocRef);
+    const likedByQuery = useMemoFirebase(() => {
+        if (!user) return null;
+        return collection(firestore, 'users', user.uid, 'likedBy');
+    }, [user, firestore]);
 
-    const matchId = useMemo(() => {
-        if (!user || !otherUserId) return null;
-        return [user.uid, otherUserId].sort().join('_');
-    }, [user, otherUserId]);
+    const { data: likes, isLoading: isLoadingLikes } = useCollection<LikeInfo>(likedByQuery);
 
-    const messagesQuery = useMemoFirebase(() => {
-        if (!firestore || !matchId) return null;
-        return query(collection(firestore, 'matches', matchId, 'messages'), orderBy('timestamp', 'asc'));
-    }, [firestore, matchId]);
-    
-    const { data: messages, isLoading: areMessagesLoading } = useCollection<Message>(messagesQuery);
+    useEffect(() => {
+        const fetchProfiles = async () => {
+            if (!likes || !firestore) return;
 
+            // Prevent re-fetching if data is already loaded
+            if (likes.length === likedByProfiles.length && likedByProfiles.every(p => likes.some(l => l.id === p.id))) {
+                 setIsLoading(false);
+                 return;
+            }
 
-    const handleSendMessage = async (e: React.FormEvent) => {
-        e.preventDefault();
-        if (!newMessage.trim() || !user || !firestore || !matchId) return;
+            try {
+                const profilePromises = likes.map(async (like) => {
+                    const userDocRef = doc(firestore, 'users', like.id);
+                    const userDoc = await getDoc(userDocRef);
+                    if (userDoc.exists()) {
+                        return { 
+                            ...(userDoc.data() as UserProfile), 
+                            id: userDoc.id, 
+                            likeType: like.type 
+                        };
+                    }
+                    return null;
+                });
 
-        const messagesRef = collection(firestore, 'matches', matchId, 'messages');
+                const profiles = (await Promise.all(profilePromises)).filter(p => p !== null) as LikedByProfile[];
+                setLikedByProfiles(profiles);
+            } catch (error) {
+                console.error("Error fetching liked by profiles: ", error);
+            } finally {
+                setIsLoading(false);
+            }
+        };
         
-        try {
-            await addDoc(messagesRef, {
-                senderId: user.uid,
-                text: newMessage,
-                timestamp: serverTimestamp(),
-                isAiGenerated: false,
-            });
-            setNewMessage('');
-        } catch (error) {
-            console.error("Error sending message: ", error);
+        if (!isLoadingLikes) {
+            fetchProfiles();
         }
-    };
+
+    }, [likes, firestore, isLoadingLikes, likedByProfiles]);
+
     
-    const isLoading = isCurrentUserLoading || isOtherUserLoading || areMessagesLoading;
+    if (isLoading || isUserLoading || isLoadingLikes) {
+        return <LikesGridSkeleton />;
+    }
 
-    if (isLoading) {
-       return (
-        <div className="h-full flex flex-col bg-black text-white">
-          <header className="flex items-center gap-4 p-3 border-b border-gray-800 sticky top-0 bg-black z-10">
-            <Button variant="ghost" size="icon" onClick={() => router.back()}>
-                <ArrowLeft className="w-6 h-6" />
-            </Button>
-            <Skeleton className="h-10 w-10 rounded-full" />
-            <div className="flex-1 space-y-2">
-              <Skeleton className="h-4 w-32" />
+    if (likedByProfiles.length === 0) {
+        return (
+             <div className="flex flex-col items-center justify-center h-full text-center p-8">
+                <p className="text-muted-foreground">Seni henüz beğenen kimse yok.</p>
             </div>
-          </header>
-           <div className="flex-1 p-4 space-y-6 overflow-y-auto">
-              <div className="flex justify-end gap-2">
-                  <Skeleton className="h-12 w-48 rounded-2xl" />
-              </div>
-               <div className="flex justify-start gap-2">
-                   <Skeleton className="h-8 w-8 rounded-full" />
-                   <Skeleton className="h-12 w-64 rounded-2xl" />
-               </div>
-           </div>
-           <div className="p-2 border-t border-gray-800 sticky bottom-0 bg-black">
-                <Skeleton className="h-12 w-full rounded-full" />
-           </div>
-        </div>
-      )
+        )
     }
-
-    if (!otherUser) {
-        notFound();
-    }
-
-
+    
     return (
-        <div className="h-full flex flex-col bg-background text-foreground">
-            {/* Header */}
-            <header className="flex items-center gap-4 p-3 border-b sticky top-0 bg-background z-10">
-                <Button variant="ghost" size="icon" onClick={() => router.back()}>
-                    <ArrowLeft className="w-6 h-6" />
-                </Button>
-                <Avatar className="h-10 w-10">
-                    <AvatarImage src={otherUser.avatarUrl} alt={otherUser.name} />
-                    <AvatarFallback>{otherUser.name.charAt(0)}</AvatarFallback>
-                </Avatar>
-                <div className="flex-1">
-                    <h2 className="text-lg font-semibold">{otherUser.name}</h2>
-                </div>
-            </header>
-
-            {/* Message List */}
-            <div className="flex-1 overflow-y-auto p-4 space-y-6">
-                {messages?.map((message) => (
-                    <div
-                        key={message.id}
-                        className={cn(
-                            "flex items-end gap-2",
-                            message.senderId === user?.uid ? 'justify-end' : 'justify-start'
-                        )}
+        <>
+            <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
+                {likedByProfiles.map((like) => (
+                    <Card 
+                        key={like.id} 
+                        className="aspect-[3/4] rounded-lg overflow-hidden relative group cursor-pointer"
+                        onClick={() => setSelectedProfile(like)}
                     >
-                         {message.senderId !== user?.uid && (
-                            <Avatar className="h-8 w-8 self-end">
-                                <AvatarImage src={otherUser.avatarUrl} alt={otherUser.name} />
-                                <AvatarFallback>{otherUser.name.charAt(0)}</AvatarFallback>
-                            </Avatar>
-                        )}
-                        <div
-                            className={cn(
-                                "max-w-md p-3 rounded-2xl flex flex-col",
-                                message.senderId === user?.uid
-                                    ? 'bg-rose-600 text-primary-foreground rounded-br-none'
-                                    : 'bg-gray-800 text-secondary-foreground rounded-bl-none'
-                            )}
-                        >
-                            <p>{message.text}</p>
-                             <div className="flex items-center justify-end gap-1.5 self-end mt-1">
-                                <span className={cn("text-xs", message.senderId === user?.uid ? "text-primary-foreground/70" : "text-muted-foreground")}>{formatMessageTimestamp(message.timestamp)}</span>
-                             </div>
-                        </div>
-                    </div>
+                       <Image src={like.avatarUrl} alt={like.name} fill className="object-cover"/>
+                       
+                       <div className="absolute bottom-0 left-0 right-0 p-2 bg-gradient-to-t from-black/70 to-transparent">
+                          <p className="text-white font-bold truncate">{like.name}</p>
+                       </div>
+
+                       <div className={cn("absolute top-1.5 right-1.5 p-1.5 rounded-full",
+                         like.likeType === 'superlike' && "bg-blue-500/80",
+                         like.likeType === 'like' && "bg-red-500/80",
+                       )}>
+                        {like.likeType === 'superlike' && <Star className="w-4 h-4 text-white fill-white"/>}
+                        {like.likeType === 'like' && <Heart className="w-4 h-4 text-white fill-white"/>}
+                       </div>
+                    </Card>
                 ))}
             </div>
 
-            {/* Input Area */}
-            <footer className="p-2 border-t sticky bottom-0 bg-background">
-                <form onSubmit={handleSendMessage} className="flex items-center gap-2">
-                    <Input
-                        placeholder="Bir mesaj yaz..."
-                        className="flex-1 bg-gray-900 border-none focus-visible:ring-0 focus-visible:ring-offset-0 h-12 rounded-full px-5 text-base"
-                        value={newMessage}
-                        onChange={(e) => setNewMessage(e.target.value)}
-                    />
-                    <Button type="submit" size="icon" className="bg-primary text-primary-foreground w-10 h-10 rounded-full" disabled={!newMessage.trim()}>
-                        <Send className="w-5 h-5" />
-                    </Button>
-                </form>
-            </footer>
-        </div>
-    );
+            <Sheet open={!!selectedProfile} onOpenChange={(isOpen) => !isOpen && setSelectedProfile(null)}>
+                <SheetContent side="bottom" className="h-[90vh] rounded-t-2xl flex flex-col p-0">
+                   {selectedProfile && (
+                       <>
+                         <SheetHeader className="sr-only">
+                           <SheetTitle>Profil Detayları</SheetTitle>
+                           <SheetDescription>{selectedProfile.name} kullanıcısının profil detayları</SheetDescription>
+                         </SheetHeader>
+                         <div className="flex-1 overflow-hidden">
+                           <ProfileDetails profile={selectedProfile} />
+                         </div>
+                       </>
+                   )}
+                </SheetContent>
+            </Sheet>
+        </>
+    )
 }

@@ -6,13 +6,11 @@ import { Star, Heart } from "lucide-react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
-import { collection, doc, getDoc, writeBatch, serverTimestamp } from 'firebase/firestore';
+import { collection, doc, getDoc } from 'firebase/firestore';
 import type { UserProfile } from '@/lib/data';
 import { Skeleton } from '../ui/skeleton';
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
 import ProfileDetails from './profile-details';
-import { Button } from '../ui/button';
-import { useRouter } from 'next/navigation';
 
 type LikeInfo = {
     id: string; // liker's ID
@@ -35,7 +33,6 @@ export default function LikesGrid() {
     const { t } = useLanguage();
     const { user, isUserLoading } = useUser();
     const firestore = useFirestore();
-    const router = useRouter();
 
     const [likedByProfiles, setLikedByProfiles] = useState<LikedByProfile[]>([]);
     const [isLoading, setIsLoading] = useState(true);
@@ -87,39 +84,6 @@ export default function LikesGrid() {
 
     }, [likes, firestore, isLoadingLikes, likedByProfiles]);
 
-    const handleStartChat = async (profile: LikedByProfile) => {
-        if (!user || !firestore) return;
-        
-        const matchId = [user.uid, profile.id].sort().join('_');
-        const matchRef = doc(firestore, 'matches', matchId);
-
-        try {
-            const batch = writeBatch(firestore);
-
-            batch.set(matchRef, {
-              id: matchId,
-              users: [user.uid, profile.id],
-              matchDate: serverTimestamp(),
-              lastMessage: null,
-            });
-
-            const currentUserSwipeRef = doc(firestore, 'users', user.uid, 'swipes', profile.id);
-            batch.set(currentUserSwipeRef, {
-                type: 'like',
-                timestamp: serverTimestamp()
-            });
-
-            const likedByRef = doc(firestore, 'users', user.uid, 'likedBy', profile.id);
-            batch.delete(likedByRef);
-
-            await batch.commit();
-            
-            router.push(`/chat/${profile.id}`);
-
-        } catch (error) {
-            console.error("Error creating match and starting chat: ", error);
-        }
-    }
     
     if (isLoading || isUserLoading || isLoadingLikes) {
         return <LikesGridSkeleton />;
@@ -169,9 +133,6 @@ export default function LikesGrid() {
                          </SheetHeader>
                          <div className="flex-1 overflow-hidden">
                            <ProfileDetails profile={selectedProfile} />
-                         </div>
-                         <div className="p-4 border-t bg-background">
-                            <Button className="w-full h-14 text-lg" onClick={() => handleStartChat(selectedProfile)}>Hadi İlk Adımı At!</Button>
                          </div>
                        </>
                    )}
