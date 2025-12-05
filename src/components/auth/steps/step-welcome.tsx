@@ -19,16 +19,13 @@ const RuleItem = ({ title, description }: { title: string; description: string }
     </div>
 );
 
-type AuthView = 'login' | 'register';
-
 interface StepWelcomeProps {
     onRegisterSuccess: () => void;
-    onSwitchView: (view: AuthView) => void;
 }
 
-export default function StepWelcome({ onRegisterSuccess, onSwitchView }: StepWelcomeProps) {
+export default function StepWelcome({ onRegisterSuccess }: StepWelcomeProps) {
   const { t } = useLanguage();
-  const { formData } = useOnboardingContext();
+  const { formData, resetOnboarding } = useOnboardingContext();
   const auth = useAuth();
   const firestore = useFirestore();
   const storage = useStorage();
@@ -128,7 +125,7 @@ export default function StepWelcome({ onRegisterSuccess, onSwitchView }: StepWel
             variant="ghost" 
             size="icon" 
             className="absolute top-0 right-0"
-            onClick={() => onSwitchView('login')}
+            onClick={resetOnboarding}
         >
             <X className="w-5 h-5 text-muted-foreground" />
         </Button>

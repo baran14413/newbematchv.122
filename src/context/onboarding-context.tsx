@@ -25,21 +25,7 @@ interface FormData {
   confirmPassword: string;
 }
 
-interface OnboardingContextType {
-  currentStep: number;
-  formData: FormData;
-  isStepValid: boolean;
-  setStepValid: (isValid: boolean) => void;
-  updateFormData: (data: Partial<FormData>) => void;
-  nextStep: () => void;
-  prevStep: () => void;
-}
-
-const OnboardingContext = createContext<OnboardingContextType | undefined>(undefined);
-
-export const OnboardingProvider = ({ children }: { children: ReactNode }) => {
-  const [currentStep, setCurrentStep] = useState(0); // Start from step 0 (Name)
-  const [formData, setFormData] = useState<FormData>({
+const initialFormData: FormData = {
     firstName: '',
     lastName: '',
     day: '',
@@ -61,7 +47,24 @@ export const OnboardingProvider = ({ children }: { children: ReactNode }) => {
     email: '',
     password: '',
     confirmPassword: '',
-  });
+};
+
+interface OnboardingContextType {
+  currentStep: number;
+  formData: FormData;
+  isStepValid: boolean;
+  setStepValid: (isValid: boolean) => void;
+  updateFormData: (data: Partial<FormData>) => void;
+  nextStep: () => void;
+  prevStep: () => void;
+  resetOnboarding: () => void;
+}
+
+const OnboardingContext = createContext<OnboardingContextType | undefined>(undefined);
+
+export const OnboardingProvider = ({ children }: { children: ReactNode }) => {
+  const [currentStep, setCurrentStep] = useState(0);
+  const [formData, setFormData] = useState<FormData>(initialFormData);
   const [isStepValid, setStepValid] = useState(false);
 
   const updateFormData = (data: Partial<FormData>) => {
@@ -78,6 +81,12 @@ export const OnboardingProvider = ({ children }: { children: ReactNode }) => {
     setStepValid(true); // Assume previous steps are valid
   };
 
+  const resetOnboarding = () => {
+    setCurrentStep(0);
+    setFormData(initialFormData);
+    setStepValid(false);
+  }
+
   return (
     <OnboardingContext.Provider
       value={{
@@ -88,6 +97,7 @@ export const OnboardingProvider = ({ children }: { children: ReactNode }) => {
         updateFormData,
         nextStep,
         prevStep,
+        resetOnboarding,
       }}
     >
       {children}

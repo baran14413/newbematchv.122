@@ -70,7 +70,7 @@ export default function OnboardingWizard({ onSwitchView, onRegisterSuccess }: On
                 <div className="flex-1 flex flex-col">
                     <ScrollArea className="flex-1 -mx-6">
                         <div className="px-6 h-full">
-                            <CurrentStepComponent onRegisterSuccess={onRegisterSuccess} onSwitchView={onSwitchView} />
+                            <CurrentStepComponent onRegisterSuccess={onRegisterSuccess} />
                         </div>
                     </ScrollArea>
                 </div>
