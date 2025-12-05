@@ -71,14 +71,17 @@ export default function ChatPage() {
 
     if (isLoading) {
        return (
-        <div className="h-screen flex flex-col bg-black text-white">
+        <div className="h-full flex flex-col bg-black text-white">
           <header className="flex items-center gap-4 p-3 border-b border-gray-800 sticky top-0 bg-black z-10">
+            <Button variant="ghost" size="icon" onClick={() => router.back()}>
+                <ArrowLeft className="w-6 h-6" />
+            </Button>
             <Skeleton className="h-10 w-10 rounded-full" />
             <div className="flex-1 space-y-2">
               <Skeleton className="h-4 w-32" />
             </div>
           </header>
-           <div className="flex-1 p-4 space-y-6">
+           <div className="flex-1 p-4 space-y-6 overflow-y-auto">
               <div className="flex justify-end gap-2">
                   <Skeleton className="h-12 w-48 rounded-2xl" />
               </div>
@@ -100,9 +103,9 @@ export default function ChatPage() {
 
 
     return (
-        <div className="h-screen flex flex-col bg-black text-white">
+        <div className="h-full flex flex-col bg-background text-foreground">
             {/* Header */}
-            <header className="flex items-center gap-4 p-3 border-b border-gray-800 sticky top-0 bg-black z-10">
+            <header className="flex items-center gap-4 p-3 border-b sticky top-0 bg-background z-10">
                 <Button variant="ghost" size="icon" onClick={() => router.back()}>
                     <ArrowLeft className="w-6 h-6" />
                 </Button>
@@ -135,13 +138,13 @@ export default function ChatPage() {
                             className={cn(
                                 "max-w-md p-3 rounded-2xl flex flex-col",
                                 message.senderId === user?.uid
-                                    ? 'bg-rose-600 text-white rounded-br-none'
-                                    : 'bg-gray-800 text-white rounded-bl-none'
+                                    ? 'bg-primary text-primary-foreground rounded-br-none'
+                                    : 'bg-secondary text-secondary-foreground rounded-bl-none'
                             )}
                         >
                             <p>{message.text}</p>
                              <div className="flex items-center justify-end gap-1.5 self-end mt-1">
-                                <span className={cn("text-xs", message.senderId === user?.uid ? "text-white/70" : "text-gray-400")}>{formatMessageTimestamp(message.timestamp)}</span>
+                                <span className={cn("text-xs", message.senderId === user?.uid ? "text-primary-foreground/70" : "text-muted-foreground")}>{formatMessageTimestamp(message.timestamp)}</span>
                              </div>
                         </div>
                     </div>
@@ -149,16 +152,16 @@ export default function ChatPage() {
             </div>
 
             {/* Input Area */}
-            <footer className="p-2 border-t border-gray-800 sticky bottom-0 bg-black">
+            <footer className="p-2 border-t sticky bottom-0 bg-background">
                 <form onSubmit={handleSendMessage} className="flex items-center gap-2">
                     <Input
                         placeholder="Bir mesaj yaz..."
-                        className="flex-1 bg-gray-900 border-none focus-visible:ring-0 focus-visible:ring-offset-0 h-12 rounded-full px-5 text-base"
+                        className="flex-1 bg-secondary border-none focus-visible:ring-0 focus-visible:ring-offset-0 h-12 rounded-full px-5 text-base"
                         value={newMessage}
                         onChange={(e) => setNewMessage(e.target.value)}
                     />
-                    <Button type="submit" size="icon" variant="ghost" className="text-rose-500 w-10 h-10 rounded-full" disabled={!newMessage.trim()}>
-                        <Send className="w-6 h-6" />
+                    <Button type="submit" size="icon" className="bg-primary text-primary-foreground w-10 h-10 rounded-full" disabled={!newMessage.trim()}>
+                        <Send className="w-5 h-5" />
                     </Button>
                 </form>
             </footer>
