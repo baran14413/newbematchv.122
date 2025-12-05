@@ -2,22 +2,31 @@
 import { useState, useMemo } from 'react';
 import { motion, useMotionValue, useTransform, PanInfo } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { X, Star, Heart, Undo2, Clapperboard } from 'lucide-react';
+import { X, Star, Heart, Undo2 } from 'lucide-react';
 import { useLanguage } from '@/context/language-context';
 import { useIsMobile } from '@/hooks/use-mobile';
 import ProfileCard from '@/components/discover/profile-card';
 import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 import { Skeleton } from '@/components/ui/skeleton';
-import LikesYou from '@/components/discover/likes-you';
-import { collection } from 'firebase/firestore';
+import { collection, query, where } from 'firebase/firestore';
 import type { UserProfile } from '@/lib/data';
-
+import { Sheet, SheetContent } from '@/components/ui/sheet';
+import ProfileDetails from '@/components/discover/profile-details';
 
 type SwipeDirection = 'left' | 'right' | 'up';
 
-const SwipeableCard = ({ profile, onSwipe, isTop }: { profile: UserProfile, onSwipe: (direction: SwipeDirection) => void, isTop: boolean }) => {
+const SwipeableCard = ({
+  profile,
+  onSwipe,
+  onShowDetails,
+  isTop,
+}: {
+  profile: UserProfile;
+  onSwipe: (direction: SwipeDirection) => void;
+  onShowDetails: () => void;
+  isTop: boolean;
+}) => {
   const x = useMotionValue(0);
-
   const rotate = useTransform(x, [-200, 200], [-25, 25]);
   const likeOpacity = useTransform(x, [10, 100], [0, 1]);
   const nopeOpacity = useTransform(x, [-100, -10], [1, 0]);
@@ -35,7 +44,7 @@ const SwipeableCard = ({ profile, onSwipe, isTop }: { profile: UserProfile, onSw
       onSwipe('left');
     }
   };
-  
+
   return (
     <motion.div
       className="absolute w-full h-full"
@@ -45,22 +54,21 @@ const SwipeableCard = ({ profile, onSwipe, isTop }: { profile: UserProfile, onSw
       style={{ x, rotate, cursor: isTop ? 'grab' : 'auto' }}
       whileDrag={{ cursor: 'grabbing' }}
     >
-        <motion.div
-            style={{ opacity: likeOpacity }}
-            className="absolute top-12 right-6 z-10 p-4 bg-black/30 rounded-full"
-        >
-            <Heart className="w-12 h-12 text-green-400" fill="currentColor" />
-        </motion.div>
+      <motion.div
+        style={{ opacity: likeOpacity }}
+        className="absolute top-12 right-6 z-10 p-4 bg-black/30 rounded-full"
+      >
+        <Heart className="w-12 h-12 text-green-400" fill="currentColor" />
+      </motion.div>
 
-        <motion.div
-            style={{ opacity: nopeOpacity }}
-            className="absolute top-12 left-6 z-10 p-4 bg-black/30 rounded-full"
-        >
-            <X className="w-12 h-12 text-red-500" strokeWidth={3} />
-        </motion.div>
-        
-        <ProfileCard profile={profile} />
+      <motion.div
+        style={{ opacity: nopeOpacity }}
+        className="absolute top-12 left-6 z-10 p-4 bg-black/30 rounded-full"
+      >
+        <X className="w-12 h-12 text-red-500" strokeWidth={3} />
+      </motion.div>
 
+      <ProfileCard profile={profile} onShowDetails={onShowDetails} />
     </motion.div>
   );
 };
@@ -79,24 +87,31 @@ const DesktopProfileSkeleton = () => (
 export default function DiscoverPage() {
   const { user } = useUser();
   const firestore = useFirestore();
+  const { t } = useLanguage();
+  const isMobile = useIsMobile();
   
-  const usersCollection = useMemoFirebase(() => {
+  const [stack, setStack] = useState<UserProfile[]>([]);
+  const [history, setHistory] = useState<UserProfile[]>([]);
+  const [detailsProfile, setDetailsProfile] = useState<UserProfile | null>(null);
+
+  const usersQuery = useMemoFirebase(() => {
     if (!firestore) return null;
-    return collection(firestore, 'users');
+    // Basic query: fetch all users. In a real app, you'd filter by location, preferences, and exclude swiped users.
+    return query(collection(firestore, 'users'));
   }, [firestore]);
 
-  const { data: profiles, isLoading } = useCollection<UserProfile>(usersCollection);
+  const { data: profiles, isLoading } = useCollection<UserProfile>(usersQuery);
 
   const filteredProfiles = useMemo(() => {
     if (!profiles) return [];
-    if (!user) return profiles;
-    return profiles.filter(p => p.id !== user.uid);
+    // Add a random distance to each profile for demo purposes
+    const profilesWithDistance = profiles.map(p => ({
+        ...p,
+        distance: Math.floor(Math.random() * 50) + 1
+    }));
+    if (!user) return profilesWithDistance;
+    return profilesWithDistance.filter(p => p.id !== user.uid);
   }, [profiles, user]);
-
-  const [stack, setStack] = useState<UserProfile[]>([]);
-  const [history, setHistory] = useState<UserProfile[]>([]);
-  const { t } = useLanguage();
-  const isMobile = useIsMobile();
 
   // Populate stack when profiles are loaded
   useMemo(() => {
@@ -148,8 +163,13 @@ export default function DiscoverPage() {
       <div className="w-full flex flex-col items-center p-4 md:p-8 space-y-8">
           <div className="w-full max-w-md space-y-8">
           {filteredProfiles.length > 0 ? filteredProfiles.map((profile) => (
-              <ProfileCard key={profile.id} profile={profile} />
+              <ProfileCard key={profile.id} profile={profile} onShowDetails={() => setDetailsProfile(profile)}/>
           )) : <p className="text-center text-muted-foreground">{t('discover.noMoreProfiles')}</p>}
+           <Sheet open={!!detailsProfile} onOpenChange={(isOpen) => !isOpen && setDetailsProfile(null)}>
+                <SheetContent side="bottom" className="h-[85vh] rounded-t-2xl">
+                   {detailsProfile && <ProfileDetails profile={detailsProfile} />}
+                </SheetContent>
+            </Sheet>
           </div>
       </div>
     );
@@ -191,6 +211,7 @@ export default function DiscoverPage() {
                   <SwipeableCard
                     profile={profile}
                     onSwipe={handleSwipe}
+                    onShowDetails={() => setDetailsProfile(profile)}
                     isTop={isTop}
                   />
                 </motion.div>
@@ -216,6 +237,11 @@ export default function DiscoverPage() {
           </Button>
         </div>
       </div>
+      <Sheet open={!!detailsProfile} onOpenChange={(isOpen) => !isOpen && setDetailsProfile(null)}>
+        <SheetContent side="bottom" className="h-[85vh] rounded-t-2xl flex flex-col">
+            {detailsProfile && <ProfileDetails profile={detailsProfile} />}
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }

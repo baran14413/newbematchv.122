@@ -41,6 +41,7 @@ export interface UserProfile {
   location: string;
   goal?: string;
   interests?: string[];
+  distance?: number;
 }
 
 export type Conversation = {
