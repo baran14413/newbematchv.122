@@ -158,7 +158,7 @@ export const OnboardingProvider = ({ children }: { children: ReactNode }) => {
         description: "BeMatch'e hoş geldiniz.",
       });
 
-      router.push('/welcome');
+      router.push('/discover');
 
     } catch (error: any) {
       console.error('Registration error:', error);
