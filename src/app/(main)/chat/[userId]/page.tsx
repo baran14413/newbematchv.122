@@ -55,7 +55,7 @@ export default function ChatPage() {
   const { user, isUserLoading } = useUser();
   const firestore = useFirestore();
 
-  const chatId = params.chatId as string;
+  const chatId = params.userId as string;
 
   const [otherUser, setOtherUser] = useState<UserProfile | null>(null);
   const [newMessage, setNewMessage] = useState('');
