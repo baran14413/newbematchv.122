@@ -1,5 +1,5 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useOnboardingContext } from '@/context/onboarding-context';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -14,18 +14,16 @@ export default function StepCredentials() {
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
 
-  const validateStep = (data: typeof formData) => {
-    const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(data.email);
-    const isPasswordValid = data.password.length >= 8;
-    const isPasswordMatch = data.password === data.confirmPassword;
+  useEffect(() => {
+    const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email);
+    const isPasswordValid = formData.password.length >= 8;
+    const isPasswordMatch = formData.password === formData.confirmPassword;
     setStepValid(isEmailValid && isPasswordValid && isPasswordMatch);
-  };
+  }, [formData.email, formData.password, formData.confirmPassword, setStepValid]);
   
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    const newFormData = { ...formData, [name]: value };
-    updateFormData(newFormData);
-    validateStep(newFormData);
+    updateFormData({ [name]: value });
   };
 
   return (
@@ -40,6 +38,7 @@ export default function StepCredentials() {
           value={formData.email}
           onChange={handleChange}
           className="h-12 text-base"
+          autoFocus
           />
       </div>
       <div className="space-y-2 relative">
@@ -75,7 +74,7 @@ export default function StepCredentials() {
           onChange={handleChange}
           className={`h-12 text-base ${
               formData.confirmPassword && formData.password !== formData.confirmPassword
-              ? 'border-red-500'
+              ? 'border-destructive'
               : ''
           }`}
           />
@@ -89,7 +88,7 @@ export default function StepCredentials() {
           {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
           </Button>
           {formData.confirmPassword && formData.password !== formData.confirmPassword && (
-              <p className="text-xs text-red-500">{t('onboarding.credentials.passwordMismatch')}</p>
+              <p className="text-xs text-destructive">{t('onboarding.credentials.passwordMismatch')}</p>
           )}
       </div>
     </div>

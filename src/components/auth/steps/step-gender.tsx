@@ -16,7 +16,6 @@ export default function StepGender() {
   ];
   
   useEffect(() => {
-    // This step is valid if a gender has been chosen.
     setStepValid(!!formData.gender);
   }, [formData.gender, setStepValid]);
 
@@ -29,7 +28,6 @@ export default function StepGender() {
     }
     
     updateFormData({ gender: genderId, interestedIn: interestedIn });
-    setStepValid(true); // A selection automatically makes the step valid
   };
 
   return (

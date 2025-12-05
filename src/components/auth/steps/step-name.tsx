@@ -1,4 +1,5 @@
 'use client';
+import { useEffect } from 'react';
 import { useOnboardingContext } from '@/context/onboarding-context';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
@@ -8,15 +9,13 @@ export default function StepName() {
   const { formData, updateFormData, setStepValid } = useOnboardingContext();
   const { t } = useLanguage();
 
-  const validateStep = (data: typeof formData) => {
-    setStepValid(data.firstName.trim() !== '' && data.lastName.trim() !== '');
-  };
+  useEffect(() => {
+    setStepValid(formData.firstName.trim() !== '' && formData.lastName.trim() !== '');
+  }, [formData.firstName, formData.lastName, setStepValid]);
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    const newFormData = { ...formData, [name]: value };
-    updateFormData(newFormData);
-    validateStep(newFormData);
+    updateFormData({ [name]: value });
   };
 
   return (

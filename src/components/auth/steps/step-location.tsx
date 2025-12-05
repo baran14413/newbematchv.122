@@ -43,15 +43,12 @@ export default function StepLocation() {
       const { latitude, longitude } = position.coords;
       const locationString = await getCityFromCoordinates(latitude, longitude);
       if (locationString) {
-        const newFormData = { 
-            ...formData, 
+        updateFormData({ 
             location: locationString, 
             latitude,
             longitude,
             locationEnabled: true 
-        };
-        updateFormData(newFormData);
-        setStepValid(true);
+        });
       }
     }, (error) => {
       console.error("Geolocation error: ", error);
@@ -61,8 +58,7 @@ export default function StepLocation() {
   };
 
   const handleSliderChange = (value: number[]) => {
-    const newFormData = { ...formData, maxDistance: value[0] };
-    updateFormData(newFormData);
+    updateFormData({ maxDistance: value[0] });
   };
 
   useEffect(() => {

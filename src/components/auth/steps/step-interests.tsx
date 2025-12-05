@@ -25,9 +25,7 @@ export default function StepInterests() {
     } else {
       newInterests.add(interest);
     }
-    const newFormData = { ...formData, interests: Array.from(newInterests) };
-    updateFormData(newFormData);
-    setStepValid(newInterests.size > 0);
+    updateFormData({ interests: Array.from(newInterests) });
   };
 
   return (

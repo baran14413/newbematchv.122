@@ -24,7 +24,7 @@ interface OnboardingWizardProps {
 }
 
 export default function OnboardingWizard({ onSwitchView, onRegisterSuccess }: OnboardingWizardProps) {
-  const { currentStep } = useOnboardingContext();
+  const { currentStep, resetOnboarding } = useOnboardingContext();
   const { t } = useLanguage();
 
   const steps = [
@@ -49,7 +49,7 @@ export default function OnboardingWizard({ onSwitchView, onRegisterSuccess }: On
     <div className="w-full h-full flex flex-col bg-background">
        {!isWelcomeStep && (
         <div className="p-4">
-            <StepIndicator currentStep={currentStep} totalSteps={steps.length} />
+            <StepIndicator currentStep={currentStep} totalSteps={steps.length-1} />
         </div>
        )}
         <div className="flex-1 flex flex-col overflow-hidden px-6 pb-4">
@@ -62,15 +62,15 @@ export default function OnboardingWizard({ onSwitchView, onRegisterSuccess }: On
                 transition={{ duration: 0.3, ease: 'easeInOut' }}
                 className="w-full flex-1 flex flex-col"
               >
-                {!isWelcomeStep && (
+                {!isWelcomeStep ? (
                   <div className="text-center pt-2 pb-6">
                       <h2 className="text-3xl font-bold">{steps[currentStep].title}</h2>
                   </div>
-                )}
+                ) : <div className="h-8"/>}
                 <div className="flex-1 flex flex-col">
                     <ScrollArea className="flex-1 -mx-6">
                         <div className="px-6 h-full">
-                            <CurrentStepComponent onRegisterSuccess={onRegisterSuccess} />
+                            <CurrentStepComponent onRegisterSuccess={onRegisterSuccess} onSwitchView={onSwitchView} resetOnboarding={resetOnboarding}/>
                         </div>
                     </ScrollArea>
                 </div>
@@ -80,12 +80,6 @@ export default function OnboardingWizard({ onSwitchView, onRegisterSuccess }: On
         {!isWelcomeStep && (
           <div className="p-4 pt-0 space-y-3">
               <WizardControls totalSteps={steps.length} />
-              <p className="text-sm text-muted-foreground text-center">
-                    {t('onboarding.haveAccount')}{' '}
-                    <button onClick={() => onSwitchView('login')} className="font-semibold text-primary hover:underline">
-                        {t('onboarding.login')}
-                    </button>
-              </p>
           </div>
         )}
     </div>

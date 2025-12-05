@@ -27,9 +27,7 @@ export default function StepGoals() {
   }, [formData.goal, setStepValid]);
 
   const handleSelect = (goalId: string) => {
-    const newFormData = { ...formData, goal: goalId };
-    updateFormData(newFormData);
-    setStepValid(true);
+    updateFormData({ goal: goalId });
   };
 
   return (

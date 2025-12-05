@@ -127,7 +127,7 @@ export default function StepWelcome({ onRegisterSuccess }: StepWelcomeProps) {
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
         >
-            <div className="mb-8 pt-8">
+            <div className="mb-8">
                 <Flame className="w-12 h-12 text-primary" />
             </div>
             
