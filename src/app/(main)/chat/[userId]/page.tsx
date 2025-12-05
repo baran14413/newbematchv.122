@@ -89,7 +89,7 @@ const MessageOptions = ({ onEdit, onDelete }: { onEdit: () => void; onDelete: ()
     return (
         <Popover>
             <PopoverTrigger asChild>
-                <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity">
+                <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground">
                     <MoreHorizontal className="w-5 h-5"/>
                 </Button>
             </PopoverTrigger>
@@ -199,23 +199,32 @@ export default function ChatPage() {
 
         const data = messageDoc.data();
         const reactions = data.reactions || {};
-        const userReacted = Object.values(reactions).some(users => (users as string[]).includes(user.uid));
-
-        // If user already reacted, remove their previous reaction first
-        if (userReacted) {
-            for (const key in reactions) {
-                const index = (reactions[key] as string[]).indexOf(user.uid);
-                if (index > -1) {
-                    reactions[key].splice(index, 1);
-                    if (reactions[key].length === 0) {
-                        delete reactions[key];
-                    }
-                    break;
-                }
+        
+        let userHasReacted = false;
+        let previousEmoji: string | null = null;
+        for (const key in reactions) {
+             if (reactions[key].includes(user.uid)) {
+                 userHasReacted = true;
+                 previousEmoji = key;
+                 break;
+             }
+        }
+        
+        if (userHasReacted && previousEmoji) {
+            // User is changing their reaction or removing it
+            const previousEmojiUsers = reactions[previousEmoji].filter((uid: string) => uid !== user.uid);
+            if (previousEmojiUsers.length > 0) {
+                 reactions[previousEmoji] = previousEmojiUsers;
+            } else {
+                delete reactions[previousEmoji];
+            }
+             if (previousEmoji === emoji) {
+                // User clicked the same emoji again, so we just removed it.
+                transaction.update(messageRef, { reactions });
+                return;
             }
         }
         
-        // Add new reaction
         if (!reactions[emoji]) {
             reactions[emoji] = [];
         }
@@ -289,7 +298,7 @@ export default function ChatPage() {
   if (!user) {
      return (
         <div className="flex items-center justify-center h-full bg-zinc-900 text-white">
-            <p>DEBUG: Yükleniyor... ID: {chatId}</p>
+            <p>Yükleniyor... ID: {chatId}</p>
         </div>
     );
   }
@@ -362,7 +371,7 @@ export default function ChatPage() {
                                             {formatMessageTimestamp(message.timestamp)}
                                         </span>
                                         {message.senderId === user?.uid && (
-                                            <CheckCheck className={cn("w-4 h-4", message.isRead ? "text-blue-300" : "text-primary-foreground/70")} />
+                                            <CheckCheck className={cn("w-4 h-4", message.isRead ? "text-blue-400" : "text-primary-foreground/70")} />
                                         )}
                                     </div>
                                     {message.reactions && Object.keys(message.reactions).length > 0 && (
