@@ -2,7 +2,7 @@
 import { useUser, useDoc, useMemoFirebase, useFirestore, useCollection } from "@/firebase";
 import ChatArea from "@/components/lounge/chat-area";
 import { notFound, useParams } from "next/navigation";
-import { collection, doc, query } from "firebase/firestore";
+import { collection, doc, query, orderBy } from "firebase/firestore";
 import type { UserProfile, Conversation, Message } from "@/lib/data";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useEffect, useState } from "react";
@@ -26,7 +26,7 @@ export default function ConversationPage() {
   // Fetch messages for this conversation
   const messagesQuery = useMemoFirebase(() => {
     if (!firestore) return null;
-    return query(collection(firestore, 'matches', conversationId, 'messages'));
+    return query(collection(firestore, 'matches', conversationId, 'messages'), orderBy('timestamp', 'asc'));
   }, [firestore, conversationId]);
   const { data: messages, isLoading: areMessagesLoading } = useCollection<Message>(messagesQuery);
 

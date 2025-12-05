@@ -139,14 +139,6 @@
             "type": "string"
           }
         },
-        "user1Id": {
-          "type": "string",
-          "description": "Reference to User 1. (Relationship: User N:N Match)"
-        },
-        "user2Id": {
-          "type": "string",
-          "description": "Reference to User 2. (Relationship: User N:N Match)"
-        },
         "matchDate": {
           "type": "string",
           "description": "Date when the match was created.",

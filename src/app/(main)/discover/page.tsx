@@ -272,8 +272,6 @@ export default function DiscoverPage() {
             matchBatch.set(matchRef, {
               id: matchId,
               users: [user.uid, swipedProfile.id],
-              user1Id: user.uid,
-              user2Id: swipedProfile.id,
               matchDate: serverTimestamp(),
               lastMessage: null,
             });
