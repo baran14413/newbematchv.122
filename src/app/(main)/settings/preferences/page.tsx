@@ -31,13 +31,12 @@ export default function PreferencesPage() {
     const [distance, setDistance] = useState(50);
     const [ageRange, setAgeRange] = useState([18, 55]);
     const [globalMode, setGlobalMode] = useState(true);
-    const [interestedIn, setInterestedIn] = useState<'man' | 'woman' | 'everyone'>();
+    const [interestedIn, setInterestedIn] = useState<'man' | 'woman'>();
     const [isSaving, setIsSaving] = useState(false);
 
      const interestOptions = [
         { id: 'man', label: t('onboarding.interestedIn.men') },
         { id: 'woman', label: t('onboarding.interestedIn.women') },
-        { id: 'everyone', label: t('onboarding.interestedIn.everyone') },
     ];
 
     useEffect(() => {
@@ -45,7 +44,7 @@ export default function PreferencesPage() {
             setDistance(userProfile.maxDistance || 50);
             setAgeRange(userProfile.ageRange || [18, 55]);
             setGlobalMode(userProfile.globalMode === undefined ? true : userProfile.globalMode);
-            setInterestedIn(userProfile.interestedIn || 'everyone');
+            setInterestedIn(userProfile.interestedIn as 'man' | 'woman' | undefined);
         }
     }, [userProfile]);
 
@@ -127,7 +126,7 @@ export default function PreferencesPage() {
                          {interestOptions.map((option) => (
                             <Button
                                 key={option.id}
-                                onClick={() => setInterestedIn(option.id as 'man' | 'woman' | 'everyone')}
+                                onClick={() => setInterestedIn(option.id as 'man' | 'woman')}
                                 variant={interestedIn === option.id ? 'default' : 'outline'}
                                 className={cn('w-full justify-center h-12 text-base')}
                             >
