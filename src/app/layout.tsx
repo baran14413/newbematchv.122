@@ -47,11 +47,11 @@ export default function RootLayout({
           disableTransitionOnChange
         >
           <LanguageProvider>
-            <OnboardingProvider>
-              <FirebaseClientProvider>
+            <FirebaseClientProvider>
+              <OnboardingProvider>
                 {children}
-              </FirebaseClientProvider>
-            </OnboardingProvider>
+              </OnboardingProvider>
+            </FirebaseClientProvider>
             <Toaster />
           </LanguageProvider>
         </ThemeProvider>

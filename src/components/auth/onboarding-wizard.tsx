@@ -23,7 +23,7 @@ interface OnboardingWizardProps {
 }
 
 export default function OnboardingWizard({ onSwitchView, onRegisterSuccess }: OnboardingWizardProps) {
-  const { currentStep, isLastStep } = useOnboardingContext();
+  const { currentStep } = useOnboardingContext();
   const { t } = useLanguage();
 
   const steps = [
@@ -65,19 +65,16 @@ export default function OnboardingWizard({ onSwitchView, onRegisterSuccess }: On
                     <h2 className="text-3xl font-bold">{steps[currentStep].title}</h2>
                 </div>
                 <div className="flex-1 flex flex-col">
-                    <CurrentStepComponent onRegisterSuccess={onRegisterSuccess} />
+                    <CurrentStepComponent />
                 </div>
               </motion.div>
            </AnimatePresence>
         </div>
-        {!isLastStep && (
-          <div className="p-4 pt-0 space-y-3">
-              <WizardControls
-                totalSteps={steps.length}
-                onRegisterSuccess={onRegisterSuccess} 
-              />
-          </div>
-        )}
+        <div className="p-4 pt-0 space-y-3">
+            <WizardControls
+              totalSteps={steps.length}
+            />
+        </div>
     </div>
   );
 }

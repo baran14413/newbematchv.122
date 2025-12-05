@@ -1,5 +1,13 @@
 'use client';
 import { createContext, useContext, useState, ReactNode } from 'react';
+import { useRouter } from 'next/navigation';
+import { useAuth, useFirestore, useStorage } from '@/firebase';
+import { createUserWithEmailAndPassword } from 'firebase/auth';
+import { doc, setDoc, serverTimestamp, Timestamp } from 'firebase/firestore';
+import { useToast } from '@/hooks/use-toast';
+import { ref, uploadString, getDownloadURL } from "firebase/storage";
+import { v4 as uuidv4 } from 'uuid';
+
 
 interface FormData {
   firstName: string;
@@ -49,13 +57,12 @@ const initialFormData: FormData = {
     confirmPassword: '',
 };
 
-const TOTAL_STEPS = 10;
-
 interface OnboardingContextType {
   currentStep: number;
   isLastStep: boolean;
   formData: FormData;
   isStepValid: boolean;
+  isLoading: boolean;
   setStepValid: (isValid: boolean) => void;
   updateFormData: (data: Partial<FormData>) => void;
   nextStep: (totalSteps: number) => void;
@@ -69,22 +76,109 @@ export const OnboardingProvider = ({ children }: { children: ReactNode }) => {
   const [currentStep, setCurrentStep] = useState(0);
   const [formData, setFormData] = useState<FormData>(initialFormData);
   const [isStepValid, setStepValid] = useState(false);
+  const [isLoading, setIsLoading] = useState(false);
+
+  const router = useRouter();
+  const auth = useAuth();
+  const firestore = useFirestore();
+  const storage = useStorage();
+  const { toast } = useToast();
+
+  const isLastStep = currentStep === 9; // 10 steps total, index 9 is the last
 
   const updateFormData = (data: Partial<FormData>) => {
     setFormData((prev) => ({ ...prev, ...data }));
   };
 
+  const handleRegister = async () => {
+    setIsLoading(true);
+
+    try {
+      const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
+      const user = userCredential.user;
+
+      const uploadPhotos = async (userId: string, photos: string[]): Promise<string[]> => {
+          const photoURLs: string[] = [];
+          for (const photo of photos) {
+            const photoId = uuidv4();
+            const storageRef = ref(storage, `users/${userId}/photos/${photoId}.jpg`);
+            const uploadResult = await uploadString(storageRef, photo, 'data_url');
+            const downloadURL = await getDownloadURL(uploadResult.ref);
+            photoURLs.push(downloadURL);
+          }
+          return photoURLs;
+      };
+
+      const photoURLs = await uploadPhotos(user.uid, formData.photos);
+
+      const userDocRef = doc(firestore, 'users', user.uid);
+      
+      const userProfileData = {
+          id: user.uid,
+          email: formData.email,
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          name: `${formData.firstName} ${formData.lastName}`,
+          age: formData.age,
+          dateOfBirth: formData.dateOfBirth ? Timestamp.fromDate(formData.dateOfBirth) : null,
+          gender: formData.gender,
+          interestedIn: formData.interestedIn,
+          bio: formData.bio,
+          location: formData.location,
+          latitude: formData.latitude,
+          longitude: formData.longitude,
+          interests: formData.interests,
+          goal: formData.goal,
+          avatarUrl: photoURLs[0] || '',
+          imageUrls: photoURLs,
+          createdAt: serverTimestamp(),
+          updatedAt: serverTimestamp(),
+          prompts: [],
+          zodiac: '',
+          videoUrl: '',
+          videoDescription: '',
+          voiceNoteUrl: '',
+          globalMode: true,
+          maxDistance: 50,
+          ageRange: [18, 55]
+      };
+      
+      await setDoc(userDocRef, userProfileData);
+
+      toast({
+        title: "Hesap oluşturuldu!",
+        description: "BeMatch'e hoş geldiniz.",
+      });
+
+      router.push('/welcome');
+
+    } catch (error: any) {
+      console.error('Registration error:', error);
+      toast({
+        variant: 'destructive',
+        title: "Kayıt sırasında hata oluştu",
+        description: error.message || 'Lütfen bilgilerinizi kontrol edip tekrar deneyin.',
+      });
+    } finally {
+        setIsLoading(false);
+    }
+  };
+
+
   const nextStep = (totalSteps: number) => {
-    // Add a guard to prevent going beyond the last step
+    if (isLastStep) {
+        handleRegister();
+        return;
+    }
     if (currentStep < totalSteps - 1) {
         setCurrentStep((prev) => prev + 1);
-        setStepValid(false); // Reset validation for the next step
+        setStepValid(false);
     }
   };
 
   const prevStep = () => {
     setCurrentStep((prev) => prev - 1);
-    setStepValid(true); // Assume previous steps are valid
+    setStepValid(true);
   };
 
   const resetOnboarding = () => {
@@ -97,9 +191,10 @@ export const OnboardingProvider = ({ children }: { children: ReactNode }) => {
     <OnboardingContext.Provider
       value={{
         currentStep,
-        isLastStep: currentStep === TOTAL_STEPS - 1,
+        isLastStep,
         formData,
         isStepValid,
+        isLoading,
         setStepValid,
         updateFormData,
         nextStep,
