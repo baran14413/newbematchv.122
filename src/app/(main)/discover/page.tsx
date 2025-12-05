@@ -2,14 +2,17 @@
 import { useState, useMemo } from 'react';
 import { motion, useMotionValue, useTransform, PanInfo } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { X, Star, Heart, Undo2 } from 'lucide-react';
+import { X, Star, Heart, Undo2, Clapperboard } from 'lucide-react';
 import { UserProfile, profiles as staticProfiles } from '@/lib/data';
 import { useLanguage } from '@/context/language-context';
 import { useIsMobile } from '@/hooks/use-mobile';
 import ProfileCard from '@/components/discover/profile-card';
 import { useUser } from '@/firebase';
 import { Skeleton } from '@/components/ui/skeleton';
-import LikesYou from '@/components/discover/likes-you';
+import { useCollection, useMemoFirebase } from '@/firebase';
+import { collection, query } from 'firebase/firestore';
+import { useFirestore } from '@/firebase';
+
 
 type SwipeDirection = 'left' | 'right' | 'up';
 
@@ -76,13 +79,17 @@ const DesktopProfileSkeleton = () => (
 
 export default function DiscoverPage() {
   const { user } = useUser();
+  const firestore = useFirestore();
+
+  const usersQuery = useMemoFirebase(
+    () => (firestore ? query(collection(firestore, 'users')) : null),
+    [firestore]
+  );
   
-  // Using static data for now as requested
-  const [profiles, setProfiles] = useState<UserProfile[]>(staticProfiles);
-  const isLoading = false;
+  const { data: profiles, isLoading } = useCollection<UserProfile>(usersQuery);
 
   const filteredProfiles = useMemo(() => {
-    if (!user) return profiles;
+    if (!profiles || !user) return [];
     return profiles.filter(p => p.id !== user.uid);
   }, [profiles, user]);
 
@@ -95,6 +102,8 @@ export default function DiscoverPage() {
   useMemo(() => {
     if (filteredProfiles.length > 0) {
         setStack(filteredProfiles)
+    } else {
+        setStack([])
     }
   }, [filteredProfiles]);
 
@@ -138,11 +147,10 @@ export default function DiscoverPage() {
   if (!isMobile) {
     return (
       <div className="w-full flex flex-col items-center bg-gray-50 dark:bg-black p-4 md:p-8 space-y-8">
-        <LikesYou />
         <div className="w-full max-w-md space-y-8">
-          {filteredProfiles.map((profile) => (
+          {filteredProfiles.length > 0 ? filteredProfiles.map((profile) => (
             <ProfileCard key={profile.id} profile={profile} />
-          ))}
+          )) : <p className="text-center text-muted-foreground">{t('discover.noMoreProfiles')}</p>}
         </div>
       </div>
     );
@@ -150,7 +158,6 @@ export default function DiscoverPage() {
 
   return (
     <div className="h-full w-full flex flex-col bg-gray-50 dark:bg-black overflow-hidden">
-      <div className="p-4"><LikesYou /></div>
       <div className="flex-1 flex flex-col items-center justify-center px-4">
         <div className="w-full max-w-sm h-[65vh] max-h-[550px] relative flex items-center justify-center">
           {stack.length > 0 ? (

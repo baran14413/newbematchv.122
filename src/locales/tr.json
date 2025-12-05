@@ -2,11 +2,12 @@
     "discover": {
         "title": "Keşfet",
         "noMoreProfiles": "Gösterilecek başka profil yok.",
-        "job": "Yazılım Mühendisi",
-        "likesYou": {
-            "title": "Seni Beğenenler",
-            "seeAll": "Tümünü Gör"
-        }
+        "job": "Yazılım Mühendisi"
+    },
+    "likes": {
+        "title": "Beğeniler",
+        "likesYou": "Seni Beğenenler",
+        "superLikes": "Süper Beğeniler"
     },
     "lounge": {
         "title": "Sohbet",

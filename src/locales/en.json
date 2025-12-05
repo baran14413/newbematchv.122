@@ -2,11 +2,12 @@
     "discover": {
         "title": "Discover",
         "noMoreProfiles": "No more profiles to show.",
-        "job": "Software Engineer",
-        "likesYou": {
-            "title": "Who Liked You",
-            "seeAll": "See All"
-        }
+        "job": "Software Engineer"
+    },
+    "likes": {
+        "title": "Likes",
+        "likesYou": "Likes You",
+        "superLikes": "Super Likes"
     },
     "lounge": {
         "title": "Lounge",

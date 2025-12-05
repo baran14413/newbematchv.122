@@ -1,5 +1,5 @@
 'use client';
-import { Flame, MessagesSquare, UserCircle } from 'lucide-react';
+import { Flame, MessagesSquare, UserCircle, Heart, Clapperboard } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from './ui/button';
 import { usePathname } from 'next/navigation';
@@ -12,6 +12,7 @@ const MainHeader = () => {
 
     const navLinks = [
         { href: '/discover', icon: Flame, label: t('discover.title') },
+        { href: '/likes', icon: Heart, label: t('likes.title') },
         { href: '/lounge', icon: MessagesSquare, label: t('lounge.title') },
         { href: '/profile', icon: UserCircle, label: t('profile.title') },
     ];
