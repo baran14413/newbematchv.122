@@ -10,6 +10,7 @@ import { doc, setDoc, serverTimestamp, Timestamp } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 import { ref, uploadString, getDownloadURL } from "firebase/storage";
 import { v4 as uuidv4 } from 'uuid';
+import { motion } from 'framer-motion';
 
 const RuleItem = ({ title, description }: { title: string; description: string }) => (
     <div className="space-y-1">
@@ -119,23 +120,36 @@ export default function StepWelcome({ onRegisterSuccess }: StepWelcomeProps) {
 
 
   return (
-    <div className="flex flex-col h-full items-start">
-        <div className="mb-8">
-            <Flame className="w-12 h-12 text-primary" />
-        </div>
-        
-        <div className="flex-1 space-y-6">
-            <h1 className="text-3xl font-bold">{t('onboarding.welcome.title')}</h1>
-            <p className="text-muted-foreground">{t('onboarding.welcome.subtitle')}</p>
-            
-            <div className="space-y-5">
-                {rules.map(rule => <RuleItem key={rule.title} {...rule} />)}
+    <div className="flex flex-col h-full">
+        <motion.div 
+            className="flex-1"
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            transition={{ duration: 0.5, delay: 0.2 }}
+        >
+            <div className="mb-8">
+                <Flame className="w-12 h-12 text-primary" />
             </div>
-        </div>
+            
+            <div className="space-y-6">
+                <h1 className="text-4xl font-bold">{t('onboarding.welcome.title')}</h1>
+                <p className="text-muted-foreground">{t('onboarding.welcome.subtitle')}</p>
+                
+                <div className="space-y-5 pt-4">
+                    {rules.map(rule => <RuleItem key={rule.title} {...rule} />)}
+                </div>
+            </div>
+        </motion.div>
 
-        <Button onClick={handleConfirm} disabled={isLoading} className="w-full font-bold text-lg py-7 rounded-xl mt-8">
-            {isLoading ? <Loader2 className="animate-spin" /> : t('onboarding.welcome.confirm')}
-        </Button>
+        <motion.div
+             initial={{ opacity: 0, y: 20 }}
+             animate={{ opacity: 1, y: 0 }}
+             transition={{ duration: 0.5, delay: 0.4 }}
+        >
+            <Button onClick={handleConfirm} disabled={isLoading} className="w-full font-bold text-lg py-7 rounded-xl mt-8">
+                {isLoading ? <Loader2 className="animate-spin" /> : t('onboarding.welcome.confirm')}
+            </Button>
+        </motion.div>
     </div>
   );
 }

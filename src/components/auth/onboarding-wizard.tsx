@@ -42,13 +42,14 @@ export default function OnboardingWizard({ onSwitchView, onRegisterSuccess }: On
 
   const CurrentStepComponent = steps[currentStep].component;
 
-  const isExpandedStep = [6, 7, 9].includes(currentStep);
-  const hideControls = currentStep === steps.length -1;
+  const isExpandedStep = [6, 7].includes(currentStep);
+  const isWelcomeStep = currentStep === steps.length - 1;
+
 
   return (
     <div className="w-full h-full flex flex-col bg-background">
         <div className="p-4">
-            <StepIndicator currentStep={currentStep} totalSteps={steps.length} />
+            {!isWelcomeStep && <StepIndicator currentStep={currentStep} totalSteps={steps.length} />}
         </div>
         <div className="flex-1 flex flex-col overflow-hidden px-6">
            <AnimatePresence mode="wait">
@@ -60,12 +61,14 @@ export default function OnboardingWizard({ onSwitchView, onRegisterSuccess }: On
                 transition={{ duration: 0.3, ease: 'easeInOut' }}
                 className="w-full flex-1 flex flex-col"
               >
-                <div className="text-center pt-2 pb-6">
-                    <h2 className="text-3xl font-bold">{steps[currentStep].title}</h2>
-                </div>
-                <div className={`flex-1 ${isExpandedStep ? 'flex flex-col' : ''}`}>
+                {!isWelcomeStep && (
+                  <div className="text-center pt-2 pb-6">
+                      <h2 className="text-3xl font-bold">{steps[currentStep].title}</h2>
+                  </div>
+                )}
+                <div className={`flex-1 ${isExpandedStep || isWelcomeStep ? 'flex flex-col' : ''}`}>
                     <ScrollArea className="flex-1 -mx-6">
-                        <div className="px-6">
+                        <div className="px-6 h-full">
                             <CurrentStepComponent onRegisterSuccess={onRegisterSuccess} />
                         </div>
                     </ScrollArea>
@@ -74,13 +77,17 @@ export default function OnboardingWizard({ onSwitchView, onRegisterSuccess }: On
            </AnimatePresence>
         </div>
         <div className="p-4 space-y-3">
-          {!hideControls && <WizardControls totalSteps={steps.length} />}
-           <p className="text-sm text-muted-foreground text-center">
-                {t('onboarding.haveAccount')}{' '}
-                <button onClick={() => onSwitchView('login')} className="font-semibold text-primary hover:underline">
-                    {t('onboarding.login')}
-                </button>
-           </p>
+          {!isWelcomeStep && (
+            <>
+              <WizardControls totalSteps={steps.length} />
+              <p className="text-sm text-muted-foreground text-center">
+                    {t('onboarding.haveAccount')}{' '}
+                    <button onClick={() => onSwitchView('login')} className="font-semibold text-primary hover:underline">
+                        {t('onboarding.login')}
+                    </button>
+              </p>
+            </>
+           )}
         </div>
     </div>
   );
