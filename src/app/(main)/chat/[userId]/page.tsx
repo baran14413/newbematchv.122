@@ -2,12 +2,13 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'next/navigation';
 import { useUser, useFirestore, useDoc, useCollection, useMemoFirebase } from '@/firebase';
-import { doc, collection, addDoc, updateDoc, deleteDoc, serverTimestamp, orderBy, query, Timestamp, onSnapshot } from 'firebase/firestore';
+import { doc, collection, addDoc, updateDoc, deleteDoc, serverTimestamp, orderBy, query, Timestamp, onSnapshot, arrayUnion, arrayRemove, runTransaction } from 'firebase/firestore';
 import type { UserProfile, Message } from '@/lib/data';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { ArrowLeft, CheckCheck, Mic, Phone, Plus, Send, Video, MoreHorizontal, Smile, Trash2, Pencil } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
@@ -17,6 +18,7 @@ import Link from 'next/link';
 import { formatDistanceToNowStrict } from 'date-fns';
 import { tr, enUS } from 'date-fns/locale';
 import { useLanguage } from '@/context/language-context';
+import EmojiPicker, { Emoji } from 'emoji-picker-react';
 
 function formatMessageTimestamp(timestamp: any) {
   if (!timestamp) return '';
@@ -37,6 +39,42 @@ function formatLastSeen(timestamp: any, locale: Locale) {
     return formatDistanceToNowStrict(date, { addSuffix: true, locale });
 }
 
+const ReactionTooltip = ({ children, onReaction, onEdit, onDelete }: { children: React.ReactNode, onReaction: (emoji: string) => void, onEdit: () => void; onDelete: () => void; }) => {
+    const popularEmojis = ['👍', '❤️', '😂', '😮', '😢', '🙏'];
+    const [emojiPickerOpen, setEmojiPickerOpen] = useState(false);
+
+    const handleEmojiSelect = (emojiData: { emoji: string; }) => {
+        onReaction(emojiData.emoji);
+        setEmojiPickerOpen(false);
+    }
+    
+    return (
+        <TooltipProvider delayDuration={100}>
+            <Tooltip>
+                <TooltipTrigger asChild>{children}</TooltipTrigger>
+                <TooltipContent className="p-1 rounded-full bg-zinc-800 border-zinc-700">
+                    <div className="flex items-center gap-1">
+                        {popularEmojis.map(emoji => (
+                            <Button key={emoji} variant="ghost" size="icon" className="rounded-full h-8 w-8 hover:bg-zinc-700" onClick={() => onReaction(emoji)}>
+                                <span className="text-lg">{emoji}</span>
+                            </Button>
+                        ))}
+                         <Popover open={emojiPickerOpen} onOpenChange={setEmojiPickerOpen}>
+                            <PopoverTrigger asChild>
+                                <Button variant="ghost" size="icon" className="rounded-full h-8 w-8 bg-zinc-700 hover:bg-zinc-600">
+                                    <Plus className="w-4 h-4 text-zinc-400"/>
+                                </Button>
+                            </PopoverTrigger>
+                            <PopoverContent side='bottom' className="p-0 border-0">
+                                <EmojiPicker onEmojiClick={handleEmojiSelect} />
+                            </PopoverContent>
+                        </Popover>
+                    </div>
+                </TooltipContent>
+            </Tooltip>
+        </TooltipProvider>
+    )
+}
 
 const ChatSkeleton = () => (
     <div className="flex flex-col h-screen bg-zinc-900">
@@ -70,29 +108,6 @@ const ChatSkeleton = () => (
       </footer>
     </div>
 );
-
-const MessageMenu = ({ onEdit, onDelete }: { onEdit: () => void; onDelete: () => void; }) => (
-    <Popover>
-        <PopoverTrigger asChild>
-            <Button variant="ghost" size="icon" className="h-7 w-7 text-muted-foreground opacity-0 group-hover:opacity-100 transition-opacity">
-                <MoreHorizontal className="w-5 h-5" />
-            </Button>
-        </PopoverTrigger>
-        <PopoverContent className="w-48 p-2">
-            <div className="flex flex-col gap-1">
-                 <Button variant="ghost" className="w-full justify-start text-sm h-9">
-                    <Smile className="w-4 h-4 mr-2" /> Tepki Ver
-                </Button>
-                <Button variant="ghost" className="w-full justify-start text-sm h-9" onClick={onEdit}>
-                    <Pencil className="w-4 h-4 mr-2" /> Düzenle
-                </Button>
-                <Button variant="ghost" className="w-full justify-start text-sm h-9 text-destructive hover:text-destructive" onClick={onDelete}>
-                    <Trash2 className="w-4 h-4 mr-2" /> Sil
-                </Button>
-            </div>
-        </PopoverContent>
-    </Popover>
-)
 
 
 export default function ChatPage() {
@@ -139,6 +154,44 @@ export default function ChatPage() {
       }
     }
   }, [matchData, user, firestore]);
+    
+   const handleReaction = async (messageId: string, emoji: string) => {
+    if (!firestore || !chatId || !user) return;
+    const messageRef = doc(firestore, 'matches', chatId, 'messages', messageId);
+
+    await runTransaction(firestore, async (transaction) => {
+        const messageDoc = await transaction.get(messageRef);
+        if (!messageDoc.exists()) return;
+
+        const data = messageDoc.data();
+        const reactions = data.reactions || {};
+        const userReacted = Object.values(reactions).some(users => (users as string[]).includes(user.uid));
+
+        // If user already reacted, remove their previous reaction first
+        if (userReacted) {
+            for (const key in reactions) {
+                const index = (reactions[key] as string[]).indexOf(user.uid);
+                if (index > -1) {
+                    reactions[key].splice(index, 1);
+                    if (reactions[key].length === 0) {
+                        delete reactions[key];
+                    }
+                    break;
+                }
+            }
+        }
+        
+        // Add new reaction
+        if (!reactions[emoji]) {
+            reactions[emoji] = [];
+        }
+        if (!reactions[emoji].includes(user.uid)) {
+            reactions[emoji].push(user.uid);
+        }
+
+        transaction.update(messageRef, { reactions });
+    });
+};
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -249,33 +302,47 @@ export default function ChatPage() {
             </header>
 
             <ScrollArea className="flex-1 p-4" viewportRef={viewportRef}>
-                <div className="space-y-4">
+                <div className="space-y-1">
                 {messages?.map((message) => (
                     <div
                     key={message.id}
-                    className={cn("flex items-center gap-2 w-full group", message.senderId === user?.uid ? 'justify-end' : 'justify-start')}
+                    className={cn("flex items-center w-full group py-1", message.senderId === user?.uid ? 'justify-end' : 'justify-start')}
                     >
-                    {message.senderId === user?.uid && <MessageMenu onEdit={() => handleEditMessage(message)} onDelete={() => handleDeleteMessage(message.id)} />}
-                    <div
-                        className={cn(
-                            "max-w-[70%] p-3 rounded-2xl flex flex-col relative",
-                            message.senderId === user?.uid
-                            ? 'bg-primary text-primary-foreground rounded-br-sm'
-                            : 'bg-zinc-800 text-white rounded-bl-sm'
-                        )}
-                    >
-                        {message.text && <p className='break-words'>{message.text}</p>}
-                        <div className="flex items-center justify-end gap-1.5 self-end mt-1 -mb-1">
-                            {message.isEdited && <span className="text-xs text-muted-foreground italic mr-1">(düzenlendi)</span>}
-                            <span className={cn("text-xs", message.senderId === user?.uid ? "text-primary-foreground/70" : "text-zinc-400")}>
-                                {formatMessageTimestamp(message.timestamp)}
-                            </span>
-                            {message.senderId === user?.uid && (
-                                <CheckCheck className="w-4 h-4 text-blue-300" />
-                            )}
-                         </div>
+                    <div className={cn("flex items-end gap-2", message.senderId === user?.uid ? 'flex-row-reverse' : 'flex-row')}>
+                        <ReactionTooltip onReaction={(emoji) => handleReaction(message.id, emoji)} onEdit={() => handleEditMessage(message)} onDelete={() => handleDeleteMessage(message.id)}>
+                            <div
+                                className={cn(
+                                    "max-w-[70%] p-3 rounded-2xl flex flex-col relative",
+                                    message.senderId === user?.uid
+                                    ? 'bg-primary text-primary-foreground rounded-br-sm'
+                                    : 'bg-zinc-800 text-white rounded-bl-sm'
+                                )}
+                            >
+                                {message.text && <p className='break-words'>{message.text}</p>}
+                                <div className="flex items-center justify-end gap-1.5 self-end mt-1 -mb-1">
+                                    {message.isEdited && <span className="text-xs text-muted-foreground italic mr-1">(düzenlendi)</span>}
+                                    <span className={cn("text-xs", message.senderId === user?.uid ? "text-primary-foreground/70" : "text-zinc-400")}>
+                                        {formatMessageTimestamp(message.timestamp)}
+                                    </span>
+                                    {message.senderId === user?.uid && (
+                                        <CheckCheck className="w-4 h-4 text-blue-300" />
+                                    )}
+                                </div>
+                                {message.reactions && Object.keys(message.reactions).length > 0 && (
+                                     <div className="absolute -bottom-4 right-0 flex items-center gap-1">
+                                        {Object.entries(message.reactions).map(([emoji, users]) => (
+                                            (users as string[]).length > 0 && (
+                                                <div key={emoji} className="flex items-center bg-zinc-700/80 backdrop-blur-sm rounded-full p-0.5 pr-1.5 border border-zinc-600">
+                                                    <span className="text-xs">{emoji}</span>
+                                                    {(users as string[]).length > 1 && <span className="text-xs font-bold text-zinc-300 ml-1">{(users as string[]).length}</span>}
+                                                </div>
+                                            )
+                                        ))}
+                                    </div>
+                                )}
+                            </div>
+                        </ReactionTooltip>
                     </div>
-                    {message.senderId !== user?.uid && <MessageMenu onEdit={() => {}} onDelete={() => {}} />}
                     </div>
                 ))}
                 </div>

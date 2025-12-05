@@ -26,6 +26,7 @@ export type Message = {
   imageUrl?: string;
   audioUrl?: string;
   isAiGenerated: boolean;
+  reactions?: { [emoji: string]: string[] }; // Map of emoji to user IDs
 };
 
 export interface UserProfile {
