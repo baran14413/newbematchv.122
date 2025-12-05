@@ -35,6 +35,7 @@ export interface UserProfile {
   voiceNoteUrl?: string;
   prompts: Prompt[];
   zodiac: string;
+  location: string;
   // personalityTraits are removed for simplification with firestore integration
 }
 
@@ -79,6 +80,7 @@ export const profiles: UserProfile[] = [
       { question: 'Şu konuda çok hırslanırım...', answer: 'Mario Kart. Bana bulaşma bile.' },
     ],
     zodiac: 'Koç',
+    location: 'İstanbul, TR',
   },
   {
     id: '2',
@@ -95,6 +97,7 @@ export const profiles: UserProfile[] = [
       { question: 'Aradığım kişi...', answer: 'Kendini çok ciddiye almayan biri.' },
     ],
     zodiac: 'Terazi',
+    location: 'Ankara, TR',
   },
     {
     id: '3',
@@ -109,6 +112,7 @@ export const profiles: UserProfile[] = [
       { question: 'Yorum bırakmalısın eğer...', answer: 'İyi bir yürüyüş rotası biliyorsan.' },
     ],
     zodiac: 'Balık',
+    location: 'İzmir, TR',
   },
 ];
 

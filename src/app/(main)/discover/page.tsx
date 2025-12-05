@@ -20,44 +20,43 @@ const SwipeableCard = ({ profile, onSwipe, isTop }: { profile: UserProfile, onSw
 
   const handleDragEnd = (e: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
     const { offset } = info;
+    if (Math.abs(offset.y) > Math.abs(offset.x)) {
+      if (offset.y < -100) onSwipe('up');
+      return;
+    }
+
     if (offset.x > 100) {
       onSwipe('right');
     } else if (offset.x < -100) {
       onSwipe('left');
-    } else if (offset.y < -100) {
-      onSwipe('up');
     }
   };
-
+  
   return (
     <motion.div
+      className="absolute w-full h-full"
       drag={isTop}
       dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
       onDragEnd={handleDragEnd}
-      style={{
-        position: 'absolute',
-        width: '100%',
-        height: '100%',
-        x,
-        rotate
-      }}
-      className={isTop ? "cursor-grab active:cursor-grabbing" : ""}
+      style={{ x, rotate, cursor: isTop ? 'grab' : 'auto' }}
+      whileDrag={{ cursor: 'grabbing' }}
     >
-      <motion.div
-        style={{ opacity: likeOpacity }}
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10"
-      >
-        <Heart className="w-24 h-24 text-green-500 fill-green-500" style={{ transform: 'rotate(-20deg)' }} />
-      </motion.div>
+        <motion.div
+            style={{ opacity: likeOpacity }}
+            className="absolute top-12 right-6 z-10 p-4 bg-black/30 rounded-full"
+        >
+            <Heart className="w-12 h-12 text-green-400" fill="currentColor" />
+        </motion.div>
 
-      <motion.div
-        style={{ opacity: nopeOpacity }}
-        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10"
-      >
-        <X className="w-24 h-24 text-red-500" style={{ transform: 'rotate(20deg)' }} />
-      </motion.div>
+        <motion.div
+            style={{ opacity: nopeOpacity }}
+            className="absolute top-12 left-6 z-10 p-4 bg-black/30 rounded-full"
+        >
+            <X className="w-12 h-12 text-red-500" strokeWidth={3} />
+        </motion.div>
+        
+        <ProfileCard profile={profile} />
 
-      <ProfileCard profile={profile} />
     </motion.div>
   );
 };
