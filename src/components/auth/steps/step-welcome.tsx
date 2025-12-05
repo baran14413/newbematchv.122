@@ -10,7 +10,7 @@ import { doc, setDoc, serverTimestamp, Timestamp } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 import { ref, uploadString, getDownloadURL } from "firebase/storage";
 import { v4 as uuidv4 } from 'uuid';
-import { motion } from 'framer-motion';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 const RuleItem = ({ title, description }: { title: string; description: string }) => (
     <div className="space-y-1">
@@ -21,11 +21,9 @@ const RuleItem = ({ title, description }: { title: string; description: string }
 
 interface StepWelcomeProps {
     onRegisterSuccess: () => void;
-    onSwitchView: (view: 'login' | 'register') => void;
-    resetOnboarding: () => void;
 }
 
-export default function StepWelcome({ onRegisterSuccess, resetOnboarding }: StepWelcomeProps) {
+export default function StepWelcome({ onRegisterSuccess }: StepWelcomeProps) {
   const { t } = useLanguage();
   const { formData } = useOnboardingContext();
   const auth = useAuth();
@@ -120,17 +118,14 @@ export default function StepWelcome({ onRegisterSuccess, resetOnboarding }: Step
     }
   };
 
-
   return (
     <div className="flex flex-col h-full w-full">
-        <div 
-            className="flex-1"
-        >
-            <div className="mb-8">
-                <Flame className="w-12 h-12 text-primary" />
-            </div>
+        <ScrollArea className="flex-1 -mx-6">
+            <div className="px-6 space-y-6 max-w-md mx-auto">
+                <div className="mb-4 pt-8">
+                    <Flame className="w-12 h-12 text-primary" />
+                </div>
             
-            <div className="space-y-6">
                 <h1 className="text-4xl font-bold">{t('onboarding.welcome.title')}</h1>
                 <p className="text-muted-foreground">{t('onboarding.welcome.subtitle')}</p>
                 
@@ -138,9 +133,9 @@ export default function StepWelcome({ onRegisterSuccess, resetOnboarding }: Step
                     {rules.map(rule => <RuleItem key={rule.title} {...rule} />)}
                 </div>
             </div>
-        </div>
+        </ScrollArea>
 
-        <div className="pb-4 mt-8">
+        <div className="py-4 mt-auto">
             <Button onClick={handleConfirm} disabled={isLoading} className="w-full font-bold text-lg py-7 rounded-xl">
                 {isLoading ? <Loader2 className="animate-spin" /> : t('onboarding.welcome.confirm')}
             </Button>

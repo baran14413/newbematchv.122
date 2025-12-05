@@ -64,17 +64,13 @@ export default function OnboardingWizard({ onSwitchView, onRegisterSuccess }: On
                 transition={{ duration: 0.3, ease: 'easeInOut' }}
                 className="w-full flex-1 flex flex-col"
               >
-                {!isWelcomeStep ? (
+                {!isWelcomeStep && (
                   <div className="text-center pt-2 pb-6">
                       <h2 className="text-3xl font-bold">{steps[currentStep].title}</h2>
                   </div>
-                ) : <div className="h-8"/>}
+                )}
                 <div className="flex-1 flex flex-col">
-                    <ScrollArea className="flex-1 -mx-6">
-                        <div className="px-6 h-full">
-                            <CurrentStepComponent onRegisterSuccess={onRegisterSuccess} onSwitchView={onSwitchView} resetOnboarding={resetOnboarding}/>
-                        </div>
-                    </ScrollArea>
+                    <CurrentStepComponent onRegisterSuccess={onRegisterSuccess} onSwitchView={onSwitchView} resetOnboarding={resetOnboarding}/>
                 </div>
               </motion.div>
            </AnimatePresence>
