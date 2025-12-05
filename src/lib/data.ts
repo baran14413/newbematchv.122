@@ -148,9 +148,45 @@ export const profiles: UserProfile[] = [
 ];
 
 
-export const conversations: Conversation[] = [];
+export const conversations: Conversation[] = [
+  {
+    id: 'convo-1',
+    userId: 'user-1',
+    userName: 'Sarah',
+    avatarUrl: placeholderImages.find(p => p.id === 'user-1-avatar')?.imageUrl ?? '',
+    lastMessage: 'Harika fikir! Yarın saat 8 uygun mu?',
+    timestamp: '10m ago',
+    unreadCount: 2,
+    messages: [
+      { id: 1, text: 'Selam! Profilin çok ilgimi çekti. Özellikle sanatla ilgileniyor olman harika.', sender: 'me', timestamp: '1h' },
+      { id: 2, text: 'Teşekkür ederim! Senin de müzik zevkin fena değilmiş. Belki bir gün birlikte bir konsere gideriz?', sender: 'them', timestamp: '45m' },
+      { id: 3, text: 'Harika fikir! Yarın saat 8 uygun mu?', sender: 'me', timestamp: '10m' },
+      { id: 4, text: 'Evet, uygun! Nerede buluşalım?', sender: 'them', timestamp: '5m' },
+    ]
+  },
+  {
+    id: 'convo-2',
+    userId: 'user-3',
+    userName: 'Chloe',
+    avatarUrl: placeholderImages.find(p => p.id === 'user-3-avatar')?.imageUrl ?? '',
+    lastMessage: 'Ben de! Yoga yapmayı çok seviyorum.',
+    timestamp: '1h ago',
+    unreadCount: 0,
+    messages: [
+       { id: 1, text: 'Merhaba Chloe! Doğa fotoğrafların harika. Ben de kamp yapmayı çok seviyorum.', sender: 'me', timestamp: '2h' },
+       { id: 2, text: 'Teşekkürler! Ne güzel tesadüf. En son nereye kamp yapmaya gittin?', sender: 'them', timestamp: '1h' },
+       { id: 3, text: 'Geçen ay Bolu\'daydım. Muhteşemdi! Senin favori kamp yerin neresi?', sender: 'me', timestamp: '1h' },
+       { id: 4, text: 'Ben de! Yoga yapmayı çok seviyorum.', sender: 'them', timestamp: '1h' },
+    ]
+  }
+];
 
-export const newMatches: Pick<UserProfile, 'id' | 'name' | 'avatarUrl'>[] = []
+export const newMatches: Pick<UserProfile, 'id' | 'name' | 'avatarUrl'>[] = [
+    { id: 'user-2', name: 'Alex', avatarUrl: placeholderImages.find(p => p.id === 'user-2-avatar')?.imageUrl ?? ''},
+    { id: 'user-4', name: 'Ben', avatarUrl: placeholderImages.find(p => p.id === 'user-4-avatar')?.imageUrl ?? ''},
+    { id: 'user-5', name: 'Maya', avatarUrl: placeholderImages.find(p => p.id === 'user-5-avatar')?.imageUrl ?? ''},
+    { id: 'user-6', name: 'Leo', avatarUrl: placeholderImages.find(p => p.id === 'user-6-avatar')?.imageUrl ?? ''}
+]
 
 export const zodiacSigns = [
   "Koç", "Boğa", "İkizler", "Yengeç", "Aslan", "Başak",

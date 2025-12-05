@@ -9,9 +9,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import ProfileCard from '@/components/discover/profile-card';
 import { useUser } from '@/firebase';
 import { Skeleton } from '@/components/ui/skeleton';
-import { useCollection, useMemoFirebase } from '@/firebase';
-import { collection, query } from 'firebase/firestore';
-import { useFirestore } from '@/firebase';
+import LikesYou from '@/components/discover/likes-you';
 
 
 type SwipeDirection = 'left' | 'right' | 'up';
@@ -79,17 +77,11 @@ const DesktopProfileSkeleton = () => (
 
 export default function DiscoverPage() {
   const { user } = useUser();
-  const firestore = useFirestore();
-
-  const usersQuery = useMemoFirebase(
-    () => (firestore ? query(collection(firestore, 'users')) : null),
-    [firestore]
-  );
-  
-  const { data: profiles, isLoading } = useCollection<UserProfile>(usersQuery);
+  const profiles = staticProfiles;
+  const isLoading = false;
 
   const filteredProfiles = useMemo(() => {
-    if (!profiles || !user) return [];
+    if (!profiles || !user) return profiles; // Show all if no user
     return profiles.filter(p => p.id !== user.uid);
   }, [profiles, user]);
 
@@ -158,6 +150,7 @@ export default function DiscoverPage() {
 
   return (
     <div className="h-full w-full flex flex-col bg-gray-50 dark:bg-black overflow-hidden">
+       <LikesYou />
       <div className="flex-1 flex flex-col items-center justify-center px-4">
         <div className="w-full max-w-sm h-[65vh] max-h-[550px] relative flex items-center justify-center">
           {stack.length > 0 ? (
