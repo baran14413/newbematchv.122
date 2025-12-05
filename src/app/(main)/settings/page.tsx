@@ -1,10 +1,13 @@
 'use client';
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Separator } from "@/components/ui/separator";
-import { ChevronRight, Heart, LogOut, MapPin, ShieldCheck, SlidersHorizontal, Smartphone, User, Wallet, KeyRound, Trash2, GalleryHorizontal, Crown } from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
+import { ChevronRight, Heart, LogOut, MapPin, ShieldCheck, SlidersHorizontal, Smartphone, User, Wallet, GalleryHorizontal, Crown } from "lucide-react";
 import Link from "next/link";
 import { useLanguage } from "@/context/language-context";
+import { useAuth } from "@/firebase";
+import { signOut } from "firebase/auth";
+import { useRouter } from "next/navigation";
+import { useToast } from "@/hooks/use-toast";
 
 const SettingsSection = ({ title, children }: { title: string, children: React.ReactNode }) => (
     <div className="space-y-4">
@@ -19,9 +22,9 @@ const SettingsSection = ({ title, children }: { title: string, children: React.R
     </div>
 );
 
-const SettingsItem = ({ icon: Icon, label, href = "#" }: { icon: React.ElementType, label: string, href?: string }) => (
+const SettingsItem = ({ icon: Icon, label, href }: { icon: React.ElementType, label: string, href?: string }) => (
     <li className="list-none">
-        <Link href={href} passHref>
+        <Link href={href!} passHref>
             <div className="flex items-center p-4 hover:bg-secondary cursor-pointer">
                 <Icon className="w-6 h-6 mr-4 text-primary" />
                 <span className="flex-1 font-medium">{label}</span>
@@ -31,8 +34,42 @@ const SettingsItem = ({ icon: Icon, label, href = "#" }: { icon: React.ElementTy
     </li>
 );
 
+const SettingsButton = ({ icon: Icon, label, onClick }: { icon: React.ElementType, label: string, onClick: () => void }) => (
+     <li className="list-none">
+        <button onClick={onClick} className="w-full">
+            <div className="flex items-center p-4 hover:bg-secondary cursor-pointer">
+                <Icon className="w-6 h-6 mr-4 text-primary" />
+                <span className="flex-1 font-medium text-left">{label}</span>
+                <ChevronRight className="w-5 h-5 text-muted-foreground" />
+            </div>
+        </button>
+    </li>
+);
+
 export default function SettingsPage() {
     const { t } = useLanguage();
+    const auth = useAuth();
+    const router = useRouter();
+    const { toast } = useToast();
+
+    const handleLogout = async () => {
+        try {
+            await signOut(auth);
+            toast({
+                title: "Başarıyla çıkış yapıldı",
+                description: "Görüşmek üzere!",
+            });
+            router.push('/');
+        } catch (error) {
+            console.error("Logout error: ", error);
+            toast({
+                variant: 'destructive',
+                title: "Çıkış yapılamadı",
+                description: "Bir hata oluştu, lütfen tekrar deneyin.",
+            });
+        }
+    };
+
   return (
     <div className="h-full overflow-y-auto bg-gray-50 dark:bg-black">
         <header className="p-4 py-6 md:p-8">
@@ -63,7 +100,7 @@ export default function SettingsPage() {
             </SettingsSection>
 
             <SettingsSection title={t('settings.session')}>
-                <SettingsItem icon={LogOut} label={t('settings.logout')} />
+                <SettingsButton icon={LogOut} label={t('settings.logout')} onClick={handleLogout} />
             </SettingsSection>
         </div>
     </div>
