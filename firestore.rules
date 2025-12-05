@@ -18,8 +18,7 @@ service cloud.firestore {
      *
      * Key Security Decisions:
      * - Default Deny: All paths are closed by default. Access must be explicitly granted.
-     * - No User Listing: Global listing of user profiles at the root `/users` path is
-     *   disallowed to protect user privacy.
+     * - User Listing Allowed: Authenticated users can list profiles for discovery, but can only get their own full profile.
      * - Strict Ownership: A user can only access and modify documents within their
      *   own `/users/{userId}` data tree.
      * - Shared Access via Denormalization: The `/matches/{matchId}` documents contain
@@ -80,15 +79,15 @@ service cloud.firestore {
     /**
      * @description Manages user profile data. A user can only read and write their own profile.
      * @path /users/{userId}
-     * @allow (get, update, delete) A user with auth.uid 'user123' to get or modify their own document at /users/user123.
+     * @allow (get) A user with auth.uid 'user123' to get their own document at /users/user123.
+     * @allow (list) Any signed-in user to list users for discovery purposes.
      * @allow (create) A new user with auth.uid 'user123' to create their own profile document at /users/user123.
      * @deny (get) A user with auth.uid 'user456' from reading /users/user123.
-     * @deny (list) Any user from listing all documents in the /users collection.
-     * @principle Restricts access to a user's own data tree (Path-based Ownership).
+     * @principle Restricts full-read access to a user's own data tree (Path-based Ownership).
      */
     match /users/{userId} {
       allow get: if isOwner(userId);
-      allow list: if false;
+      allow list: if isSignedIn();
       allow create: if isOwner(userId) && request.resource.data.id == userId;
       allow update: if isOwner(userId) && isExistingDocument() && request.resource.data.id == resource.data.id;
       allow delete: if isOwner(userId) && isExistingDocument();
@@ -171,3 +170,4 @@ service cloud.firestore {
     }
   }
 }
+    
