@@ -19,12 +19,16 @@ function formatMessageTimestamp(timestamp: any) {
 }
 
 const ChatSkeleton = () => (
-  <div className="flex flex-col h-screen">
+  <div className="flex flex-col h-full">
     <header className="flex items-center gap-4 p-3 border-b bg-background">
       <Skeleton className="h-10 w-10 rounded-full" />
       <div className="flex-1 space-y-2">
         <Skeleton className="h-4 w-32" />
         <Skeleton className="h-3 w-20" />
+      </div>
+      <div className="flex gap-2">
+        <Skeleton className="h-9 w-9" />
+        <Skeleton className="h-9 w-9" />
       </div>
     </header>
     <div className="flex-1 p-4 space-y-6">
@@ -56,25 +60,32 @@ export default function ChatPage() {
 
   const [otherUser, setOtherUser] = useState<UserProfile | null>(null);
   const [newMessage, setNewMessage] = useState('');
-  const scrollAreaRef = useRef<HTMLDivElement>(null);
-
-  const matchDocRef = useMemoFirebase(() => doc(firestore, 'matches', chatId), [firestore, chatId]);
-  const { data: matchData } = useDoc(matchDocRef);
   
-  const messagesQuery = useMemoFirebase(() => 
-    query(collection(firestore, 'matches', chatId, 'messages'), orderBy('timestamp', 'asc')),
-    [firestore, chatId]
-  );
-  const { data: messages } = useCollection<Message>(messagesQuery);
+  const matchDocRef = useMemoFirebase(() => {
+      if (!firestore || !chatId) return null;
+      return doc(firestore, 'matches', chatId);
+  }, [firestore, chatId]);
+
+  const { data: matchData, isLoading: isMatchLoading } = useDoc(matchDocRef);
+  
+  const messagesQuery = useMemoFirebase(() => {
+    if (!firestore || !chatId) return null;
+    return query(collection(firestore, 'matches', chatId, 'messages'), orderBy('timestamp', 'asc'));
+  }, [firestore, chatId]);
+
+  const { data: messages, isLoading: areMessagesLoading } = useCollection<Message>(messagesQuery);
 
   useEffect(() => {
-    if (matchData && user) {
+    if (matchData && user && firestore) {
       const otherUserId = matchData.users.find((uid: string) => uid !== user.uid);
       if (otherUserId) {
         const userDocRef = doc(firestore, 'users', otherUserId);
         const unsub = onSnapshot(userDocRef, (doc) => {
           if (doc.exists()) {
             setOtherUser({ id: doc.id, ...doc.data() } as UserProfile);
+          } else {
+            // Handle case where other user's profile is not found
+            setOtherUser(null);
           }
         });
         return () => unsub();
@@ -82,18 +93,9 @@ export default function ChatPage() {
     }
   }, [matchData, user, firestore]);
 
-   useEffect(() => {
-    if (scrollAreaRef.current) {
-      scrollAreaRef.current.scrollTo({
-        top: scrollAreaRef.current.scrollHeight,
-        behavior: 'smooth'
-      });
-    }
-  }, [messages]);
-
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newMessage.trim() || !user) return;
+    if (!newMessage.trim() || !user || !matchDocRef) return;
 
     const messagesRef = collection(firestore, 'matches', chatId, 'messages');
     try {
@@ -119,7 +121,7 @@ export default function ChatPage() {
 
   const scrollToBottom = () => {
     if (viewportRef.current) {
-      viewportRef.current.scrollTo({ top: viewportRef.current.scrollHeight, behavior: 'smooth' });
+      viewportRef.current.scrollTo({ top: viewportRef.current.scrollHeight, behavior: 'auto' });
     }
   };
 
@@ -127,23 +129,40 @@ export default function ChatPage() {
     scrollToBottom();
   }, [messages]);
 
-  if (isUserLoading || !otherUser) {
+  const isLoading = isUserLoading || isMatchLoading || areMessagesLoading || (matchData && !otherUser);
+
+  if (isLoading) {
     return <ChatSkeleton />;
   }
 
+  if (!matchData || !user) {
+    return (
+        <div className="flex items-center justify-center h-full">
+            <p>Sohbet bulunamadı veya oturum açmadınız. ID: {chatId}</p>
+        </div>
+    );
+  }
+  
+  if (!otherUser) {
+      return (
+         <div className="flex items-center justify-center h-full">
+            <p>Sohbet edilecek kullanıcı bulunamadı.</p>
+        </div>
+      )
+  }
+
   return (
-    <div className="flex flex-col h-screen bg-secondary/20">
+    <div className="flex flex-col h-full bg-secondary/20">
       <header className="flex items-center gap-4 p-3 border-b bg-background">
-        <Button onClick={() => router.back()} variant="ghost" size="icon">
-          <ArrowLeft className="w-6 h-6" />
-        </Button>
-        <Avatar className="h-10 w-10">
-          <AvatarImage src={otherUser.avatarUrl} alt={otherUser.name} />
-          <AvatarFallback>{otherUser.name.charAt(0)}</AvatarFallback>
-        </Avatar>
-        <div className="flex-1">
-          <h2 className="text-lg font-semibold text-foreground">{otherUser.name}</h2>
-          {/* <p className="text-sm text-green-400">Online</p> */}
+        <div className="flex-1 flex items-center gap-3">
+          <Avatar className="h-10 w-10">
+            <AvatarImage src={otherUser.avatarUrl} alt={otherUser.name} />
+            <AvatarFallback>{otherUser.name.charAt(0)}</AvatarFallback>
+          </Avatar>
+          <div>
+            <h2 className="text-lg font-semibold text-foreground">{otherUser.name}</h2>
+            {/* <p className="text-sm text-green-400">Online</p> */}
+          </div>
         </div>
         <div className="flex items-center gap-2">
             <Button variant="ghost" size="icon" className="text-muted-foreground">
@@ -177,10 +196,15 @@ export default function ChatPage() {
                 )}
               >
                 <p className='break-words'>{message.text}</p>
-                 {message.senderId === user?.uid && (
+                 {message.senderId === user?.uid && message.timestamp && (
                     <div className="flex items-center justify-end gap-1.5 self-end mt-1">
                         <span className="text-xs text-primary-foreground/70">{formatMessageTimestamp(message.timestamp)}</span>
                         <CheckCheck className="w-4 h-4 text-blue-400" />
+                    </div>
+                 )}
+                 {message.senderId !== user?.uid && message.timestamp && (
+                     <div className="flex items-center justify-end gap-1.5 self-end mt-1">
+                        <span className="text-xs text-muted-foreground/70">{formatMessageTimestamp(message.timestamp)}</span>
                     </div>
                  )}
               </div>
