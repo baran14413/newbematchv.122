@@ -13,6 +13,7 @@ import { useToast } from '@/hooks/use-toast';
 import { Switch } from '@/components/ui/switch';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Separator } from '@/components/ui/separator';
+import { cn } from '@/lib/utils';
 
 export default function PreferencesPage() {
     const { t } = useLanguage();
@@ -30,13 +31,21 @@ export default function PreferencesPage() {
     const [distance, setDistance] = useState(50);
     const [ageRange, setAgeRange] = useState([18, 55]);
     const [globalMode, setGlobalMode] = useState(true);
+    const [interestedIn, setInterestedIn] = useState<'man' | 'woman' | 'everyone'>();
     const [isSaving, setIsSaving] = useState(false);
+
+     const interestOptions = [
+        { id: 'man', label: t('onboarding.interestedIn.men') },
+        { id: 'woman', label: t('onboarding.interestedIn.women') },
+        { id: 'everyone', label: t('onboarding.interestedIn.everyone') },
+    ];
 
     useEffect(() => {
         if (userProfile) {
             setDistance(userProfile.maxDistance || 50);
             setAgeRange(userProfile.ageRange || [18, 55]);
             setGlobalMode(userProfile.globalMode === undefined ? true : userProfile.globalMode);
+            setInterestedIn(userProfile.interestedIn || 'everyone');
         }
     }, [userProfile]);
 
@@ -48,6 +57,7 @@ export default function PreferencesPage() {
                 maxDistance: distance,
                 ageRange: ageRange,
                 globalMode: globalMode,
+                interestedIn: interestedIn,
             });
             toast({
                 title: t('preferencesPage.saveSuccessTitle'),
@@ -109,6 +119,24 @@ export default function PreferencesPage() {
             </header>
 
             <div className="md:p-8 md:pt-0 space-y-8">
+                <Card>
+                    <CardHeader>
+                        <CardTitle>{t('preferencesPage.showMe')}</CardTitle>
+                    </CardHeader>
+                    <CardContent className="space-y-3">
+                         {interestOptions.map((option) => (
+                            <Button
+                                key={option.id}
+                                onClick={() => setInterestedIn(option.id as 'man' | 'woman' | 'everyone')}
+                                variant={interestedIn === option.id ? 'default' : 'outline'}
+                                className={cn('w-full justify-center h-12 text-base')}
+                            >
+                                {option.label}
+                            </Button>
+                        ))}
+                    </CardContent>
+                </Card>
+
                 <Card>
                     <CardHeader>
                         <CardTitle>{t('preferencesPage.locationTitle')}</CardTitle>

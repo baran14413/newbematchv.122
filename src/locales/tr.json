@@ -120,6 +120,7 @@
     "preferencesPage": {
         "title": "Tercihler",
         "description": "Keşfet sayfasında kimleri görmek istediğini ayarla.",
+        "showMe": "Bana Şunları Göster",
         "locationTitle": "Konum Tercihleri",
         "globalMode": "Global",
         "globalModeDescription": "Tüm dünyadaki insanları mesafeye göre sıralanmış şekilde göster.",
@@ -197,7 +198,7 @@
         "ageInfo": "Devam etmek için 18 yaşında veya daha büyük olmalısın.",
         "currentAge": "Yaşın: {age}",
         "invalidDate": "Lütfen geçerli bir tarih girin.",
-        "stepGenderTitle": "Cinsiyetin nedir?",
+        "stepGenderTitle": "Bize kendinden bahset",
         "gender": {
             "yourGender": "Cinsiyetiniz",
             "woman": "Kadın",
@@ -205,7 +206,7 @@
             "other": "Diğer"
         },
         "interestedIn": {
-            "showMe": "Kimi görmek istersin?",
+            "showMe": "Bana şunları göster",
             "men": "Erkekler",
             "women": "Kadınlar",
             "everyone": "Herkes"
@@ -247,25 +248,6 @@
             "confirmPassword": "Şifreyi Onayla",
             "confirmPasswordPlaceholder": "Şifrenizi doğrulayın",
             "passwordMismatch": "Şifreler eşleşmiyor."
-        },
-        "stepWelcomeTitle": " ",
-        "welcome": {
-            "title": "BeMatch'e hoş geldin.",
-            "subtitle": "Lütfen aşağıdaki kurallara uymayı unutma.",
-            "rule1Title": "Kendin ol.",
-            "rule1Desc": "Fotoğraflarının, yaşının ve biyografinin gerçeği yansıttığından emin ol.",
-            "rule2Title": "Dikkatli ol.",
-            "rule2Desc": "Kişisel bilgilerini paylaşmadan önce iyi düşün.",
-            "rule3Title": "Nazik ol.",
-            "rule3Desc": "Diğer kullanıcılara saygı göster ve sana nasıl davranılmasını istiyorsan onlara da öyle davran.",
-            "rule4Title": "Proaktif ol.",
-            "rule4Desc": "Kötü davranışları mutlaka bize bildir.",
-            "confirm": "Onaylıyorum ve Keşfet",
-            "legal_prefix": "Kaydolarak",
-            "legal_and": "ve",
-            "legal_suffix": "kabul etmiş olursun.",
-            "terms": "Kullanım Koşullarımızı",
-            "privacy": "Gizlilik Politikamızı"
         },
         "haveAccount": "Zaten bir hesabın var mı?",
         "login": "Giriş Yap",

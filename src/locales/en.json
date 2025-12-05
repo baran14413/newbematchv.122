@@ -120,6 +120,7 @@
     "preferencesPage": {
         "title": "Preferences",
         "description": "Set who you want to see on the discovery page.",
+        "showMe": "Show Me",
         "locationTitle": "Location Preferences",
         "globalMode": "Global",
         "globalModeDescription": "Show people from all over the world, sorted by distance.",
@@ -197,7 +198,7 @@
         "ageInfo": "You must be 18 or older to continue.",
         "currentAge": "Your Age: {age}",
         "invalidDate": "Please enter a valid date.",
-        "stepGenderTitle": "What's your gender?",
+        "stepGenderTitle": "Tell us about you",
         "gender": {
             "yourGender": "Your Gender",
             "woman": "Woman",
@@ -205,7 +206,7 @@
             "other": "Other"
         },
         "interestedIn": {
-            "showMe": "Who do you want to see?",
+            "showMe": "Show me",
             "men": "Men",
             "women": "Women",
             "everyone": "Everyone"
@@ -247,25 +248,6 @@
             "confirmPassword": "Confirm Password",
             "confirmPasswordPlaceholder": "Confirm your password",
             "passwordMismatch": "Passwords do not match."
-        },
-        "stepWelcomeTitle": " ",
-        "welcome": {
-            "title": "Welcome to BeMatch.",
-            "subtitle": "Please remember to follow the rules below.",
-            "rule1Title": "Be yourself.",
-            "rule1Desc": "Make sure your photos, age, and bio are a true reflection of you.",
-            "rule2Title": "Be careful.",
-            "rule2Desc": "Think twice before sharing personal information.",
-            "rule3Title": "Be kind.",
-            "rule3Desc": "Respect other users and treat them as you would like to be treated.",
-            "rule4Title": "Be proactive.",
-            "rule4Desc": "Be sure to report any bad behavior to us.",
-            "confirm": "I Agree & Discover",
-            "legal_prefix": "By signing up you agree to our",
-            "legal_and": "and",
-            "legal_suffix": "",
-            "terms": "Terms of Service",
-            "privacy": "Privacy Policy"
         },
         "haveAccount": "Already have an account?",
         "login": "Log In",
