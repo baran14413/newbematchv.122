@@ -29,70 +29,68 @@ export default function StepCredentials() {
   };
 
   return (
-    <div className="space-y-6 flex flex-col h-full">
-      <div className="flex-1 space-y-6">
-        <div className="space-y-2">
-            <Label htmlFor="email">{t('onboarding.credentials.email')}</Label>
-            <Input 
-            id="email" 
-            name="email"
-            type="email" 
-            placeholder={t('onboarding.credentials.emailPlaceholder')}
-            value={formData.email}
-            onChange={handleChange}
-            className="h-12 text-base"
-            />
-        </div>
-        <div className="space-y-2 relative">
-            <Label htmlFor="password">{t('onboarding.credentials.password')}</Label>
-            <Input 
-            id="password" 
-            name="password"
-            type={showPassword ? 'text' : 'password'}
-            placeholder={t('onboarding.credentials.passwordPlaceholder')}
-            value={formData.password}
-            onChange={handleChange}
-            className="h-12 text-base"
-            />
-            <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            className="absolute right-2.5 top-8 h-7 w-7 text-muted-foreground"
-            onClick={() => setShowPassword(!showPassword)}
-            >
-            {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-            </Button>
-            <PasswordStrength password={formData.password} />
-        </div>
-        <div className="space-y-2 relative">
-            <Label htmlFor="confirmPassword">{t('onboarding.credentials.confirmPassword')}</Label>
-            <Input 
-            id="confirmPassword" 
-            name="confirmPassword"
-            type={showConfirmPassword ? 'text' : 'password'}
-            placeholder={t('onboarding.credentials.confirmPasswordPlaceholder')}
-            value={formData.confirmPassword}
-            onChange={handleChange}
-            className={`h-12 text-base ${
-                formData.confirmPassword && formData.password !== formData.confirmPassword
-                ? 'border-red-500'
-                : ''
-            }`}
-            />
-            <Button
-            type="button"
-            variant="ghost"
-            size="icon"
-            className="absolute right-2.5 top-8 h-7 w-7 text-muted-foreground"
-            onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-            >
-            {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-            </Button>
-            {formData.confirmPassword && formData.password !== formData.confirmPassword && (
-                <p className="text-xs text-red-500">{t('onboarding.credentials.passwordMismatch')}</p>
-            )}
-        </div>
+    <div className="space-y-6">
+      <div className="space-y-2">
+          <Label htmlFor="email">{t('onboarding.credentials.email')}</Label>
+          <Input 
+          id="email" 
+          name="email"
+          type="email" 
+          placeholder={t('onboarding.credentials.emailPlaceholder')}
+          value={formData.email}
+          onChange={handleChange}
+          className="h-12 text-base"
+          />
+      </div>
+      <div className="space-y-2 relative">
+          <Label htmlFor="password">{t('onboarding.credentials.password')}</Label>
+          <Input 
+          id="password" 
+          name="password"
+          type={showPassword ? 'text' : 'password'}
+          placeholder={t('onboarding.credentials.passwordPlaceholder')}
+          value={formData.password}
+          onChange={handleChange}
+          className="h-12 text-base"
+          />
+          <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          className="absolute right-2.5 top-8 h-7 w-7 text-muted-foreground"
+          onClick={() => setShowPassword(!showPassword)}
+          >
+          {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+          </Button>
+          <PasswordStrength password={formData.password} />
+      </div>
+      <div className="space-y-2 relative">
+          <Label htmlFor="confirmPassword">{t('onboarding.credentials.confirmPassword')}</Label>
+          <Input 
+          id="confirmPassword" 
+          name="confirmPassword"
+          type={showConfirmPassword ? 'text' : 'password'}
+          placeholder={t('onboarding.credentials.confirmPasswordPlaceholder')}
+          value={formData.confirmPassword}
+          onChange={handleChange}
+          className={`h-12 text-base ${
+              formData.confirmPassword && formData.password !== formData.confirmPassword
+              ? 'border-red-500'
+              : ''
+          }`}
+          />
+          <Button
+          type="button"
+          variant="ghost"
+          size="icon"
+          className="absolute right-2.5 top-8 h-7 w-7 text-muted-foreground"
+          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+          >
+          {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+          </Button>
+          {formData.confirmPassword && formData.password !== formData.confirmPassword && (
+              <p className="text-xs text-red-500">{t('onboarding.credentials.passwordMismatch')}</p>
+          )}
       </div>
     </div>
   );
