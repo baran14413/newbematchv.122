@@ -1,7 +1,7 @@
 'use client';
-import { createContext, useContext, useState, ReactNode } from 'react';
+import { createContext, useContext, useState, ReactNode, useEffect } from 'react';
 import { useRouter } from 'next/navigation';
-import { useAuth, useFirestore, useStorage } from '@/firebase';
+import { useAuth, useFirestore, useStorage, useUser } from '@/firebase';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc, serverTimestamp, Timestamp } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
@@ -83,8 +83,16 @@ export const OnboardingProvider = ({ children }: { children: ReactNode }) => {
   const firestore = useFirestore();
   const storage = useStorage();
   const { toast } = useToast();
+  const { user } = useUser();
 
-  const isLastStep = currentStep === 9; 
+  const isLastStep = currentStep === 9;
+
+  useEffect(() => {
+    // If the user logs out, reset the onboarding form state
+    if (!user) {
+      resetOnboarding();
+    }
+  }, [user]);
 
   const updateFormData = (data: Partial<FormData>) => {
     setFormData((prev) => ({ ...prev, ...data }));
