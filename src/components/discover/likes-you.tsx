@@ -1,13 +1,28 @@
 'use client';
 import { useLanguage } from "@/context/language-context";
-import { likesYouData } from "@/lib/data";
 import { Card } from "../ui/card";
 import { Star, Heart, Lock } from "lucide-react";
 import Image from "next/image";
 import { cn } from "@/lib/utils";
 
+// This is now an empty array to prevent build errors.
+// In a real app, this data would be fetched from Firestore.
+const likesYouData: any[] = [];
+
+
 export default function LikesGrid() {
     const { t } = useLanguage();
+    
+    // In a real app, we would fetch users who liked the current user here.
+    // For now, it will display nothing as the array is empty.
+
+    if (likesYouData.length === 0) {
+        return (
+             <div className="flex flex-col items-center justify-center h-full text-center p-8">
+                <p className="text-muted-foreground">Seni henüz beğenen kimse yok.</p>
+            </div>
+        )
+    }
     
     return (
         <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4 p-4">
