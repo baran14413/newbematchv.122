@@ -13,6 +13,7 @@ export default function StepLocation() {
   const { t } = useLanguage();
   const { toast } = useToast();
   const [isLocating, setIsLocating] = useState(false);
+  const [distance, setDistance] = useState(formData.maxDistance || 25);
 
   const getCityFromCoordinates = async (latitude: number, longitude: number) => {
     setIsLocating(true);
@@ -58,7 +59,9 @@ export default function StepLocation() {
   };
 
   const handleSliderChange = (value: number[]) => {
-    updateFormData({ maxDistance: value[0] });
+    const newDistance = value[0];
+    setDistance(newDistance);
+    updateFormData({ maxDistance: newDistance });
   };
 
   useEffect(() => {
@@ -66,7 +69,7 @@ export default function StepLocation() {
   }, [formData.locationEnabled, setStepValid]);
 
   return (
-    <div className="space-y-8 h-full flex flex-col justify-center">
+    <div className="w-full">
       {!formData.locationEnabled ? (
         <div className='space-y-4 text-center'>
             <div className='flex justify-center'>
@@ -91,11 +94,12 @@ export default function StepLocation() {
           <div className="space-y-4">
             <div className="flex justify-between items-baseline">
                 <Label>{t('onboarding.location.maxDistance')}</Label>
-                <span className="text-sm font-semibold text-primary">{formData.maxDistance} {t('common.km')}</span>
+                <span className="text-sm font-semibold text-primary">{distance} {t('common.km')}</span>
             </div>
             <Slider 
-                value={[formData.maxDistance]} 
+                value={[distance]} 
                 max={150} 
+                min={1}
                 step={1}
                 onValueChange={handleSliderChange}
             />

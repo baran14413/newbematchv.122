@@ -24,15 +24,15 @@ export default function StepBio() {
   const remainingChars = MAX_BIO_LENGTH - formData.bio.length;
 
   return (
-    <div className="space-y-4 flex flex-col h-full">
+    <div className="flex flex-col h-full w-full">
         <Textarea
             placeholder={t('onboarding.bio.placeholder')}
             value={formData.bio}
             onChange={handleChange}
-            className="flex-1 resize-none text-base h-full"
+            className="flex-1 resize-none text-base h-full bg-transparent border-0 focus-visible:ring-0 focus-visible:ring-offset-0 p-0"
             autoFocus
         />
-      <p className="text-right text-sm text-muted-foreground">
+      <p className="text-right text-sm text-muted-foreground mt-2">
         {t('onboarding.bio.remaining', { count: remainingChars })}
       </p>
     </div>
