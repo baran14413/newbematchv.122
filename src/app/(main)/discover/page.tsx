@@ -116,7 +116,6 @@ export default function DiscoverPage() {
   const [visibleStack, setVisibleStack] = useState<UserProfile[]>([]);
   const [history, setHistory] = useState<{profile: UserProfile, type: SwipeType}[]>([]);
   const [showTutorial, setShowTutorial] = useState(false);
-  const [matchData, setMatchData] = useState<{currentUser: UserProfile, matchedUser: UserProfile} | null>(null);
 
   // Fetch current user's profile to get their coordinates and preferences
   const currentUserDocRef = useMemoFirebase(() => {
@@ -264,7 +263,7 @@ export default function DiscoverPage() {
         if (targetUserSwipeDoc.exists()) {
           const swipeData = targetUserSwipeDoc.data();
           if (swipeData.type === 'like' || swipeData.type === 'superlike') {
-            // It's a MATCH!
+            // It's a MATCH! Create the match doc in the background.
             const matchBatch = writeBatch(firestore);
             const matchId = [user.uid, swipedProfile.id].sort().join('_');
             const matchRef = doc(firestore, 'matches', matchId);
@@ -277,9 +276,6 @@ export default function DiscoverPage() {
             });
 
             await matchBatch.commit();
-            
-            // Trigger the "It's a Match!" UI
-            setMatchData({ currentUser: currentUserProfile, matchedUser: swipedProfile });
           }
         }
       }
@@ -322,14 +318,6 @@ export default function DiscoverPage() {
 
   if (isMobile === undefined) {
     return null; // or a loading skeleton
-  }
-  
-  if (matchData) {
-    return <ItIsAMatch 
-            currentUser={matchData.currentUser} 
-            matchedUser={matchData.matchedUser}
-            onContinue={() => setMatchData(null)}
-           />
   }
 
   if (isLoading) {
