@@ -260,7 +260,12 @@
             "rule3Desc": "Respect other users and treat them as you would like to be treated.",
             "rule4Title": "Be proactive.",
             "rule4Desc": "Be sure to report any bad behavior to us.",
-            "confirm": "I Agree & Discover"
+            "confirm": "I Agree & Discover",
+            "legal_prefix": "By signing up you agree to our",
+            "legal_and": "and",
+            "legal_suffix": "",
+            "terms": "Terms of Service",
+            "privacy": "Privacy Policy"
         },
         "haveAccount": "Already have an account?",
         "login": "Log In",

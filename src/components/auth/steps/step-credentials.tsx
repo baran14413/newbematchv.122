@@ -33,53 +33,61 @@ export default function StepCredentials() {
 
   return (
     <div className="space-y-6">
-      <div className="space-y-2 relative">
+      <div className="space-y-2">
           <Label htmlFor="password">{t('onboarding.credentials.password')}</Label>
           <p className="text-xs text-muted-foreground -mt-1 mb-2">
               {t('onboarding.credentials.passwordPolicy')}
           </p>
-          <Input 
-          id="password" 
-          name="password"
-          type={showPassword ? 'text' : 'password'}
-          placeholder={t('onboarding.credentials.passwordPlaceholder')}
-          value={formData.password}
-          onChange={handleChange}
-          className="h-12 text-base"
-          autoFocus
-          />
-          <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          className="absolute right-2.5 top-[42px] h-7 w-7 text-muted-foreground"
-          onClick={() => setShowPassword(!showPassword)}
-          >
-          {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-          </Button>
+          <div className="relative">
+            <Input 
+            id="password" 
+            name="password"
+            type={showPassword ? 'text' : 'password'}
+            placeholder={t('onboarding.credentials.passwordPlaceholder')}
+            value={formData.password}
+            onChange={handleChange}
+            className="h-14 text-lg pr-12"
+            autoFocus
+            />
+            <div className="absolute inset-y-0 right-0 flex items-center pr-3">
+              <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="h-7 w-7 text-muted-foreground"
+              onClick={() => setShowPassword(!showPassword)}
+              >
+              {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+              </Button>
+            </div>
+          </div>
           <PasswordStrength password={formData.password} />
       </div>
-      <div className="space-y-2 relative">
+      <div className="space-y-2">
           <Label htmlFor="confirmPassword">{t('onboarding.credentials.confirmPassword')}</Label>
-          <Input 
-          id="confirmPassword" 
-          name="confirmPassword"
-          type={showConfirmPassword ? 'text' : 'password'}
-          placeholder={t('onboarding.credentials.confirmPasswordPlaceholder')}
-          value={formData.confirmPassword}
-          onChange={handleChange}
-          onBlur={() => setIsConfirmTouched(true)}
-          className={cn('h-12 text-base', passwordsDontMatch && 'border-destructive')}
-          />
-          <Button
-          type="button"
-          variant="ghost"
-          size="icon"
-          className="absolute right-2.5 top-8 h-7 w-7 text-muted-foreground"
-          onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-          >
-          {showConfirmPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-          </Button>
+          <div className="relative">
+            <Input 
+            id="confirmPassword" 
+            name="confirmPassword"
+            type={showConfirmPassword ? 'text' : 'password'}
+            placeholder={t('onboarding.credentials.confirmPasswordPlaceholder')}
+            value={formData.confirmPassword}
+            onChange={handleChange}
+            onBlur={() => setIsConfirmTouched(true)}
+            className={cn('h-14 text-lg pr-12', passwordsDontMatch && 'border-destructive')}
+            />
+            <div className="absolute inset-y-0 right-0 flex items-center pr-3">
+              <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="h-7 w-7 text-muted-foreground"
+              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
+              >
+              {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
+              </Button>
+            </div>
+          </div>
           {passwordsDontMatch && (
               <p className="text-xs text-destructive">{t('onboarding.credentials.passwordMismatch')}</p>
           )}

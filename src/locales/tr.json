@@ -260,7 +260,12 @@
             "rule3Desc": "Diğer kullanıcılara saygı göster ve sana nasıl davranılmasını istiyorsan onlara da öyle davran.",
             "rule4Title": "Proaktif ol.",
             "rule4Desc": "Kötü davranışları mutlaka bize bildir.",
-            "confirm": "Onaylıyorum ve Keşfet"
+            "confirm": "Onaylıyorum ve Keşfet",
+            "legal_prefix": "Kaydolarak",
+            "legal_and": "ve",
+            "legal_suffix": "kabul etmiş olursun.",
+            "terms": "Kullanım Koşullarımızı",
+            "privacy": "Gizlilik Politikamızı"
         },
         "haveAccount": "Zaten bir hesabın var mı?",
         "login": "Giriş Yap",

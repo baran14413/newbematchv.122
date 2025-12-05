@@ -15,7 +15,6 @@ import StepWelcome from '@/components/auth/steps/step-welcome';
 import WizardControls from '@/components/auth/wizard-controls';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useLanguage } from '@/context/language-context';
-import { ScrollArea } from '@/components/ui/scroll-area';
 
 type AuthView = 'login' | 'register';
 

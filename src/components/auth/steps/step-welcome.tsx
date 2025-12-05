@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Flame, Loader2 } from 'lucide-react';
+import { Flame, Loader2, X } from 'lucide-react';
 import { useLanguage } from '@/context/language-context';
 import { useOnboardingContext } from '@/context/onboarding-context';
 import { useAuth, useFirestore, useStorage } from '@/firebase';
@@ -11,6 +11,7 @@ import { useToast } from '@/hooks/use-toast';
 import { ref, uploadString, getDownloadURL } from "firebase/storage";
 import { v4 as uuidv4 } from 'uuid';
 import { ScrollArea } from '@/components/ui/scroll-area';
+import PolicySheet from '@/components/auth/policy-sheet';
 
 const RuleItem = ({ title, description }: { title: string; description: string }) => (
     <div className="space-y-1">
@@ -21,9 +22,11 @@ const RuleItem = ({ title, description }: { title: string; description: string }
 
 interface StepWelcomeProps {
     onRegisterSuccess: () => void;
+    onSwitchView: (view: 'login' | 'register') => void;
+    resetOnboarding: () => void;
 }
 
-export default function StepWelcome({ onRegisterSuccess }: StepWelcomeProps) {
+export default function StepWelcome({ onRegisterSuccess, onSwitchView, resetOnboarding }: StepWelcomeProps) {
   const { t } = useLanguage();
   const { formData } = useOnboardingContext();
   const auth = useAuth();
@@ -31,6 +34,7 @@ export default function StepWelcome({ onRegisterSuccess }: StepWelcomeProps) {
   const storage = useStorage();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+  const [sheetContent, setSheetContent] = useState<'terms' | 'privacy' | null>(null);
 
   const rules = [
     { title: t('onboarding.welcome.rule1Title'), description: t('onboarding.welcome.rule1Desc') },
@@ -121,8 +125,8 @@ export default function StepWelcome({ onRegisterSuccess }: StepWelcomeProps) {
   return (
     <div className="flex flex-col h-full w-full">
         <ScrollArea className="flex-1 -mx-6">
-            <div className="px-6 space-y-6 max-w-md mx-auto">
-                <div className="mb-4 pt-8">
+            <div className="px-6 py-8 space-y-6 max-w-md mx-auto">
+                <div className="mb-4">
                     <Flame className="w-12 h-12 text-primary" />
                 </div>
             
@@ -135,11 +139,23 @@ export default function StepWelcome({ onRegisterSuccess }: StepWelcomeProps) {
             </div>
         </ScrollArea>
 
-        <div className="py-4 mt-auto">
+        <div className="py-4 mt-auto border-t border-border -mx-6 px-6">
+             <div className="text-center text-xs text-muted-foreground mb-4">
+                {t('onboarding.welcome.legal_prefix')}{' '}
+                <button onClick={() => setSheetContent('terms')} className="underline hover:text-primary">{t('onboarding.welcome.terms')}</button>
+                {' '}{t('onboarding.welcome.legal_and')}{' '}
+                <button onClick={() => setSheetContent('privacy')} className="underline hover:text-primary">{t('onboarding.welcome.privacy')}</button>
+                {' '}{t('onboarding.welcome.legal_suffix')}
+            </div>
             <Button onClick={handleConfirm} disabled={isLoading} className="w-full font-bold text-lg py-7 rounded-xl">
                 {isLoading ? <Loader2 className="animate-spin" /> : t('onboarding.welcome.confirm')}
             </Button>
         </div>
+        <PolicySheet
+            isOpen={!!sheetContent}
+            onOpenChange={(open) => !open && setSheetContent(null)}
+            initialTab={sheetContent === 'terms' ? 'terms' : 'privacy'}
+        />
     </div>
   );
 }
