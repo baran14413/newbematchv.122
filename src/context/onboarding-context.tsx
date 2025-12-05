@@ -4,6 +4,8 @@ import { createContext, useContext, useState, ReactNode } from 'react';
 interface FormData {
   firstName: string;
   lastName: string;
+  dateOfBirth: Date | undefined;
+  age: number;
   goal: string;
   interests: string[];
   location: string;
@@ -32,6 +34,8 @@ export const OnboardingProvider = ({ children }: { children: ReactNode }) => {
   const [formData, setFormData] = useState<FormData>({
     firstName: '',
     lastName: '',
+    dateOfBirth: undefined,
+    age: 0,
     goal: '',
     interests: [],
     location: '',

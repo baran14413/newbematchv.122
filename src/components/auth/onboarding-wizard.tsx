@@ -2,6 +2,7 @@
 import { useOnboardingContext } from '@/context/onboarding-context';
 import StepIndicator from '@/components/auth/step-indicator';
 import StepName from '@/components/auth/steps/step-name';
+import StepAge from '@/components/auth/steps/step-age';
 import StepGoals from '@/components/auth/steps/step-goals';
 import StepInterests from '@/components/auth/steps/step-interests';
 import StepLocation from '@/components/auth/steps/step-location';
@@ -24,6 +25,7 @@ export default function OnboardingWizard({ onSwitchView, onRegisterSuccess }: On
 
   const steps = [
     { component: StepName, title: t("onboarding.stepNameTitle") },
+    { component: StepAge, title: t('onboarding.stepAgeTitle') },
     { component: StepGoals, title: t('onboarding.stepGoalsTitle') },
     { component: StepInterests, title: t('onboarding.stepInterestsTitle') },
     { component: StepLocation, title: t('onboarding.stepLocationTitle') },

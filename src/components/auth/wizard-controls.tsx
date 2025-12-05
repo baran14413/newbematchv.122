@@ -5,7 +5,7 @@ import { ArrowLeft, ArrowRight, Loader2 } from 'lucide-react';
 import { useLanguage } from '@/context/language-context';
 import { useAuth, useFirestore, useStorage } from '@/firebase';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
-import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
+import { doc, setDoc, serverTimestamp, Timestamp } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
 import { ref, uploadString, getDownloadURL } from "firebase/storage";
@@ -62,8 +62,8 @@ export default function WizardControls({ totalSteps, onRegisterSuccess }: Wizard
           firstName: formData.firstName,
           lastName: formData.lastName,
           name: `${formData.firstName} ${formData.lastName}`, // For easy display
-          // TODO: Get real age from date of birth
-          age: 30, // Placeholder
+          age: formData.age,
+          dateOfBirth: formData.dateOfBirth ? Timestamp.fromDate(formData.dateOfBirth) : null,
           bio: "", // Add a bio step later if needed
           location: formData.location,
           interests: formData.interests,
@@ -72,7 +72,6 @@ export default function WizardControls({ totalSteps, onRegisterSuccess }: Wizard
           imageUrls: photoURLs,
           createdAt: serverTimestamp(),
           updatedAt: serverTimestamp(),
-          // Default empty/null values for other User fields
           prompts: [],
           zodiac: '',
           videoUrl: '',

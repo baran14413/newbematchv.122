@@ -188,6 +188,9 @@
         "firstNamePlaceholder": "Adınız",
         "lastName": "Soyadın",
         "lastNamePlaceholder": "Soyadınız",
+        "stepAgeTitle": "Doğum tarihin nedir?",
+        "ageInfo": "Devam etmek için 18 yaşında veya daha büyük olmalısın.",
+        "currentAge": "Yaşın: {age}",
         "stepGoalsTitle": "Burada ne arıyorsunuz?",
         "goals": {
             "longTerm": "Uzun süreli ilişki",

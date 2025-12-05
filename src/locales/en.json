@@ -188,6 +188,9 @@
         "firstNamePlaceholder": "Your first name",
         "lastName": "Last Name",
         "lastNamePlaceholder": "Your last name",
+        "stepAgeTitle": "What is your date of birth?",
+        "ageInfo": "You must be 18 or older to continue.",
+        "currentAge": "Your Age: {age}",
         "stepGoalsTitle": "What are you looking for here?",
         "goals": {
             "longTerm": "Long-term relationship",

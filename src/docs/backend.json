@@ -31,6 +31,10 @@
             "type": "string",
             "description": "User's full display name."
         },
+        "age": {
+            "type": "number",
+            "description": "Age of the user."
+        },
         "dateOfBirth": {
           "type": "string",
           "description": "Date of birth of the user.",
@@ -92,7 +96,7 @@
         }
       },
       "required": [
-        "id", "firstName", "lastName", "name", "email"
+        "id", "firstName", "lastName", "name", "email", "age", "dateOfBirth"
       ]
     },
     "Match": {
