@@ -1,13 +1,13 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
-import { useParams, useRouter } from 'next/navigation';
+import { useParams } from 'next/navigation';
 import { useUser, useFirestore, useDoc, useCollection, useMemoFirebase } from '@/firebase';
 import { doc, collection, addDoc, updateDoc, serverTimestamp, orderBy, query, Timestamp, onSnapshot } from 'firebase/firestore';
 import type { UserProfile, Message } from '@/lib/data';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ArrowLeft, Send, Video, Phone, CheckCheck } from 'lucide-react';
+import { Phone, Send, Video } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -52,7 +52,6 @@ const ChatSkeleton = () => (
 
 export default function ChatPage() {
   const params = useParams();
-  const router = useRouter();
   const { user, isUserLoading } = useUser();
   const firestore = useFirestore();
 
@@ -84,7 +83,6 @@ export default function ChatPage() {
           if (doc.exists()) {
             setOtherUser({ id: doc.id, ...doc.data() } as UserProfile);
           } else {
-            // Handle case where other user's profile is not found
             setOtherUser(null);
           }
         });
@@ -95,7 +93,7 @@ export default function ChatPage() {
 
   const handleSendMessage = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!newMessage.trim() || !user || !matchDocRef) return;
+    if (!newMessage.trim() || !user || !firestore || !matchDocRef) return;
 
     const messagesRef = collection(firestore, 'matches', chatId, 'messages');
     try {
@@ -129,10 +127,14 @@ export default function ChatPage() {
     scrollToBottom();
   }, [messages]);
 
-  const isLoading = isUserLoading || isMatchLoading || areMessagesLoading || (matchData && !otherUser);
+  const isLoading = isUserLoading || isMatchLoading || areMessagesLoading;
 
   if (isLoading) {
-    return <ChatSkeleton />;
+    return (
+        <div className="flex items-center justify-center h-full">
+            <p>Loading System... ID: {chatId}</p>
+        </div>
+    );
   }
 
   if (!matchData || !user) {
@@ -161,7 +163,6 @@ export default function ChatPage() {
           </Avatar>
           <div>
             <h2 className="text-lg font-semibold text-foreground">{otherUser.name}</h2>
-            {/* <p className="text-sm text-green-400">Online</p> */}
           </div>
         </div>
         <div className="flex items-center gap-2">
@@ -196,13 +197,7 @@ export default function ChatPage() {
                 )}
               >
                 <p className='break-words'>{message.text}</p>
-                 {message.senderId === user?.uid && message.timestamp && (
-                    <div className="flex items-center justify-end gap-1.5 self-end mt-1">
-                        <span className="text-xs text-primary-foreground/70">{formatMessageTimestamp(message.timestamp)}</span>
-                        <CheckCheck className="w-4 h-4 text-blue-400" />
-                    </div>
-                 )}
-                 {message.senderId !== user?.uid && message.timestamp && (
+                 {message.timestamp && (
                      <div className="flex items-center justify-end gap-1.5 self-end mt-1">
                         <span className="text-xs text-muted-foreground/70">{formatMessageTimestamp(message.timestamp)}</span>
                     </div>
