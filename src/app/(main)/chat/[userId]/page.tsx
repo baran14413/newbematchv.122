@@ -15,7 +15,7 @@ import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
 import Image from 'next/image';
 import Link from 'next/link';
-import { formatDistanceToNowStrict } from 'date-fns';
+import { formatDistanceToNow, isToday, isYesterday, format } from 'date-fns';
 import { tr, enUS } from 'date-fns/locale';
 import { useLanguage } from '@/context/language-context';
 import EmojiPicker, { Emoji } from 'emoji-picker-react';
@@ -32,11 +32,21 @@ function formatLastSeen(timestamp: any, locale: Locale) {
     const now = new Date();
     const diffSeconds = (now.getTime() - date.getTime()) / 1000;
 
-    if (diffSeconds < 60) {
-        return "Şu an aktif";
+    if (diffSeconds < 5) {
+        return "çevrimiçi";
+    }
+    
+    const timeFormat = format(date, 'HH:mm');
+
+    if (isToday(date)) {
+        return `son görülme bugün ${timeFormat}`;
     }
 
-    return formatDistanceToNowStrict(date, { addSuffix: true, locale });
+    if (isYesterday(date)) {
+        return `son görülme dün ${timeFormat}`;
+    }
+
+    return formatDistanceToNow(date, { addSuffix: true, locale });
 }
 
 const ReactionTooltip = ({ children, onReaction }: { children: React.ReactNode, onReaction: (emoji: string) => void }) => {
@@ -310,11 +320,15 @@ export default function ChatPage() {
                         <AvatarImage src={otherUser.avatarUrl} alt={otherUser.name} />
                         <AvatarFallback>{otherUser.name.charAt(0)}</AvatarFallback>
                     </Avatar>
-                    <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-zinc-900"></div>
+                     {formatLastSeen(otherUser.lastSeen, lastSeenLocale) === 'çevrimiçi' && (
+                        <div className="absolute bottom-0 right-0 w-3 h-3 bg-green-500 rounded-full border-2 border-zinc-900"></div>
+                     )}
                 </div>
                 <div className="flex-1">
                     <h2 className="text-lg font-bold">{otherUser.name}</h2>
-                    <p className="text-xs text-green-400 font-medium">{formatLastSeen(otherUser.lastSeen, lastSeenLocale)}</p>
+                    <p className={cn("text-xs font-medium", formatLastSeen(otherUser.lastSeen, lastSeenLocale) === 'çevrimiçi' ? 'text-green-400' : 'text-zinc-400')}>
+                        {formatLastSeen(otherUser.lastSeen, lastSeenLocale)}
+                    </p>
                 </div>
                 <div className="flex items-center gap-2">
                     <Button variant="ghost" size="icon" className="h-9 w-9 text-muted-foreground hover:text-white">
@@ -369,7 +383,9 @@ export default function ChatPage() {
                                     )}
                                 </div>
                             </ReactionTooltip>
-                             <MessageOptions onEdit={() => handleEditMessage(message)} onDelete={() => handleDeleteMessage(message.id)} />
+                             {message.senderId === user?.uid && (
+                                <MessageOptions onEdit={() => handleEditMessage(message)} onDelete={() => handleDeleteMessage(message.id)} />
+                             )}
                         </div>
                     </div>
                 ))}
