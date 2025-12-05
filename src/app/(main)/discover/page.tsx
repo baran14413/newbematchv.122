@@ -57,7 +57,7 @@ export default function DiscoverPage() {
 
   return (
     <div className="h-screen w-screen flex flex-col bg-gray-50 dark:bg-black">
-      <div className="flex-1 flex flex-col items-center justify-center p-4">
+      <div className="flex-1 flex flex-col items-center justify-end p-4 pb-8">
         <div className="w-full max-w-sm h-[65vh] max-h-[550px] relative flex items-center justify-center">
           <AnimatePresence>
             {stack.length > 0 ? (
@@ -169,18 +169,18 @@ export default function DiscoverPage() {
           </AnimatePresence>
         </div>
 
-        <div className="flex justify-center items-center gap-4 mt-4">
-          <Button variant="outline" className="p-3 rounded-full bg-white shadow" onClick={undoSwipe} disabled={history.length === 0}>
-            <Undo2 className="w-5 h-5 text-yellow-500" />
+        <div className="flex justify-center items-center gap-2 mt-6">
+          <Button variant="outline" className="p-4 rounded-full bg-white shadow" onClick={undoSwipe} disabled={history.length === 0}>
+            <Undo2 className="w-6 h-6 text-yellow-500" />
           </Button>
-          <Button variant="outline" className="p-4 rounded-full bg-white shadow" onClick={() => handleSwipe('left')}>
-            <X className="w-6 h-6 text-red-500" />
+          <Button variant="outline" className="p-5 rounded-full bg-white shadow" onClick={() => handleSwipe('left')}>
+            <X className="w-8 h-8 text-red-500" />
           </Button>
-          <Button variant="outline" className="p-3 rounded-full bg-white shadow" onClick={() => handleSwipe('up')}>
-            <Star className="w-5 h-5 text-blue-500" />
+          <Button variant="outline" className="p-4 rounded-full bg-white shadow" onClick={() => handleSwipe('up')}>
+            <Star className="w-6 h-6 text-blue-500" />
           </Button>
-          <Button variant="outline" className="p-4 rounded-full bg-white shadow" onClick={() => handleSwipe('right')}>
-            <Heart className="w-6 h-6 text-green-500" />
+          <Button variant="outline" className="p-5 rounded-full bg-white shadow" onClick={() => handleSwipe('right')}>
+            <Heart className="w-8 h-8 text-green-500" />
           </Button>
         </div>
       </div>
