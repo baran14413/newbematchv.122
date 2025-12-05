@@ -127,20 +127,16 @@ export default function ChatPage() {
     scrollToBottom();
   }, [messages]);
 
-  const isLoading = isUserLoading || isMatchLoading || areMessagesLoading;
+  const isLoading = isUserLoading || isMatchLoading || areMessagesLoading || (matchData && !otherUser);
 
   if (isLoading) {
-    return (
-        <div className="flex items-center justify-center h-full">
-            <p>Loading System... ID: {chatId}</p>
-        </div>
-    );
+    return <ChatSkeleton />;
   }
 
   if (!matchData || !user) {
     return (
         <div className="flex items-center justify-center h-full">
-            <p>Sohbet bulunamadı veya oturum açmadınız. ID: {chatId}</p>
+            <p>DEBUG: Chat not found or user not logged in. Chat ID: {chatId}</p>
         </div>
     );
   }
@@ -148,7 +144,7 @@ export default function ChatPage() {
   if (!otherUser) {
       return (
          <div className="flex items-center justify-center h-full">
-            <p>Sohbet edilecek kullanıcı bulunamadı.</p>
+            <p>DEBUG: Could not load the other user's profile for this chat.</p>
         </div>
       )
   }
