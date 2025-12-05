@@ -3,11 +3,14 @@ import { useOnboardingContext } from '@/context/onboarding-context';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, ArrowRight, Loader2 } from 'lucide-react';
 import { useLanguage } from '@/context/language-context';
-import { useAuth, useFirestore } from '@/firebase';
+import { useAuth, useFirestore, useStorage } from '@/firebase';
 import { createUserWithEmailAndPassword } from 'firebase/auth';
 import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
+import { ref, uploadString, getDownloadURL } from "firebase/storage";
+import { v4 as uuidv4 } from 'uuid';
+
 
 interface WizardControlsProps {
   totalSteps: number;
@@ -19,8 +22,24 @@ export default function WizardControls({ totalSteps, onRegisterSuccess }: Wizard
   const { t } = useLanguage();
   const auth = useAuth();
   const firestore = useFirestore();
+  const storage = useStorage();
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
+
+  const uploadPhotos = async (userId: string, photos: string[]): Promise<string[]> => {
+    const photoURLs: string[] = [];
+
+    for (const photo of photos) {
+      const photoId = uuidv4();
+      const storageRef = ref(storage, `users/${userId}/photos/${photoId}.jpg`);
+      // 'photo' is a data URL (e.g., 'data:image/jpeg;base64,...')
+      const uploadResult = await uploadString(storageRef, photo, 'data_url');
+      const downloadURL = await getDownloadURL(uploadResult.ref);
+      photoURLs.push(downloadURL);
+    }
+    
+    return photoURLs;
+  };
 
   const handleFinish = async () => {
     if (!isStepValid) return;
@@ -31,7 +50,10 @@ export default function WizardControls({ totalSteps, onRegisterSuccess }: Wizard
       const userCredential = await createUserWithEmailAndPassword(auth, formData.email, formData.password);
       const user = userCredential.user;
 
-      // 2. Create user profile in Firestore
+      // 2. Upload photos to Firebase Storage
+      const photoURLs = await uploadPhotos(user.uid, formData.photos);
+
+      // 3. Create user profile in Firestore with photo URLs
       const userDocRef = doc(firestore, 'users', user.uid);
       
       const userProfileData = {
@@ -44,15 +66,12 @@ export default function WizardControls({ totalSteps, onRegisterSuccess }: Wizard
           location: formData.location,
           interests: formData.interests,
           goal: formData.goal,
-          // TODO: Upload photos to Firebase Storage and get URLs
-          profilePictureUrl: formData.photos[0] || '',
-          imageUrls: formData.photos,
+          profilePictureUrl: photoURLs[0] || '',
+          imageUrls: photoURLs,
           createdAt: serverTimestamp(),
           updatedAt: serverTimestamp(),
       };
       
-      // Using non-blocking update from the guide is not applicable here
-      // as we need to ensure the user document is created before proceeding.
       await setDoc(userDocRef, userProfileData);
 
       console.log('User registered and profile created:', user.uid);

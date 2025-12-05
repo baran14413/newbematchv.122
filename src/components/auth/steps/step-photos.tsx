@@ -16,10 +16,12 @@ export default function StepPhotos() {
   const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && formData.photos.length < MAX_PHOTOS) {
       const file = e.target.files[0];
+      if (!file) return;
+
       const reader = new FileReader();
       reader.onloadend = () => {
         const newPhotos = [...formData.photos, reader.result as string];
-        updateFormData({ photos: newPhotos });
+        updateFormData({ ...formData, photos: newPhotos });
         setStepValid(newPhotos.length >= 1); // En az 1 fotoğraf gerekli
       };
       reader.readAsDataURL(file);
@@ -28,7 +30,7 @@ export default function StepPhotos() {
 
   const handleRemovePhoto = (index: number) => {
     const newPhotos = formData.photos.filter((_, i) => i !== index);
-    updateFormData({ photos: newPhotos });
+    updateFormData({ ...formData, photos: newPhotos });
     setStepValid(newPhotos.length >= 1);
   };
 
