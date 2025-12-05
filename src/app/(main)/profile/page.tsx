@@ -3,7 +3,7 @@ import { useState } from 'react';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
-import { Crown, Settings, X, ChevronLeft, ChevronRight } from 'lucide-react';
+import { Crown, Settings, ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
 import { profiles } from '@/lib/data';
 import Image from 'next/image';
@@ -41,11 +41,14 @@ export default function ProfilePage() {
         <div className="flex items-center justify-between">
           <div className="flex-1"></div>
           <div className="flex flex-col items-center space-y-2 flex-1">
-            <Avatar className="w-32 h-32 border-4 border-background">
-              <AvatarImage src={userProfile.avatarUrl} alt={userProfile.name} className="object-cover"/>
-              <AvatarFallback>{userProfile.name.charAt(0)}</AvatarFallback>
-            </Avatar>
-            <div className="text-center">
+            <div className="relative">
+              <div className="absolute -inset-1 rounded-full bg-gradient-to-r from-primary via-yellow-400 to-orange-500 opacity-75 blur-lg animate-spin-slow"></div>
+              <Avatar className="relative w-32 h-32 border-4 border-background">
+                <AvatarImage src={userProfile.avatarUrl} alt={userProfile.name} className="object-cover"/>
+                <AvatarFallback>{userProfile.name.charAt(0)}</AvatarFallback>
+              </Avatar>
+            </div>
+            <div className="text-center pt-2">
               <h1 className="text-3xl font-bold">{userProfile.name}, {userProfile.age}</h1>
             </div>
           </div>
@@ -99,18 +102,11 @@ export default function ProfilePage() {
           <Dialog open={selectedImageIndex !== null} onOpenChange={(open) => !open && setSelectedImageIndex(null)}>
             <DialogContent 
               className="bg-black/90 border-none p-0 w-screen h-screen max-w-none flex items-center justify-center"
+              onCloseAutoFocus={(e) => e.preventDefault()}
             >
               <DialogHeader className="sr-only">
                   <DialogTitle>Enlarged profile photo</DialogTitle>
               </DialogHeader>
-              <Button
-                variant="ghost"
-                size="icon"
-                className="absolute top-4 right-4 text-white/70 hover:text-white z-50"
-                onClick={() => setSelectedImageIndex(null)}
-              >
-                <X className="w-8 h-8" />
-              </Button>
               
               <AnimatePresence mode="wait">
                   <motion.div
