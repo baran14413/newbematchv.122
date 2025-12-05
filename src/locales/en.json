@@ -1,8 +1,7 @@
 {
     "discover": {
         "title": "Discover",
-        "noMoreProfiles": "No more profiles to show.",
-        "job": "Software Engineer"
+        "noMoreProfiles": "No more profiles to show."
     },
     "likes": {
         "title": "Likes"
@@ -12,6 +11,7 @@
         "newMatches": "New Matches",
         "conversations": "Conversations",
         "chatInputPlaceholder": "Send a message...",
+        "noConversations": "You have no conversations yet.",
         "aiIcebreaker": {
             "title": "AI Icebreaker",
             "description": "Get help from AI to start the conversation.",
@@ -26,7 +26,8 @@
         "getGold": "Get BeMatch Gold",
         "goldDescription": "See who likes you & get unlimited swipes!",
         "myPhotos": "My Photos",
-        "profilePhoto": "Profile photo"
+        "profilePhoto": "Profile photo",
+        "notFound": "Profile not found."
     },
     "settings": {
         "title": "Settings",

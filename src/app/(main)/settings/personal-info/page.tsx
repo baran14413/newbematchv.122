@@ -4,6 +4,10 @@ import { Button } from "@/components/ui/button";
 import { Smartphone, Monitor, MapPin, ArrowLeft } from "lucide-react";
 import Link from 'next/link';
 import { useLanguage } from '@/context/language-context';
+import { useUser, useFirestore, useDoc, useMemoFirebase } from "@/firebase";
+import { doc } from "firebase/firestore";
+import type { UserProfile } from "@/lib/data";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const InfoItem = ({ label, value }: { label: string, value: string }) => (
     <div className="flex justify-between items-center py-3">
@@ -25,12 +29,17 @@ const SessionItem = ({ icon: Icon, device, location, time }: { icon: React.Eleme
 
 export default function PersonalInfoPage() {
     const { t } = useLanguage();
-    // Örnek veriler
-    const userInfo = {
-        firstName: "Alex",
-        lastName: "Doe",
-        age: 31,
-    };
+    const { user, isUserLoading } = useUser();
+    const firestore = useFirestore();
+
+    const userDocRef = useMemoFirebase(() => {
+        if (!user) return null;
+        return doc(firestore, 'users', user.uid);
+    }, [firestore, user]);
+
+    const { data: userProfile, isLoading: isProfileLoading } = useDoc<UserProfile>(userDocRef);
+
+    const isLoading = isUserLoading || isProfileLoading;
 
     return (
         <div className="h-full overflow-y-auto bg-gray-50 dark:bg-black">
@@ -52,9 +61,21 @@ export default function PersonalInfoPage() {
                         <CardTitle>{t('personalInfoPage.profileDetails')}</CardTitle>
                     </CardHeader>
                     <CardContent className="divide-y">
-                        <InfoItem label={t('personalInfoPage.firstName')} value={userInfo.firstName} />
-                        <InfoItem label={t('personalInfoPage.lastName')} value={userInfo.lastName} />
-                        <InfoItem label={t('personalInfoPage.age')} value={userInfo.age.toString()} />
+                        {isLoading ? (
+                            <div className="space-y-4">
+                                <Skeleton className="h-6 w-full" />
+                                <Skeleton className="h-6 w-full" />
+                                <Skeleton className="h-6 w-full" />
+                            </div>
+                        ) : userProfile ? (
+                            <>
+                                <InfoItem label={t('personalInfoPage.firstName')} value={userProfile.firstName} />
+                                <InfoItem label={t('personalInfoPage.lastName')} value={userProfile.lastName} />
+                                <InfoItem label={t('personalInfoPage.age')} value={userProfile.age.toString()} />
+                            </>
+                        ) : (
+                            <p>{t('profile.notFound')}</p>
+                        )}
                     </CardContent>
                 </Card>
 
@@ -64,6 +85,7 @@ export default function PersonalInfoPage() {
                         <CardDescription>{t('personalInfoPage.sessionDescription')}</CardDescription>
                     </CardHeader>
                     <CardContent className="divide-y">
+                        {/* This part remains static as session management is more complex */}
                         <SessionItem icon={Smartphone} device="iPhone 15 Pro" location="İstanbul, TR" time={t('personalInfoPage.activeNow')} />
                         <SessionItem icon={Monitor} device="Chrome - macOS" location="Ankara, TR" time={`2 ${t('common.daysAgo')}`} />
                     </CardContent>

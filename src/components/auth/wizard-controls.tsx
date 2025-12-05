@@ -59,17 +59,25 @@ export default function WizardControls({ totalSteps, onRegisterSuccess }: Wizard
       const userProfileData = {
           id: user.uid,
           email: formData.email,
-          displayName: `${formData.firstName} ${formData.lastName}`,
+          firstName: formData.firstName,
+          lastName: formData.lastName,
+          name: `${formData.firstName} ${formData.lastName}`, // For easy display
           // TODO: Get real age from date of birth
           age: 30, // Placeholder
           bio: "", // Add a bio step later if needed
           location: formData.location,
           interests: formData.interests,
           goal: formData.goal,
-          profilePictureUrl: photoURLs[0] || '',
+          avatarUrl: photoURLs[0] || '',
           imageUrls: photoURLs,
           createdAt: serverTimestamp(),
           updatedAt: serverTimestamp(),
+          // Default empty/null values for other User fields
+          prompts: [],
+          zodiac: '',
+          videoUrl: '',
+          videoDescription: '',
+          voiceNoteUrl: '',
       };
       
       await setDoc(userDocRef, userProfileData);

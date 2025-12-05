@@ -1,10 +1,12 @@
 'use client';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { conversations } from "@/lib/data";
 import { useLanguage } from "@/context/language-context";
 import { cn } from "@/lib/utils";
 import Link from "next/link";
+// In a real app, you would fetch conversations from Firestore
+// For now, we'll show an empty state.
+const conversations: any[] = [];
 
 export default function LoungePage() {
   const { t } = useLanguage();
@@ -18,7 +20,7 @@ export default function LoungePage() {
           </header>
           <ScrollArea className="flex-1">
               <div className="flex flex-col gap-2 p-2">
-                {conversations.map((convo) => (
+                {conversations.length > 0 ? conversations.map((convo) => (
                     <Link href={`/lounge/${convo.id}`} key={convo.id}>
                         <div className={cn(
                             "px-3 py-2 flex items-center gap-3 cursor-pointer rounded-lg border-2 border-transparent",
@@ -44,7 +46,11 @@ export default function LoungePage() {
                             </div>
                         </div>
                     </Link>
-                ))}
+                )) : (
+                    <div className="flex flex-col items-center justify-center h-full text-center p-8">
+                        <p className="text-muted-foreground">{t('lounge.noConversations')}</p>
+                    </div>
+                )}
               </div>
           </ScrollArea>
       </div>

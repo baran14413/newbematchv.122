@@ -3,14 +3,14 @@ import { useState, useMemo } from 'react';
 import { motion, useMotionValue, useTransform, PanInfo } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { X, Star, Heart, Undo2, Clapperboard } from 'lucide-react';
-import { UserProfile, profiles as staticProfiles } from '@/lib/data';
 import { useLanguage } from '@/context/language-context';
 import { useIsMobile } from '@/hooks/use-mobile';
 import ProfileCard from '@/components/discover/profile-card';
-import { useUser } from '@/firebase';
+import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
 import { Skeleton } from '@/components/ui/skeleton';
 import LikesYou from '@/components/discover/likes-you';
-import { ScrollArea } from '@/components/ui/scroll-area';
+import { collection } from 'firebase/firestore';
+import type { UserProfile } from '@/lib/data';
 
 
 type SwipeDirection = 'left' | 'right' | 'up';
@@ -78,8 +78,14 @@ const DesktopProfileSkeleton = () => (
 
 export default function DiscoverPage() {
   const { user } = useUser();
-  const profiles = staticProfiles;
-  const isLoading = !user && false; // Let's assume loading is false for now.
+  const firestore = useFirestore();
+  
+  const usersCollection = useMemoFirebase(() => {
+    if (!firestore) return null;
+    return collection(firestore, 'users');
+  }, [firestore]);
+
+  const { data: profiles, isLoading } = useCollection<UserProfile>(usersCollection);
 
   const filteredProfiles = useMemo(() => {
     if (!profiles) return [];
@@ -95,7 +101,7 @@ export default function DiscoverPage() {
   // Populate stack when profiles are loaded
   useMemo(() => {
     if (filteredProfiles.length > 0) {
-        setStack([...filteredProfiles].reverse())
+        setStack([...filteredProfiles].reverse());
     } else {
         setStack([])
     }

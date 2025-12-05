@@ -5,35 +5,70 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Crown, Settings, ChevronLeft, ChevronRight } from 'lucide-react';
 import Link from 'next/link';
-import { profiles } from '@/lib/data';
 import Image from 'next/image';
 import { useLanguage } from '@/context/language-context';
 import { AnimatePresence, motion } from 'framer-motion';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
-import { useUser } from '@/firebase';
+import { useUser, useFirestore, useDoc, useMemoFirebase } from '@/firebase';
+import type { UserProfile } from '@/lib/data';
+import { doc } from 'firebase/firestore';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function ProfilePage() {
-  const { user } = useUser();
-  const userProfile = profiles[1]; // Using Alex as a sample profile, will be replaced with logged in user data
+  const { user, isUserLoading } = useUser();
+  const firestore = useFirestore();
   const { t } = useLanguage();
+  
+  const userDocRef = useMemoFirebase(() => {
+    if (!user) return null;
+    return doc(firestore, 'users', user.uid);
+  }, [firestore, user]);
+
+  const { data: userProfile, isLoading: isProfileLoading } = useDoc<UserProfile>(userDocRef);
+
   const [selectedImageIndex, setSelectedImageIndex] = useState<number | null>(null);
+  
+  const isLoading = isUserLoading || isProfileLoading;
 
   const handleNextImage = () => {
-    if (selectedImageIndex === null || !userProfile) return;
+    if (selectedImageIndex === null || !userProfile?.imageUrls) return;
     setSelectedImageIndex((prevIndex) => 
         prevIndex === null ? 0 : (prevIndex + 1) % userProfile.imageUrls.length
     );
   };
 
   const handlePrevImage = () => {
-    if (selectedImageIndex === null || !userProfile) return;
+    if (selectedImageIndex === null || !userProfile?.imageUrls) return;
     setSelectedImageIndex((prevIndex) =>
       prevIndex === null ? 0 : (prevIndex - 1 + userProfile.imageUrls.length) % userProfile.imageUrls.length
     );
   };
 
+  if (isLoading) {
+    return (
+        <div className="h-full p-4 md:p-6 bg-gray-50 dark:bg-black">
+            <div className="max-w-2xl mx-auto space-y-8">
+                 <div className="flex items-center justify-between">
+                    <div className="flex-1"></div>
+                    <div className="flex flex-col items-center space-y-2 flex-1">
+                        <Skeleton className="w-32 h-32 rounded-full" />
+                        <div className="text-center pt-2 space-y-2">
+                            <Skeleton className="h-8 w-40" />
+                        </div>
+                    </div>
+                    <div className="flex-1 flex justify-end">
+                        <Settings className="w-6 h-6 text-muted-foreground" />
+                    </div>
+                 </div>
+                 <Skeleton className="h-48 w-full" />
+                 <Skeleton className="h-20 w-full" />
+            </div>
+        </div>
+    )
+  }
+
   if (!userProfile) {
-    return <div>Loading...</div>
+    return <div className="p-8 text-center">{t('profile.notFound')}</div>
   }
 
   return (
@@ -46,12 +81,12 @@ export default function ProfilePage() {
             <div className="relative">
               <div className="absolute -inset-1 rounded-full bg-gradient-to-r from-primary via-yellow-400 to-orange-500 opacity-75 blur-lg animate-spin-slow"></div>
               <Avatar className="relative w-32 h-32 border-4 border-background">
-                <AvatarImage src={user?.photoURL ?? userProfile.avatarUrl} alt={user?.displayName ?? userProfile.name} className="object-cover"/>
-                <AvatarFallback>{user?.displayName?.charAt(0) ?? userProfile.name.charAt(0)}</AvatarFallback>
+                <AvatarImage src={userProfile.avatarUrl} alt={userProfile.name} className="object-cover"/>
+                <AvatarFallback>{userProfile.name.charAt(0)}</AvatarFallback>
               </Avatar>
             </div>
             <div className="text-center pt-2">
-              <h1 className="text-3xl font-bold">{user?.displayName ?? userProfile.name}, {userProfile.age}</h1>
+              <h1 className="text-3xl font-bold">{userProfile.name}, {userProfile.age}</h1>
             </div>
           </div>
           <div className="flex-1 flex justify-end">

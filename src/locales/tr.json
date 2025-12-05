@@ -1,8 +1,7 @@
 {
     "discover": {
         "title": "Keşfet",
-        "noMoreProfiles": "Gösterilecek başka profil yok.",
-        "job": "Yazılım Mühendisi"
+        "noMoreProfiles": "Gösterilecek başka profil yok."
     },
     "likes": {
         "title": "Beğeniler"
@@ -12,6 +11,7 @@
         "newMatches": "Yeni Eşleşmeler",
         "conversations": "Sohbetler",
         "chatInputPlaceholder": "Bir mesaj gönder...",
+        "noConversations": "Henüz hiç sohbetin yok.",
         "aiIcebreaker": {
             "title": "Yapay Zeka Buzkıran",
             "description": "Sohbeti başlatmak için yapay zekadan yardım al.",
@@ -26,7 +26,8 @@
         "getGold": "BeMatch Gold Alın",
         "goldDescription": "Sizi kimlerin beğendiğini görün ve sınırsız kaydırın!",
         "myPhotos": "Fotoğraflarım",
-        "profilePhoto": "Profil fotoğrafı"
+        "profilePhoto": "Profil fotoğrafı",
+        "notFound": "Profil bulunamadı."
     },
     "settings": {
         "title": "Ayarlar",
