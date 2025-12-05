@@ -16,34 +16,37 @@ export default function StepAge() {
     updateFormData(newFormData);
   };
 
-  const { age, isValidDate, isUnderage } = useMemo(() => {
+  const { age, isValidDate, isUnderage, date } = useMemo(() => {
     const { day, month, year } = formData;
     if (!day || !month || !year || year.length < 4) {
-      return { age: 0, isValidDate: false, isUnderage: false };
+      return { age: 0, isValidDate: false, isUnderage: false, date: null };
     }
 
-    const date = new Date(`${year}-${month}-${day}`);
-    const isValidDate = isValid(date) && date.getFullYear() === parseInt(year, 10);
+    // Month is 0-indexed in JS Date, so subtract 1
+    const parsedDate = new Date(parseInt(year, 10), parseInt(month, 10) - 1, parseInt(day, 10));
+    const isValidDate = isValid(parsedDate) && parsedDate.getFullYear() === parseInt(year, 10) && (parsedDate.getMonth() + 1) === parseInt(month, 10);
     
     if (isValidDate) {
-      const age = differenceInYears(new Date(), date);
-      const isUnderage = age < 18;
-      
-      // Update form data with the calculated age and date object
-      // This is a bit of a side-effect in useMemo, but it's contained.
-      if (formData.age !== age || formData.dateOfBirth?.getTime() !== date.getTime()) {
-        updateFormData({ dateOfBirth: date, age });
-      }
-
-      return { age, isValidDate: true, isUnderage };
+      const calculatedAge = differenceInYears(new Date(), parsedDate);
+      const isUnderage = calculatedAge < 18;
+      return { age: calculatedAge, isValidDate: true, isUnderage, date: parsedDate };
     }
     
-    return { age: 0, isValidDate: false, isUnderage: false };
-  }, [formData.day, formData.month, formData.year, formData.age, formData.dateOfBirth, updateFormData]);
+    return { age: 0, isValidDate: false, isUnderage: false, date: null };
+  }, [formData.day, formData.month, formData.year]);
 
   useEffect(() => {
-    setStepValid(isValidDate && !isUnderage);
-  }, [isValidDate, isUnderage, setStepValid]);
+    if (isValidDate && !isUnderage) {
+        // Only update if the values have actually changed
+        if (formData.age !== age || formData.dateOfBirth?.getTime() !== date?.getTime()) {
+           updateFormData({ dateOfBirth: date!, age });
+        }
+        setStepValid(true);
+    } else {
+        setStepValid(false);
+    }
+  }, [isValidDate, isUnderage, age, date, setStepValid, updateFormData, formData.age, formData.dateOfBirth]);
+
 
   return (
     <div className="flex flex-col items-center space-y-6">
