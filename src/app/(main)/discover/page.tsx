@@ -56,8 +56,8 @@ export default function DiscoverPage() {
 
 
   return (
-    <div className="h-screen w-screen flex flex-col bg-gray-50 dark:bg-black">
-      <div className="flex-1 flex flex-col items-center justify-end p-4 pb-8">
+    <div className="h-full w-full flex flex-col bg-gray-50 dark:bg-black">
+      <div className="flex-1 flex flex-col items-center justify-center p-4">
         <div className="w-full max-w-sm h-[65vh] max-h-[550px] relative flex items-center justify-center">
           <AnimatePresence>
             {stack.length > 0 ? (
