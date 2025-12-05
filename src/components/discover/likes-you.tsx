@@ -9,7 +9,7 @@ import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebas
 import { collection, doc, getDoc } from 'firebase/firestore';
 import type { UserProfile } from '@/lib/data';
 import { Skeleton } from '../ui/skeleton';
-import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from '@/components/ui/sheet';
 import ProfileDetails from './profile-details';
 import { Button } from '../ui/button';
 import { useRouter } from 'next/navigation';
@@ -135,6 +135,10 @@ export default function LikesGrid() {
                 <SheetContent side="bottom" className="h-[90vh] rounded-t-2xl flex flex-col p-0">
                    {selectedProfile && (
                        <>
+                         <SheetHeader className="sr-only">
+                           <SheetTitle>Profil Detayları</SheetTitle>
+                           <SheetDescription>{selectedProfile.name} kullanıcısının profil detayları</SheetDescription>
+                         </SheetHeader>
                          <div className="flex-1 overflow-hidden">
                            <ProfileDetails profile={selectedProfile} />
                          </div>
