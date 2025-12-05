@@ -9,13 +9,18 @@ import { cn } from '@/lib/utils';
 type ProfileCardProps = {
   profile: UserProfile;
   onShowDetails: () => void;
+  isTopCard: boolean;
 };
 
-export default function ProfileCard({ profile, onShowDetails }: ProfileCardProps) {
+export default function ProfileCard({ profile, onShowDetails, isTopCard }: ProfileCardProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const totalImages = profile.imageUrls?.length || 1;
 
-  const navigateImages = (direction: 'next' | 'prev') => {
+  const navigateImages = (e: React.MouseEvent, direction: 'next' | 'prev') => {
+    // Prevent swipe gesture from triggering when changing images
+    e.stopPropagation();
+    if (!isTopCard) return;
+
     if (direction === 'next') {
       setCurrentImageIndex((prev) => Math.min(prev + 1, totalImages - 1));
     } else {
@@ -26,7 +31,7 @@ export default function ProfileCard({ profile, onShowDetails }: ProfileCardProps
   return (
     <div className="w-full h-full bg-card rounded-2xl shadow-lg overflow-hidden relative group">
       {/* Progress Bars */}
-      {totalImages > 1 && (
+      {totalImages > 1 && isTopCard && (
         <div className="absolute top-2 left-2 right-2 z-20 flex items-center gap-1">
           {Array.from({ length: totalImages }).map((_, idx) => (
             <div
@@ -42,17 +47,17 @@ export default function ProfileCard({ profile, onShowDetails }: ProfileCardProps
 
       <div className="relative w-full h-full">
         <Image 
-            src={profile.imageUrls[currentImageIndex]} 
+            src={profile.imageUrls?.[currentImageIndex] || profile.avatarUrl} 
             alt={`${profile.name}'s photo ${currentImageIndex + 1}`}
             fill
             className="object-cover"
-            priority
+            priority={isTopCard}
         />
         {/* Navigation Overlays */}
-        {totalImages > 1 && (
+        {totalImages > 1 && isTopCard && (
           <>
-            <div className="absolute top-0 left-0 h-full w-1/2 z-10" onClick={() => navigateImages('prev')}></div>
-            <div className="absolute top-0 right-0 h-full w-1/2 z-10" onClick={() => navigateImages('next')}></div>
+            <div className="absolute top-0 left-0 h-full w-1/2 z-10" onClick={(e) => navigateImages(e, 'prev')}></div>
+            <div className="absolute top-0 right-0 h-full w-1/2 z-10" onClick={(e) => navigateImages(e, 'next')}></div>
           </>
         )}
 
@@ -82,3 +87,5 @@ export default function ProfileCard({ profile, onShowDetails }: ProfileCardProps
     </div>
   );
 }
+
+    

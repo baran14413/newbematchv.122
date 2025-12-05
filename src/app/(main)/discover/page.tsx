@@ -12,6 +12,7 @@ import { collection, query, where } from 'firebase/firestore';
 import type { UserProfile } from '@/lib/data';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
 import ProfileDetails from '@/components/discover/profile-details';
+import TutorialOverlay from '@/components/discover/tutorial-overlay';
 
 type SwipeDirection = 'left' | 'right' | 'up';
 
@@ -70,7 +71,7 @@ const SwipeableCard = ({
         <X className="w-12 h-12 text-red-500" strokeWidth={3} />
       </motion.div>
 
-      <ProfileCard profile={profile} onShowDetails={onShowDetails} />
+      <ProfileCard profile={profile} onShowDetails={onShowDetails} isTopCard={isTop}/>
     </motion.div>
   );
 };
@@ -97,6 +98,7 @@ export default function DiscoverPage() {
   const [profileIndex, setProfileIndex] = useState(0);
   const [visibleStack, setVisibleStack] = useState<UserProfile[]>([]);
   const [history, setHistory] = useState<UserProfile[]>([]);
+  const [showTutorial, setShowTutorial] = useState(false);
 
   const usersQuery = useMemoFirebase(() => {
     if (!firestore) return null;
@@ -122,6 +124,21 @@ export default function DiscoverPage() {
       setVisibleStack(initialStack);
     }
   }, [filteredProfiles, profileIndex]);
+
+  useEffect(() => {
+    // Show tutorial only on mobile, once, when profiles are loaded
+    if (isMobile && profiles && profiles.length > 0) {
+      const hasSeenTutorial = localStorage.getItem('hasSeenSwipeTutorial');
+      if (!hasSeenTutorial) {
+        setShowTutorial(true);
+        const timer = setTimeout(() => {
+          setShowTutorial(false);
+          localStorage.setItem('hasSeenSwipeTutorial', 'true');
+        }, 4000);
+        return () => clearTimeout(timer);
+      }
+    }
+  }, [isMobile, profiles]);
 
 
   const handleSwipe = useCallback(() => {
@@ -200,7 +217,7 @@ export default function DiscoverPage() {
       <div className="w-full flex flex-col items-center p-4 md:p-8 space-y-8">
           <div className="w-full max-w-md space-y-8">
           {filteredProfiles.length > 0 ? filteredProfiles.map((profile) => (
-              <ProfileCard key={profile.id} profile={profile} onShowDetails={() => setDetailsProfile(profile)}/>
+              <ProfileCard key={profile.id} profile={profile} onShowDetails={() => setDetailsProfile(profile)} isTopCard={false}/>
           )) : <p className="text-center text-muted-foreground">{t('discover.noMoreProfiles')}</p>}
            <Sheet open={!!detailsProfile} onOpenChange={(isOpen) => !isOpen && setDetailsProfile(null)}>
                 <SheetContent side="bottom" className="h-[85vh] rounded-t-2xl">
@@ -217,43 +234,46 @@ export default function DiscoverPage() {
       <div className="flex-1 flex flex-col items-center justify-center px-4">
         <div className="w-full max-w-sm h-[70vh] max-h-[600px] relative flex items-center justify-center">
           {visibleStack.length > 0 ? (
-            visibleStack.map((profile, index) => {
-              const isTop = index === visibleStack.length - 1;
-              const stackIndex = visibleStack.length - 1 - index;
-              return (
-                <motion.div
-                  key={profile.id}
-                  initial={{
-                    y: 0,
-                    scale: 1 - stackIndex * 0.05,
-                    opacity: index === visibleStack.length - 1 ? 1 : 0
-                  }}
-                  animate={{
-                    y: stackIndex * -10,
-                    scale: 1 - stackIndex * 0.05,
-                    opacity: stackIndex < MAX_VISIBLE_CARDS -1 ? 1 : (isTop ? 1 : 0),
-                  }}
-                  exit={{
-                    opacity: 0,
-                    scale: 0.9,
-                    transition: { duration: 0.3 }
-                  }}
-                  style={{
-                    position: 'absolute',
-                    width: '100%',
-                    height: '100%',
-                    zIndex: index,
-                  }}
-                >
-                  <SwipeableCard
-                    profile={profile}
-                    onSwipe={handleSwipe}
-                    onShowDetails={() => setDetailsProfile(profile)}
-                    isTop={isTop}
-                  />
-                </motion.div>
-              );
-            })
+            <>
+              {visibleStack.map((profile, index) => {
+                const isTop = index === visibleStack.length - 1;
+                const stackIndex = visibleStack.length - 1 - index;
+                return (
+                  <motion.div
+                    key={profile.id}
+                    initial={{
+                      y: 0,
+                      scale: 1 - stackIndex * 0.05,
+                      opacity: index === visibleStack.length - 1 ? 1 : 0
+                    }}
+                    animate={{
+                      y: stackIndex * -10,
+                      scale: 1 - stackIndex * 0.05,
+                      opacity: stackIndex < MAX_VISIBLE_CARDS -1 ? 1 : (isTop ? 1 : 0),
+                    }}
+                    exit={{
+                      opacity: 0,
+                      scale: 0.9,
+                      transition: { duration: 0.3 }
+                    }}
+                    style={{
+                      position: 'absolute',
+                      width: '100%',
+                      height: '100%',
+                      zIndex: index,
+                    }}
+                  >
+                    <SwipeableCard
+                      profile={profile}
+                      onSwipe={handleSwipe}
+                      onShowDetails={() => setDetailsProfile(profile)}
+                      isTop={isTop}
+                    />
+                  </motion.div>
+                );
+              })}
+              {showTutorial && <TutorialOverlay />}
+            </>
           ) : (
             <p className="text-center text-muted-foreground">{t('discover.noMoreProfiles')}</p>
           )}
