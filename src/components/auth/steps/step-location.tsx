@@ -70,7 +70,7 @@ export default function StepLocation() {
   }, [formData.locationEnabled, setStepValid]);
 
   return (
-    <div className="space-y-8 text-center">
+    <div className="space-y-8 text-center h-full flex flex-col justify-center">
       {!formData.locationEnabled ? (
         <div className='space-y-4'>
             <div className='flex justify-center'>
@@ -98,7 +98,7 @@ export default function StepLocation() {
                 <span className="text-sm font-semibold text-primary">{formData.maxDistance} {t('common.km')}</span>
             </div>
             <Slider 
-                defaultValue={[formData.maxDistance]} 
+                value={[formData.maxDistance]} 
                 max={150} 
                 step={1}
                 onValueChange={handleSliderChange}
@@ -109,5 +109,3 @@ export default function StepLocation() {
     </div>
   );
 }
-
-    

@@ -4,6 +4,7 @@ import { Card } from '@/components/ui/card';
 import { Heart, Coffee, MessageSquare } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { useLanguage } from '@/context/language-context';
+import { useEffect } from 'react';
 
 export default function StepGoals() {
   const { formData, updateFormData, setStepValid } = useOnboardingContext();
@@ -20,6 +21,10 @@ export default function StepGoals() {
     'casual': Coffee,
     'chat': MessageSquare,
   }
+
+  useEffect(() => {
+    setStepValid(!!formData.goal);
+  }, [formData.goal, setStepValid]);
 
   const handleSelect = (goalId: string) => {
     const newFormData = { ...formData, goal: goalId };

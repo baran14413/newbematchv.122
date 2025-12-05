@@ -1,4 +1,5 @@
 'use client';
+import { useEffect } from 'react';
 import { useOnboardingContext } from '@/context/onboarding-context';
 import { Badge } from '@/components/ui/badge';
 import { cn } from '@/lib/utils';
@@ -12,6 +13,10 @@ const interestsList = [
 export default function StepInterests() {
   const { formData, updateFormData, setStepValid } = useOnboardingContext();
   const { t } = useLanguage();
+
+  useEffect(() => {
+    setStepValid(formData.interests.length > 0);
+  }, [formData.interests, setStepValid]);
 
   const handleToggle = (interest: string) => {
     const newInterests = new Set(formData.interests);
