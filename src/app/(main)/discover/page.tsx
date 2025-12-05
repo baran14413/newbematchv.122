@@ -6,9 +6,9 @@ import { X, Star, Heart, Undo2 } from 'lucide-react';
 import { useLanguage } from '@/context/language-context';
 import { useIsMobile } from '@/hooks/use-mobile';
 import ProfileCard from '@/components/discover/profile-card';
-import { useUser, useFirestore, useCollection, useMemoFirebase } from '@/firebase';
+import { useUser, useFirestore, useCollection, useMemoFirebase, useDoc } from '@/firebase';
 import { Skeleton } from '@/components/ui/skeleton';
-import { collection, query, where } from 'firebase/firestore';
+import { collection, query, where, doc } from 'firebase/firestore';
 import type { UserProfile } from '@/lib/data';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
 import ProfileDetails from '@/components/discover/profile-details';
@@ -17,6 +17,21 @@ import TutorialOverlay from '@/components/discover/tutorial-overlay';
 type SwipeDirection = 'left' | 'right' | 'up';
 
 const MAX_VISIBLE_CARDS = 3;
+
+// Haversine formula to calculate distance between two lat/lon points
+const getDistanceInKm = (lat1: number, lon1: number, lat2: number, lon2: number) => {
+  const R = 6371; // Radius of the Earth in km
+  const dLat = (lat2 - lat1) * (Math.PI / 180);
+  const dLon = (lon2 - lon1) * (Math.PI / 180);
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos(lat1 * (Math.PI / 180)) * Math.cos(lat2 * (Math.PI / 180)) *
+    Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+  const distance = R * c;
+  return Math.round(distance);
+};
+
 
 const SwipeableCard = ({
   profile,
@@ -100,6 +115,13 @@ export default function DiscoverPage() {
   const [history, setHistory] = useState<UserProfile[]>([]);
   const [showTutorial, setShowTutorial] = useState(false);
 
+  // Fetch current user's profile to get their coordinates
+  const currentUserDocRef = useMemoFirebase(() => {
+    if (!user) return null;
+    return doc(firestore, 'users', user.uid);
+  }, [user, firestore]);
+  const { data: currentUserProfile } = useDoc<UserProfile>(currentUserDocRef);
+
   const usersQuery = useMemoFirebase(() => {
     if (!firestore) return null;
     return query(collection(firestore, 'users'));
@@ -108,14 +130,19 @@ export default function DiscoverPage() {
   const { data: profiles, isLoading } = useCollection<UserProfile>(usersQuery);
 
   const filteredProfiles = useMemo(() => {
-    if (!profiles) return [];
-    const profilesWithDistance = profiles.map(p => ({
+    if (!profiles || !currentUserProfile?.latitude || !currentUserProfile?.longitude) return [];
+    
+    const profilesWithDistance = profiles
+      .filter(p => p.id !== user?.uid) // Exclude current user
+      .map(p => ({
         ...p,
-        distance: Math.floor(Math.random() * 50) + 1
-    }));
-    if (!user) return profilesWithDistance;
-    return profilesWithDistance.filter(p => p.id !== user.uid);
-  }, [profiles, user]);
+        distance: p.latitude && p.longitude
+          ? getDistanceInKm(currentUserProfile.latitude, currentUserProfile.longitude, p.latitude, p.longitude)
+          : undefined,
+      }));
+      
+    return profilesWithDistance;
+  }, [profiles, currentUserProfile, user]);
 
   
   useEffect(() => {

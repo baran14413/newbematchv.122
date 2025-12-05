@@ -66,6 +66,8 @@ export default function WizardControls({ totalSteps, onRegisterSuccess }: Wizard
           dateOfBirth: formData.dateOfBirth ? Timestamp.fromDate(formData.dateOfBirth) : null,
           bio: formData.bio,
           location: formData.location,
+          latitude: formData.latitude,
+          longitude: formData.longitude,
           interests: formData.interests,
           goal: formData.goal,
           avatarUrl: photoURLs[0] || '',
@@ -130,3 +132,5 @@ export default function WizardControls({ totalSteps, onRegisterSuccess }: Wizard
     </div>
   );
 }
+
+    

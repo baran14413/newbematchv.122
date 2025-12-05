@@ -12,6 +12,8 @@ interface FormData {
   goal: string;
   interests: string[];
   location: string;
+  latitude?: number;
+  longitude?: number;
   locationEnabled: boolean;
   maxDistance: number;
   bio: string;
@@ -46,6 +48,8 @@ export const OnboardingProvider = ({ children }: { children: ReactNode }) => {
     goal: '',
     interests: [],
     location: '',
+    latitude: undefined,
+    longitude: undefined,
     locationEnabled: false,
     maxDistance: 25,
     bio: '',
@@ -94,3 +98,5 @@ export const useOnboardingContext = () => {
   }
   return context;
 };
+
+    

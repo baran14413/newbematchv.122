@@ -16,7 +16,6 @@ export default function StepLocation() {
 
   const getCityFromCoordinates = async (latitude: number, longitude: number) => {
     setIsLocating(true);
-    // Using OpenStreetMap's Nominatim API, which is more reliable and doesn't require an API key for moderate usage.
     try {
         const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
         if (!response.ok) throw new Error('Failed to fetch city.');
@@ -44,11 +43,16 @@ export default function StepLocation() {
       const { latitude, longitude } = position.coords;
       const locationString = await getCityFromCoordinates(latitude, longitude);
       if (locationString) {
-        const newFormData = { ...formData, location: locationString, locationEnabled: true };
+        const newFormData = { 
+            ...formData, 
+            location: locationString, 
+            latitude,
+            longitude,
+            locationEnabled: true 
+        };
         updateFormData(newFormData);
         setStepValid(true);
       }
-      // setIsLocating(false) is handled in getCityFromCoordinates's finally block
     }, (error) => {
       console.error("Geolocation error: ", error);
       toast({ variant: 'destructive', title: t('locationPage.permissionDenied') });
@@ -105,3 +109,5 @@ export default function StepLocation() {
     </div>
   );
 }
+
+    

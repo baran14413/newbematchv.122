@@ -32,7 +32,6 @@ export default function LocationPage() {
     }, [userProfile]);
 
     const getCityFromCoordinates = async (latitude: number, longitude: number) => {
-        // Using OpenStreetMap's Nominatim API, which is more reliable and doesn't require an API key for moderate usage.
         try {
             const response = await fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${latitude}&lon=${longitude}`);
             if (!response.ok) throw new Error('Failed to fetch city.');
@@ -61,7 +60,11 @@ export default function LocationPage() {
 
             if (locationString && userDocRef) {
                 try {
-                    await updateDoc(userDocRef, { location: locationString });
+                    await updateDoc(userDocRef, { 
+                        location: locationString,
+                        latitude: latitude,
+                        longitude: longitude,
+                    });
                     setCurrentLocation(locationString);
                     toast({
                         title: t('locationPage.updateToastTitle'),
@@ -116,3 +119,5 @@ export default function LocationPage() {
         </div>
     );
 }
+
+    

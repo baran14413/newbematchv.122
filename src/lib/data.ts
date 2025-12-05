@@ -39,6 +39,8 @@ export interface UserProfile {
   prompts: Prompt[];
   zodiac: string;
   location: string;
+  latitude?: number;
+  longitude?: number;
   goal?: string;
   interests?: string[];
   distance?: number;
@@ -59,3 +61,5 @@ export const zodiacSigns = [
   "Koç", "Boğa", "İkizler", "Yengeç", "Aslan", "Başak",
   "Terazi", "Akrep", "Yay", "Oğlak", "Kova", "Balık"
 ];
+
+    
