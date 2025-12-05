@@ -1,34 +1,10 @@
 'use client';
-import { useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
+import { motion } from 'framer-motion';
 import AuthScreen from '@/components/auth/auth-screen';
 import { PlaceHolderImages } from '@/lib/placeholder-images';
 import Image from 'next/image';
-import { useRouter } from 'next/navigation';
-import { useOnboardingContext } from '@/context/onboarding-context';
-import MainLayout from './(main)/layout';
-import DiscoverPage from './(main)/discover/page';
-import { Loader2 } from 'lucide-react';
 
 export default function Home() {
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
-    const router = useRouter();
-
-    // Bu örnekte, basit bir state ile kimlik doğrulama durumunu yönetiyoruz.
-    // Gerçek bir uygulamada burada bir kimlik doğrulama sağlayıcısı (örn. Firebase Auth) kullanılırdı.
-    const handleLoginSuccess = () => {
-        setIsAuthenticated(true);
-        router.push('/discover');
-    };
-    
-    if (isAuthenticated) {
-        return (
-            <div className="flex items-center justify-center min-h-screen bg-background">
-                <Loader2 className="w-8 h-8 animate-spin text-primary" />
-            </div>
-        );
-    }
-    
     const authBg = PlaceHolderImages.find(p => p.id === 'auth-bg');
 
     return (
