@@ -7,7 +7,6 @@ import { profiles, type UserProfile } from '@/lib/data';
 import { useLanguage } from '@/context/language-context';
 import { useIsMobile } from '@/hooks/use-mobile';
 import ProfileCard from '@/components/discover/profile-card';
-import { ScrollArea } from '@/components/ui/scroll-area';
 
 type SwipeDirection = 'left' | 'right' | 'up';
 
@@ -90,14 +89,12 @@ export default function DiscoverPage() {
 
   if (!isMobile) {
     return (
-      <div className="h-full w-full flex justify-center bg-gray-50 dark:bg-black">
-        <ScrollArea className="w-full max-w-md">
-           <div className="flex flex-col items-center gap-8 p-4 md:p-8">
-            {profiles.map((profile) => (
-              <ProfileCard key={profile.id} profile={profile} />
-            ))}
-          </div>
-        </ScrollArea>
+      <div className="h-full w-full flex justify-center bg-gray-50 dark:bg-black p-4 md:p-8">
+        <div className="w-full max-w-md space-y-8">
+          {profiles.map((profile) => (
+            <ProfileCard key={profile.id} profile={profile} />
+          ))}
+        </div>
       </div>
     );
   }
