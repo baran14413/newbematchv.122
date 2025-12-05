@@ -5,7 +5,6 @@ import Image from 'next/image';
 import VoiceNote from './voice-note';
 import { Heart, MapPin } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
-import { Card } from '@/components/ui/card';
 
 type ProfileCardProps = {
   profile: UserProfile;
@@ -56,8 +55,9 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
   };
 
   return (
-    <Card className="w-full overflow-hidden rounded-2xl">
-      <div className="relative w-full aspect-[3/4]">
+    <ScrollArea className="w-full h-full bg-card rounded-2xl shadow-lg overflow-hidden">
+      <div className="flex flex-col snap-y snap-mandatory">
+        <div className="relative w-full aspect-[3/4] snap-center">
           <Image 
               src={profile.imageUrls[0]} 
               alt={`${profile.name}'s main photo`}
@@ -66,39 +66,24 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
               priority
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/80 to-transparent"></div>
-          <div className="absolute bottom-0 left-0 p-4 text-white">
-              <h2 className="text-3xl font-bold">{profile.name}, {profile.age}</h2>
+          <div className="absolute bottom-0 left-0 p-6 text-white">
+              <h2 className="text-4xl font-bold">{profile.name}, {profile.age}</h2>
               <div className="flex items-center gap-2 mt-1">
-                  <MapPin className="w-4 h-4" />
+                  <MapPin className="w-5 h-5" />
                   <p>{profile.location}</p>
               </div>
           </div>
-      </div>
+        </div>
 
-      <div className="p-4 space-y-6">
+        <div className="p-6 space-y-8 snap-start">
             <div className="relative">
-              <h3 className="text-lg font-semibold">About Me</h3>
+              <h3 className="text-lg font-semibold">Hakkımda</h3>
               <p className="text-foreground/80 mt-1">{profile.bio}</p>
           </div>
 
-          {profile.videoUrl && (
-            <div className="relative w-full aspect-[3/4] rounded-lg overflow-hidden">
-                <video
-                src={profile.videoUrl}
-                autoPlay
-                loop
-                muted
-                playsInline
-                className="w-full h-full object-cover"
-                />
-            </div>
-          )}
-          
-          {profile.imageUrls.slice(1).map((url, index) => renderMedia(url, index + 1))}
-
           {profile.voiceNoteUrl && (
           <div>
-              <h3 className="text-sm font-semibold text-muted-foreground mb-2">My voice intro</h3>
+              <h3 className="text-sm font-semibold text-muted-foreground mb-2">Sesli notum</h3>
               <VoiceNote audioSrc={profile.voiceNoteUrl} />
           </div>
           )}
@@ -108,7 +93,7 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
           return (
               <div
               key={id}
-              className="p-4 rounded-lg bg-secondary relative"
+              className="p-4 rounded-lg bg-secondary relative snap-start"
               onDoubleClick={(e) => handleDoubleClick(e, id)}
               >
               <h3 className="text-sm font-semibold text-muted-foreground">{prompt.question}</h3>
@@ -129,7 +114,23 @@ export default function ProfileCard({ profile }: ProfileCardProps) {
               </div>
           );
           })}
+
+          {profile.imageUrls.slice(1).map((url, index) => renderMedia(url, index + 1))}
+
+          {profile.videoUrl && (
+            <div className="relative w-full aspect-[3/4] rounded-lg overflow-hidden snap-center">
+                <video
+                src={profile.videoUrl}
+                autoPlay
+                loop
+                muted
+                playsInline
+                className="w-full h-full object-cover"
+                />
+            </div>
+          )}
       </div>
-    </Card>
+      </div>
+    </ScrollArea>
   );
 }

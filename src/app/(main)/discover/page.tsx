@@ -10,6 +10,7 @@ import ProfileCard from '@/components/discover/profile-card';
 import { useUser } from '@/firebase';
 import { Skeleton } from '@/components/ui/skeleton';
 import LikesYou from '@/components/discover/likes-you';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 
 type SwipeDirection = 'left' | 'right' | 'up';
@@ -78,10 +79,11 @@ const DesktopProfileSkeleton = () => (
 export default function DiscoverPage() {
   const { user } = useUser();
   const profiles = staticProfiles;
-  const isLoading = false;
+  const isLoading = !user && false; // Let's assume loading is false for now.
 
   const filteredProfiles = useMemo(() => {
-    if (!profiles || !user) return profiles; // Show all if no user
+    if (!profiles) return [];
+    if (!user) return profiles;
     return profiles.filter(p => p.id !== user.uid);
   }, [profiles, user]);
 
@@ -93,7 +95,7 @@ export default function DiscoverPage() {
   // Populate stack when profiles are loaded
   useMemo(() => {
     if (filteredProfiles.length > 0) {
-        setStack(filteredProfiles)
+        setStack(filteredProfiles.reverse())
     } else {
         setStack([])
     }
@@ -129,7 +131,6 @@ export default function DiscoverPage() {
                 : 
                 <div className='flex flex-col gap-8'>
                     <DesktopProfileSkeleton />
-                    <DesktopProfileSkeleton />
                 </div>
             }
          </div>
@@ -138,21 +139,22 @@ export default function DiscoverPage() {
 
   if (!isMobile) {
     return (
-      <div className="w-full flex flex-col items-center bg-gray-50 dark:bg-black p-4 md:p-8 space-y-8">
-        <div className="w-full max-w-md space-y-8">
-          {filteredProfiles.length > 0 ? filteredProfiles.map((profile) => (
-            <ProfileCard key={profile.id} profile={profile} />
-          )) : <p className="text-center text-muted-foreground">{t('discover.noMoreProfiles')}</p>}
+      <ScrollArea className="h-full w-full">
+        <div className="w-full flex flex-col items-center p-4 md:p-8 space-y-8">
+            <div className="w-full max-w-md space-y-8">
+            {filteredProfiles.length > 0 ? filteredProfiles.map((profile) => (
+                <ProfileCard key={profile.id} profile={profile} />
+            )) : <p className="text-center text-muted-foreground">{t('discover.noMoreProfiles')}</p>}
+            </div>
         </div>
-      </div>
+      </ScrollArea>
     );
   }
 
   return (
     <div className="h-full w-full flex flex-col bg-gray-50 dark:bg-black overflow-hidden">
-       <LikesYou />
       <div className="flex-1 flex flex-col items-center justify-center px-4">
-        <div className="w-full max-w-sm h-[65vh] max-h-[550px] relative flex items-center justify-center">
+        <div className="w-full max-w-sm h-[70vh] max-h-[600px] relative flex items-center justify-center">
           {stack.length > 0 ? (
             stack.map((profile, index) => {
               const isTop = index === stack.length - 1;
