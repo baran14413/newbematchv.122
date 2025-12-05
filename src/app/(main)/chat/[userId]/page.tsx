@@ -7,7 +7,7 @@ import type { UserProfile, Message } from '@/lib/data';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
-import { ArrowLeft, CheckCheck, Mic, Phone, Plus, Send, Video } from 'lucide-react';
+import { ArrowLeft, CheckCheck, Mic, Phone, Plus, Send, Video, Play } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -272,5 +272,3 @@ export default function ChatPage() {
     </div>
   );
 }
-
-    
