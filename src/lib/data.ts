@@ -72,3 +72,11 @@ export const zodiacSigns = [
   "Koç", "Boğa", "İkizler", "Yengeç", "Aslan", "Başak",
   "Terazi", "Akrep", "Yay", "Oğlak", "Kova", "Balık"
 ];
+
+export const likesYouData: { id: string; name: string; avatarUrl: string; likeType: 'like' | 'superlike' | 'locked' }[] = [
+    { id: '1', name: 'Sarah', avatarUrl: placeholderImages.find(p => p.id === 'user-1-avatar')?.imageUrl ?? '', likeType: 'superlike'},
+    { id: '2', name: 'Chloe', avatarUrl: placeholderImages.find(p => p.id === 'user-3-avatar')?.imageUrl ?? '', likeType: 'like'},
+    { id: '3', name: 'Locked', avatarUrl: '', likeType: 'locked'},
+    { id: '4', name: 'Locked', avatarUrl: '', likeType: 'locked'},
+    { id: '5', name: 'Locked', avatarUrl: '', likeType: 'locked'},
+]

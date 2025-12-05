@@ -10,6 +10,7 @@ import ProfileCard from '@/components/discover/profile-card';
 import { useCollection, useFirestore, useUser, useMemoFirebase } from '@/firebase';
 import { collection, query, where } from 'firebase/firestore';
 import { Skeleton } from '@/components/ui/skeleton';
+import LikesYou from '@/components/discover/likes-you';
 
 type SwipeDirection = 'left' | 'right' | 'up';
 
@@ -142,7 +143,8 @@ export default function DiscoverPage() {
 
   if (!isMobile) {
     return (
-      <div className="h-full w-full flex justify-center bg-gray-50 dark:bg-black p-4 md:p-8">
+      <div className="h-full w-full flex flex-col items-center bg-gray-50 dark:bg-black p-4 md:p-8 space-y-8">
+        <LikesYou />
         <div className="w-full max-w-md space-y-8">
           {filteredProfiles.map((profile) => (
             <ProfileCard key={profile.id} profile={profile} />
@@ -154,7 +156,8 @@ export default function DiscoverPage() {
 
   return (
     <div className="h-full w-full flex flex-col bg-gray-50 dark:bg-black overflow-hidden">
-      <div className="flex-1 flex flex-col items-center justify-center p-4">
+      <div className="p-4"><LikesYou /></div>
+      <div className="flex-1 flex flex-col items-center justify-center px-4">
         <div className="w-full max-w-sm h-[65vh] max-h-[550px] relative flex items-center justify-center">
           {stack.length > 0 ? (
             stack.map((profile, index) => {

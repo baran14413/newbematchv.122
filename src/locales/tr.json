@@ -1,7 +1,11 @@
 {
     "discover": {
         "noMoreProfiles": "Gösterilecek başka profil yok.",
-        "job": "Yazılım Mühendisi"
+        "job": "Yazılım Mühendisi",
+        "likesYou": {
+            "title": "Seni Beğenenler",
+            "seeAll": "Tümünü Gör"
+        }
     },
     "lounge": {
         "title": "Sohbet",
@@ -23,6 +27,12 @@
         "goldDescription": "Sizi kimlerin beğendiğini görün ve sınırsız kaydırın!",
         "myPhotos": "Fotoğraflarım",
         "profilePhoto": "Profil fotoğrafı"
+    },
+    "reels": {
+        "title": "Reels",
+        "like": "Beğen",
+        "comment": "Yorum Yap",
+        "share": "Paylaş"
     },
     "settings": {
         "title": "Ayarlar",

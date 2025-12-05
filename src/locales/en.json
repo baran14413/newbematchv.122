@@ -1,7 +1,11 @@
 {
     "discover": {
         "noMoreProfiles": "No more profiles to show.",
-        "job": "Software Engineer"
+        "job": "Software Engineer",
+        "likesYou": {
+            "title": "Who Liked You",
+            "seeAll": "See All"
+        }
     },
     "lounge": {
         "title": "Lounge",
@@ -23,6 +27,12 @@
         "goldDescription": "See who likes you & get unlimited swipes!",
         "myPhotos": "My Photos",
         "profilePhoto": "Profile photo"
+    },
+    "reels": {
+        "title": "Reels",
+        "like": "Like",
+        "comment": "Comment",
+        "share": "Share"
     },
     "settings": {
         "title": "Settings",
