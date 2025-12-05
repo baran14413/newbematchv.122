@@ -53,10 +53,9 @@ interface OnboardingContextType {
   currentStep: number;
   formData: FormData;
   isStepValid: boolean;
-  isLastStep: boolean;
   setStepValid: (isValid: boolean) => void;
   updateFormData: (data: Partial<FormData>) => void;
-  nextStep: () => void;
+  nextStep: (totalSteps: number) => void;
   prevStep: () => void;
   resetOnboarding: () => void;
 }
@@ -68,17 +67,16 @@ export const OnboardingProvider = ({ children }: { children: ReactNode }) => {
   const [formData, setFormData] = useState<FormData>(initialFormData);
   const [isStepValid, setStepValid] = useState(false);
 
-  // This will be dynamic based on the number of steps.
-  // We'll define the steps array in the wizard component.
-  const isLastStep = false; // This will be calculated in the component.
-
   const updateFormData = (data: Partial<FormData>) => {
     setFormData((prev) => ({ ...prev, ...data }));
   };
 
-  const nextStep = () => {
-    setCurrentStep((prev) => prev + 1);
-    setStepValid(false); // Reset validation for the next step
+  const nextStep = (totalSteps: number) => {
+    // Add a guard to prevent going beyond the last step
+    if (currentStep < totalSteps - 1) {
+        setCurrentStep((prev) => prev + 1);
+        setStepValid(false); // Reset validation for the next step
+    }
   };
 
   const prevStep = () => {
@@ -98,7 +96,6 @@ export const OnboardingProvider = ({ children }: { children: ReactNode }) => {
         currentStep,
         formData,
         isStepValid,
-        isLastStep,
         setStepValid,
         updateFormData,
         nextStep,
@@ -116,9 +113,5 @@ export const useOnboardingContext = () => {
   if (!context) {
     throw new Error('useOnboardingContext must be used within an OnboardingProvider');
   }
-  // We need to calculate isLastStep here dynamically.
-  // The component using the context will know the total steps.
-  // This is a bit of a workaround for simplicity.
-  // A better approach might involve passing totalSteps to the provider.
   return context;
 };

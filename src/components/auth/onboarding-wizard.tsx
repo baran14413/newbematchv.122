@@ -38,8 +38,15 @@ export default function OnboardingWizard({ onSwitchView, onRegisterSuccess }: On
     { component: StepEmail, title: t('onboarding.credentials.emailTitle') },
     { component: StepCredentials, title: t('onboarding.credentials.passwordTitle') },
   ];
+  
+  const isLastStep = currentStep === steps.length - 1;
 
-  const CurrentStepComponent = steps[currentStep].component;
+  const CurrentStepComponent = steps[currentStep]?.component;
+
+  if (!CurrentStepComponent) {
+    // Handle the case where the step is out of bounds, maybe reset or show an error
+    return <div>Error: Invalid step.</div>;
+  }
 
   return (
     <div className="w-full h-full flex flex-col bg-background">
@@ -66,7 +73,8 @@ export default function OnboardingWizard({ onSwitchView, onRegisterSuccess }: On
            </AnimatePresence>
         </div>
         <div className="p-4 pt-0 space-y-3">
-            <WizardControls 
+            <WizardControls
+              isLastStep={isLastStep}
               totalSteps={steps.length}
               onRegisterSuccess={onRegisterSuccess} 
             />

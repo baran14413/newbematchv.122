@@ -7,10 +7,11 @@ import { useLanguage } from '@/context/language-context';
 interface WizardControlsProps {
   totalSteps: number;
   onRegisterSuccess: () => void;
+  isLastStep: boolean;
 }
 
-export default function WizardControls({ totalSteps, onRegisterSuccess }: WizardControlsProps) {
-  const { currentStep, prevStep, nextStep, isStepValid, isLastStep } = useOnboardingContext();
+export default function WizardControls({ totalSteps, onRegisterSuccess, isLastStep }: WizardControlsProps) {
+  const { currentStep, prevStep, nextStep, isStepValid } = useOnboardingContext();
   const { t } = useLanguage();
 
   if (isLastStep) {
@@ -24,7 +25,7 @@ export default function WizardControls({ totalSteps, onRegisterSuccess }: Wizard
         >
             <ArrowLeft className="h-6 w-6" />
         </Button>
-    ) : <div></div>; // Hide controls completely if it's somehow the last and first step
+    ) : <div></div>;
   }
 
   return (
@@ -40,7 +41,7 @@ export default function WizardControls({ totalSteps, onRegisterSuccess }: Wizard
         </Button>
        )}
 
-      <Button onClick={nextStep} disabled={!isStepValid} className="font-bold text-lg py-7 rounded-xl w-full">
+      <Button onClick={() => nextStep(totalSteps)} disabled={!isStepValid} className="font-bold text-lg py-7 rounded-xl w-full">
         {t('onboarding.next')}
       </Button>
     </div>
