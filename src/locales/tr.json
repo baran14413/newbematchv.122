@@ -192,6 +192,19 @@
         "ageInfo": "Devam etmek için 18 yaşında veya daha büyük olmalısın.",
         "currentAge": "Yaşın: {age}",
         "invalidDate": "Lütfen geçerli bir tarih girin.",
+        "stepGenderTitle": "Cinsiyetin nedir?",
+        "gender": {
+            "yourGender": "Cinsiyetiniz",
+            "woman": "Kadın",
+            "man": "Erkek",
+            "other": "Diğer"
+        },
+        "interestedIn": {
+            "showMe": "Kimi görmek istersin?",
+            "men": "Erkekler",
+            "women": "Kadınlar",
+            "everyone": "Herkes"
+        },
         "stepGoalsTitle": "Burada ne arıyorsunuz?",
         "goals": {
             "longTerm": "Uzun süreli ilişki",
@@ -213,7 +226,7 @@
         },
         "stepPhotosTitle": "En iyi fotoğraflarını ekle",
         "photos": {
-            "info": "Devam etmek için en az 1 fotoğraf ekle. En fazla {count} fotoğraf ekleyebilirsin.",
+            "info": "Devam etmek için en az 1 fotoğraf ekle. En fazla 3 fotoğraf ekleyebilirsin.",
             "addButton": "Fotoğraf Ekle",
             "previewAlt": "Yükleme önizlemesi",
             "profilePhotoHint": "İlk seçtiğiniz fotoğraf, profil fotoğrafınız olarak ayarlanacaktır."
@@ -228,11 +241,25 @@
             "confirmPasswordPlaceholder": "Şifrenizi doğrulayın",
             "passwordMismatch": "Şifreler eşleşmiyor."
         },
+        "stepWelcomeTitle": " ",
+        "welcome": {
+            "title": "BeMatch'e hoş geldin.",
+            "subtitle": "Lütfen aşağıdaki kurallara uymayı unutma.",
+            "rule1Title": "Kendin ol.",
+            "rule1Desc": "Fotoğraflarının, yaşının ve biyografinin gerçeği yansıttığından emin ol.",
+            "rule2Title": "Dikkatli ol.",
+            "rule2Desc": "Kişisel bilgilerini paylaşmadan önce iyi düşün.",
+            "rule3Title": "Nazik ol.",
+            "rule3Desc": "Diğer kullanıcılara saygı göster ve sana nasıl davranılmasını istiyorsan onlara da öyle davran.",
+            "rule4Title": "Proaktif ol.",
+            "rule4Desc": "Kötü davranışları mutlaka bize bildir.",
+            "confirm": "Onaylıyorum ve Keşfet"
+        },
         "haveAccount": "Zaten bir hesabın var mı?",
         "login": "Giriş Yap",
         "back": "Geri",
         "next": "İleri",
-        "createAccount": "Hesap Oluştur"
+        "createAccount": "Hesap Oluştur ve Kuralları Onayla"
     },
     "login": {
         "title": "BeMatch",

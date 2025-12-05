@@ -64,6 +64,8 @@ export default function WizardControls({ totalSteps, onRegisterSuccess }: Wizard
           name: `${formData.firstName} ${formData.lastName}`, // For easy display
           age: formData.age,
           dateOfBirth: formData.dateOfBirth ? Timestamp.fromDate(formData.dateOfBirth) : null,
+          gender: formData.gender,
+          interestedIn: formData.interestedIn,
           bio: formData.bio,
           location: formData.location,
           latitude: formData.latitude,
@@ -90,7 +92,9 @@ export default function WizardControls({ totalSteps, onRegisterSuccess }: Wizard
         description: "BeMatch'e hoş geldiniz.",
       });
 
-      onRegisterSuccess();
+      // Instead of calling onRegisterSuccess directly, we now let the welcome screen handle it.
+      // We just need to proceed to the final step.
+      nextStep(); 
 
     } catch (error: any) {
       console.error('Registration error:', error);
@@ -104,7 +108,7 @@ export default function WizardControls({ totalSteps, onRegisterSuccess }: Wizard
     }
   };
 
-  const isLastStep = currentStep === totalSteps - 1;
+  const isLastStep = currentStep === totalSteps - 2; // Second to last step is now credentials
 
   return (
     <div className="flex items-center justify-between gap-4">
@@ -132,5 +136,3 @@ export default function WizardControls({ totalSteps, onRegisterSuccess }: Wizard
     </div>
   );
 }
-
-    

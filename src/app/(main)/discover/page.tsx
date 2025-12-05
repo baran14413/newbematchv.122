@@ -8,7 +8,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import ProfileCard from '@/components/discover/profile-card';
 import { useUser, useFirestore, useCollection, useMemoFirebase, useDoc } from '@/firebase';
 import { Skeleton } from '@/components/ui/skeleton';
-import { collection, query, where, doc } from 'firebase/firestore';
+import { collection, query, where, doc, or } from 'firebase/firestore';
 import type { UserProfile } from '@/lib/data';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
 import ProfileDetails from '@/components/discover/profile-details';
@@ -123,14 +123,26 @@ export default function DiscoverPage() {
   const { data: currentUserProfile } = useDoc<UserProfile>(currentUserDocRef);
 
   const usersQuery = useMemoFirebase(() => {
-    if (!firestore) return null;
-    return query(collection(firestore, 'users'));
-  }, [firestore]);
+    if (!firestore || !currentUserProfile) return null;
+
+    const baseQuery = collection(firestore, 'users');
+    const interestedIn = currentUserProfile.interestedIn; // e.g., 'woman', 'man', 'everyone'
+    
+    if (interestedIn === 'everyone') {
+      // No gender filter needed, just return all users
+      return query(baseQuery);
+    }
+    
+    // Filter by the gender the user is interested in
+    return query(baseQuery, where('gender', '==', interestedIn));
+
+  }, [firestore, currentUserProfile]);
+
 
   const { data: profiles, isLoading } = useCollection<UserProfile>(usersQuery);
 
   const filteredProfiles = useMemo(() => {
-    if (!profiles) return [];
+    if (!profiles || !currentUserProfile) return [];
     
     return profiles
       .filter(p => p.id !== user?.uid) // Exclude current user

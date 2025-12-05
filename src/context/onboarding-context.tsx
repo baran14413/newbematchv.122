@@ -9,6 +9,8 @@ interface FormData {
   year: string;
   dateOfBirth: Date | undefined;
   age: number;
+  gender: string;
+  interestedIn: string;
   goal: string;
   interests: string[];
   location: string;
@@ -45,6 +47,8 @@ export const OnboardingProvider = ({ children }: { children: ReactNode }) => {
     year: '',
     dateOfBirth: undefined,
     age: 0,
+    gender: '',
+    interestedIn: '',
     goal: '',
     interests: [],
     location: '',
@@ -98,5 +102,3 @@ export const useOnboardingContext = () => {
   }
   return context;
 };
-
-    
