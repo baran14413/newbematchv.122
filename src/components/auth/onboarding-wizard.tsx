@@ -15,9 +15,10 @@ type AuthView = 'login' | 'register';
 
 interface OnboardingWizardProps {
   onSwitchView: (view: AuthView) => void;
+  onRegisterSuccess: () => void;
 }
 
-export default function OnboardingWizard({ onSwitchView }: OnboardingWizardProps) {
+export default function OnboardingWizard({ onSwitchView, onRegisterSuccess }: OnboardingWizardProps) {
   const { currentStep } = useOnboardingContext();
   const { t } = useLanguage();
 
@@ -55,7 +56,7 @@ export default function OnboardingWizard({ onSwitchView }: OnboardingWizardProps
            </AnimatePresence>
         </div>
         <div className="p-6 space-y-4">
-          <WizardControls totalSteps={steps.length} />
+          <WizardControls totalSteps={steps.length} onRegisterSuccess={onRegisterSuccess} />
            <p className="text-sm text-muted-foreground text-center">
                 {t('onboarding.haveAccount')}{' '}
                 <button onClick={() => onSwitchView('login')} className="font-semibold text-primary hover:underline">

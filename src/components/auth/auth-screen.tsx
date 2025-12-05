@@ -5,7 +5,11 @@ import OnboardingWizard from '@/components/auth/onboarding-wizard';
 
 type AuthView = 'login' | 'register';
 
-export default function AuthScreen() {
+interface AuthScreenProps {
+  onAuthSuccess: () => void;
+}
+
+export default function AuthScreen({ onAuthSuccess }: AuthScreenProps) {
   const [view, setView] = useState<AuthView>('login');
 
   const onSwitchView = (newView: AuthView) => {
@@ -14,8 +18,8 @@ export default function AuthScreen() {
 
   return (
     <>
-      {view === 'login' && <Login onSwitchView={onSwitchView} />}
-      {view === 'register' && <OnboardingWizard onSwitchView={onSwitchView} />}
+      {view === 'login' && <Login onSwitchView={onSwitchView} onLoginSuccess={onAuthSuccess} />}
+      {view === 'register' && <OnboardingWizard onSwitchView={onSwitchView} onRegisterSuccess={onAuthSuccess} />}
     </>
   );
 }

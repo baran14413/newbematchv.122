@@ -1,22 +1,34 @@
 'use client';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import AuthScreen from '@/components/auth/auth-screen';
-import MainLayout from './(main)/layout';
 import { useRouter } from 'next/navigation';
+import { useUser } from '@/firebase';
+import { Skeleton } from '@/components/ui/skeleton';
 
 export default function Home() {
-    const [isAuthenticated, setIsAuthenticated] = useState(false);
+    const { user, isUserLoading } = useUser();
     const router = useRouter();
 
-    const handleLoginSuccess = () => {
-        setIsAuthenticated(true);
-        router.push('/discover');
-    };
+    useEffect(() => {
+        if (!isUserLoading && user) {
+            router.replace('/discover');
+        }
+    }, [user, isUserLoading, router]);
 
-    if (isAuthenticated) {
-        return <MainLayout><div /></MainLayout>;
+    if (isUserLoading || user) {
+        return (
+             <main className="w-full h-screen flex items-center justify-center bg-gray-100 dark:bg-black">
+                 <div className="w-full max-w-md h-[90vh] max-h-[800px]">
+                    <Skeleton className="w-full h-full rounded-2xl" />
+                 </div>
+            </main>
+        )
     }
+
+    const handleAuthSuccess = () => {
+        router.replace('/discover');
+    };
 
     return (
         <main className="w-full h-screen flex items-center justify-center bg-gray-100 dark:bg-black">
@@ -28,7 +40,7 @@ export default function Home() {
                     transition={{ duration: 0.3 }}
                     className="w-full max-w-md h-[90vh] max-h-[800px] bg-card rounded-2xl shadow-2xl overflow-hidden"
                 >
-                    <AuthScreen />
+                    <AuthScreen onAuthSuccess={handleAuthSuccess} />
                 </motion.div>
             </AnimatePresence>
         </main>
