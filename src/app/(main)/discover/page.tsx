@@ -9,14 +9,12 @@ import { X, Star, Heart, Undo2, ChevronUp, Loader2, RefreshCw } from 'lucide-rea
 import type { UserProfile } from '@/lib/data';
 import { useLanguage } from '@/context/language-context';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
-import { Badge } from '@/components/ui/badge';
 import { useCollection } from '@/firebase';
-import { collection } from 'firebase/firestore';
 
 type SwipeDirection = 'left' | 'right' | 'up';
 
 export default function DiscoverPage() {
-  const { data: profiles, loading, error } = useCollection<UserProfile>(collection, 'profiles');
+  const { data: profiles, loading, error } = useCollection<UserProfile>('profiles');
   const [stack, setStack] = useState<UserProfile[]>([]);
   const [history, setHistory] = useState<UserProfile[]>([]);
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
@@ -142,6 +140,7 @@ export default function DiscoverPage() {
                   >
                     <Card className="w-full h-full rounded-2xl overflow-hidden shadow-2xl">
                       <CardContent className="p-0 h-full relative" onClick={isTop ? handleTapOnCard : undefined}>
+                        {profile.imageUrls && profile.imageUrls.length > 0 ?
                         <AnimatePresence initial={false}>
                              <motion.div
                                 key={`${profile.id}-${currentImageIndex}`}
@@ -160,17 +159,22 @@ export default function DiscoverPage() {
                                 />
                             </motion.div>
                         </AnimatePresence>
+                        :
+                        <div className="w-full h-full bg-secondary flex items-center justify-center text-muted-foreground">No Images</div>
+                        }
 
-                        <div className="absolute top-2 left-2 right-2 flex gap-1 z-20 pointer-events-none">
-                            {profile.imageUrls.map((_, imgIndex) => (
-                                <div key={imgIndex} className="flex-1 h-1 rounded-full bg-white/50">
-                                    <div 
-                                        className="h-full rounded-full bg-white transition-all duration-300"
-                                        style={{ width: imgIndex === currentImageIndex ? '100%' : '0%' }}
-                                    />
-                                </div>
-                            ))}
-                        </div>
+                        {profile.imageUrls && profile.imageUrls.length > 1 &&
+                          <div className="absolute top-2 left-2 right-2 flex gap-1 z-20 pointer-events-none">
+                              {profile.imageUrls.map((_, imgIndex) => (
+                                  <div key={imgIndex} className="flex-1 h-1 rounded-full bg-white/50">
+                                      <div 
+                                          className="h-full rounded-full bg-white transition-all duration-300"
+                                          style={{ width: imgIndex === currentImageIndex ? '100%' : '0%' }}
+                                      />
+                                  </div>
+                              ))}
+                          </div>
+                        }
 
                         <div className="absolute bottom-0 left-0 right-0 h-48 bg-gradient-to-t from-black/80 to-transparent p-6 flex flex-col justify-end pointer-events-none z-10">
                           <h2 className="text-3xl font-bold text-white">
@@ -232,13 +236,15 @@ export default function DiscoverPage() {
               <SheetTitle className="text-2xl">{activeProfile.name}, {activeProfile.age}</SheetTitle>
             </SheetHeader>
             <div className="flex-1 overflow-y-auto p-4 space-y-6">
-                <div className="grid grid-cols-2 gap-4">
-                    {activeProfile.imageUrls.map((url, index) => (
-                        <div key={index} className="relative aspect-[3/4] rounded-lg overflow-hidden">
-                            <Image src={url} alt={`${activeProfile.name} photo ${index + 1}`} fill className="object-cover" />
-                        </div>
-                    ))}
-                </div>
+                {activeProfile.imageUrls && activeProfile.imageUrls.length > 0 &&
+                  <div className="grid grid-cols-2 gap-4">
+                      {activeProfile.imageUrls.map((url, index) => (
+                          <div key={index} className="relative aspect-[3/4] rounded-lg overflow-hidden">
+                              <Image src={url} alt={`${activeProfile.name} photo ${index + 1}`} fill className="object-cover" />
+                          </div>
+                      ))}
+                  </div>
+                }
 
                 <Card>
                     <CardContent className="p-4">
@@ -246,7 +252,7 @@ export default function DiscoverPage() {
                     </CardContent>
                 </Card>
 
-                {activeProfile.prompts.length > 0 && (
+                {activeProfile.prompts && activeProfile.prompts.length > 0 && (
                     <Card>
                         <CardContent className="p-4 space-y-4">
                             {activeProfile.prompts.map((p, i) => (
@@ -259,12 +265,12 @@ export default function DiscoverPage() {
                     </Card>
                 )}
 
-                <Card>
+                {activeProfile.zodiac && <Card>
                     <CardContent className="p-4">
                         <p className="font-semibold text-sm text-muted-foreground mb-2">Burç</p>
                         <p className="text-lg">{activeProfile.zodiac}</p>
                     </CardContent>
-                </Card>
+                </Card>}
 
             </div>
           </SheetContent>

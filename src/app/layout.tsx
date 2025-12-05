@@ -5,6 +5,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { OnboardingProvider } from '@/context/onboarding-context';
 import { ThemeProvider } from '@/components/theme-provider';
 import { LanguageProvider } from '@/context/language-context';
+import { FirebaseClientProvider } from '@/firebase/client-provider';
 
 const poppins = Poppins({
   subsets: ['latin'],
@@ -34,7 +35,9 @@ export default function RootLayout({
         >
           <LanguageProvider>
             <OnboardingProvider>
-              {children}
+              <FirebaseClientProvider>
+                {children}
+              </FirebaseClientProvider>
             </OnboardingProvider>
             <Toaster />
           </LanguageProvider>
