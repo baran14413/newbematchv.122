@@ -1,7 +1,7 @@
 'use client';
 import { useState } from 'react';
 import { Button } from '@/components/ui/button';
-import { Flame, Loader2 } from 'lucide-react';
+import { Flame, Loader2, X } from 'lucide-react';
 import { useLanguage } from '@/context/language-context';
 import { useOnboardingContext } from '@/context/onboarding-context';
 import { useAuth, useFirestore, useStorage } from '@/firebase';
@@ -19,11 +19,14 @@ const RuleItem = ({ title, description }: { title: string; description: string }
     </div>
 );
 
+type AuthView = 'login' | 'register';
+
 interface StepWelcomeProps {
     onRegisterSuccess: () => void;
+    onSwitchView: (view: AuthView) => void;
 }
 
-export default function StepWelcome({ onRegisterSuccess }: StepWelcomeProps) {
+export default function StepWelcome({ onRegisterSuccess, onSwitchView }: StepWelcomeProps) {
   const { t } = useLanguage();
   const { formData } = useOnboardingContext();
   const auth = useAuth();
@@ -120,14 +123,22 @@ export default function StepWelcome({ onRegisterSuccess }: StepWelcomeProps) {
 
 
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full relative">
+        <Button 
+            variant="ghost" 
+            size="icon" 
+            className="absolute top-0 right-0"
+            onClick={() => onSwitchView('login')}
+        >
+            <X className="w-5 h-5 text-muted-foreground" />
+        </Button>
         <motion.div 
             className="flex-1"
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.5, delay: 0.2 }}
         >
-            <div className="mb-8">
+            <div className="mb-8 pt-8">
                 <Flame className="w-12 h-12 text-primary" />
             </div>
             
@@ -145,6 +156,7 @@ export default function StepWelcome({ onRegisterSuccess }: StepWelcomeProps) {
              initial={{ opacity: 0, y: 20 }}
              animate={{ opacity: 1, y: 0 }}
              transition={{ duration: 0.5, delay: 0.4 }}
+             className="pb-4"
         >
             <Button onClick={handleConfirm} disabled={isLoading} className="w-full font-bold text-lg py-7 rounded-xl mt-8">
                 {isLoading ? <Loader2 className="animate-spin" /> : t('onboarding.welcome.confirm')}

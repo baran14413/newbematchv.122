@@ -42,16 +42,17 @@ export default function OnboardingWizard({ onSwitchView, onRegisterSuccess }: On
 
   const CurrentStepComponent = steps[currentStep].component;
 
-  const isExpandedStep = [6, 7].includes(currentStep);
   const isWelcomeStep = currentStep === steps.length - 1;
 
 
   return (
     <div className="w-full h-full flex flex-col bg-background">
+       {!isWelcomeStep && (
         <div className="p-4">
-            {!isWelcomeStep && <StepIndicator currentStep={currentStep} totalSteps={steps.length} />}
+            <StepIndicator currentStep={currentStep} totalSteps={steps.length} />
         </div>
-        <div className="flex-1 flex flex-col overflow-hidden px-6">
+       )}
+        <div className="flex-1 flex flex-col overflow-hidden px-6 pb-4">
            <AnimatePresence mode="wait">
              <motion.div
                 key={currentStep}
@@ -66,19 +67,18 @@ export default function OnboardingWizard({ onSwitchView, onRegisterSuccess }: On
                       <h2 className="text-3xl font-bold">{steps[currentStep].title}</h2>
                   </div>
                 )}
-                <div className={`flex-1 ${isExpandedStep || isWelcomeStep ? 'flex flex-col' : ''}`}>
+                <div className="flex-1 flex flex-col">
                     <ScrollArea className="flex-1 -mx-6">
                         <div className="px-6 h-full">
-                            <CurrentStepComponent onRegisterSuccess={onRegisterSuccess} />
+                            <CurrentStepComponent onRegisterSuccess={onRegisterSuccess} onSwitchView={onSwitchView} />
                         </div>
                     </ScrollArea>
                 </div>
               </motion.div>
            </AnimatePresence>
         </div>
-        <div className="p-4 space-y-3">
-          {!isWelcomeStep && (
-            <>
+        {!isWelcomeStep && (
+          <div className="p-4 pt-0 space-y-3">
               <WizardControls totalSteps={steps.length} />
               <p className="text-sm text-muted-foreground text-center">
                     {t('onboarding.haveAccount')}{' '}
@@ -86,9 +86,8 @@ export default function OnboardingWizard({ onSwitchView, onRegisterSuccess }: On
                         {t('onboarding.login')}
                     </button>
               </p>
-            </>
-           )}
-        </div>
+          </div>
+        )}
     </div>
   );
 }
