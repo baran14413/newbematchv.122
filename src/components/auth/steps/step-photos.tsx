@@ -7,7 +7,7 @@ import { Button } from '@/components/ui/button';
 import { useLanguage } from '@/context/language-context';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
-const MAX_PHOTOS = 6;
+const MAX_PHOTOS = 3;
 
 export default function StepPhotos() {
   const { formData, updateFormData, setStepValid } = useOnboardingContext();
@@ -45,7 +45,7 @@ export default function StepPhotos() {
         <div className="space-y-4">
           <div className="text-center space-y-1">
             <p className="text-muted-foreground text-sm">
-              {t('onboarding.photos.info')}
+              {t('onboarding.photos.info', { count: MAX_PHOTOS })}
             </p>
             <p className="text-muted-foreground text-xs italic">
               {t('onboarding.photos.profilePhotoHint')}

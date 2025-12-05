@@ -213,7 +213,7 @@
         },
         "stepPhotosTitle": "Add your best photos",
         "photos": {
-            "info": "Add at least 1 photo to continue. You can add up to 6 photos.",
+            "info": "Add at least 1 photo to continue. You can add up to {count} photos.",
             "addButton": "Add Photo",
             "previewAlt": "Upload preview",
             "profilePhotoHint": "The first photo you select will be your profile picture."
