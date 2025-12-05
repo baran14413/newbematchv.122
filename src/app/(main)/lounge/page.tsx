@@ -17,14 +17,14 @@ export default function LoungePage() {
             <h1 className="text-2xl font-bold text-foreground">{t('lounge.conversations')}</h1>
           </header>
           <ScrollArea className="flex-1">
-              <div className="flex flex-col gap-3 p-4">
+              <div className="flex flex-col gap-2 p-2">
                 {conversations.map((convo) => (
                     <Link href={`/lounge/${convo.id}`} key={convo.id}>
                         <div className={cn(
-                            "p-3 flex items-center gap-4 cursor-pointer rounded-full border-2 border-transparent bg-secondary",
+                            "px-3 py-2 flex items-center gap-3 cursor-pointer rounded-lg border-2 border-transparent",
                             "hover:bg-secondary/50 transition-colors duration-200"
                         )}>
-                            <Avatar className="h-14 w-14">
+                            <Avatar className="h-12 w-12">
                                 <AvatarImage src={convo.avatarUrl} alt={convo.userName} />
                                 <AvatarFallback>{convo.userName.charAt(0)}</AvatarFallback>
                             </Avatar>
