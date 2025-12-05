@@ -236,8 +236,9 @@
             "previewAlt": "Upload preview",
             "profilePhotoHint": "The first photo you select will be your profile picture."
         },
-        "stepCredentialsTitle": "Create your account",
         "credentials": {
+            "emailTitle": "What's your email?",
+            "passwordTitle": "Create a password",
             "email": "Email",
             "emailPlaceholder": "email@youraddress.com",
             "password": "Password",

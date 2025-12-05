@@ -123,11 +123,8 @@ export default function StepWelcome({ onRegisterSuccess, resetOnboarding }: Step
 
   return (
     <div className="flex flex-col h-full w-full">
-        <motion.div 
+        <div 
             className="flex-1"
-            initial={{ opacity: 0, y: 20 }}
-            animate={{ opacity: 1, y: 0 }}
-            transition={{ duration: 0.5, delay: 0.2 }}
         >
             <div className="mb-8">
                 <Flame className="w-12 h-12 text-primary" />
@@ -141,18 +138,13 @@ export default function StepWelcome({ onRegisterSuccess, resetOnboarding }: Step
                     {rules.map(rule => <RuleItem key={rule.title} {...rule} />)}
                 </div>
             </div>
-        </motion.div>
+        </div>
 
-        <motion.div
-             initial={{ opacity: 0, y: 20 }}
-             animate={{ opacity: 1, y: 0 }}
-             transition={{ duration: 0.5, delay: 0.4 }}
-             className="pb-4"
-        >
-            <Button onClick={handleConfirm} disabled={isLoading} className="w-full font-bold text-lg py-7 rounded-xl mt-8">
+        <div className="pb-4 mt-8">
+            <Button onClick={handleConfirm} disabled={isLoading} className="w-full font-bold text-lg py-7 rounded-xl">
                 {isLoading ? <Loader2 className="animate-spin" /> : t('onboarding.welcome.confirm')}
             </Button>
-        </motion.div>
+        </div>
     </div>
   );
 }

@@ -236,8 +236,9 @@
             "previewAlt": "Yükleme önizlemesi",
             "profilePhotoHint": "İlk seçtiğiniz fotoğraf, profil fotoğrafınız olarak ayarlanacaktır."
         },
-        "stepCredentialsTitle": "Hesabını oluştur",
         "credentials": {
+            "emailTitle": "E-posta adresin nedir?",
+            "passwordTitle": "Bir şifre oluştur",
             "email": "E-posta",
             "emailPlaceholder": "eposta@adresiniz.com",
             "password": "Şifre",

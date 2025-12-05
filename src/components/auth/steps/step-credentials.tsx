@@ -17,13 +17,12 @@ export default function StepCredentials() {
   const [isConfirmTouched, setIsConfirmTouched] = useState(false);
 
   useEffect(() => {
-    const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email);
     const hasLetters = /[a-zA-Z]/.test(formData.password);
     const hasNumbers = /\d/.test(formData.password);
     const isPasswordStrongEnough = formData.password.length >= 8 && hasLetters && hasNumbers;
     const isPasswordMatch = formData.password === formData.confirmPassword;
-    setStepValid(isEmailValid && isPasswordStrongEnough && isPasswordMatch);
-  }, [formData.email, formData.password, formData.confirmPassword, setStepValid]);
+    setStepValid(isPasswordStrongEnough && isPasswordMatch);
+  }, [formData.password, formData.confirmPassword, setStepValid]);
   
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -34,19 +33,6 @@ export default function StepCredentials() {
 
   return (
     <div className="space-y-6">
-      <div className="space-y-2">
-          <Label htmlFor="email">{t('onboarding.credentials.email')}</Label>
-          <Input 
-          id="email" 
-          name="email"
-          type="email" 
-          placeholder={t('onboarding.credentials.emailPlaceholder')}
-          value={formData.email}
-          onChange={handleChange}
-          className="h-12 text-base"
-          autoFocus
-          />
-      </div>
       <div className="space-y-2 relative">
           <Label htmlFor="password">{t('onboarding.credentials.password')}</Label>
           <p className="text-xs text-muted-foreground -mt-1 mb-2">
@@ -60,6 +46,7 @@ export default function StepCredentials() {
           value={formData.password}
           onChange={handleChange}
           className="h-12 text-base"
+          autoFocus
           />
           <Button
           type="button"
