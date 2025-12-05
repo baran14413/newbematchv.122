@@ -14,6 +14,7 @@ import StepWelcome from '@/components/auth/steps/step-welcome';
 import WizardControls from '@/components/auth/wizard-controls';
 import { AnimatePresence, motion } from 'framer-motion';
 import { useLanguage } from '@/context/language-context';
+import { ScrollArea } from '@/components/ui/scroll-area';
 
 type AuthView = 'login' | 'register';
 
@@ -27,6 +28,7 @@ export default function OnboardingWizard({ onSwitchView, onRegisterSuccess }: On
   const { t } = useLanguage();
 
   const steps = [
+    { component: StepWelcome, title: t('onboarding.stepWelcomeTitle') },
     { component: StepName, title: t("onboarding.stepNameTitle") },
     { component: StepAge, title: t('onboarding.stepAgeTitle') },
     { component: StepGender, title: t('onboarding.stepGenderTitle') },
@@ -36,13 +38,12 @@ export default function OnboardingWizard({ onSwitchView, onRegisterSuccess }: On
     { component: StepBio, title: t('onboarding.stepBioTitle') },
     { component: StepPhotos, title: t('onboarding.stepPhotosTitle') },
     { component: StepCredentials, title: t('onboarding.stepCredentialsTitle') },
-    { component: StepWelcome, title: t('onboarding.stepWelcomeTitle') },
   ];
 
   const CurrentStepComponent = steps[currentStep].component;
 
-  const isExpandedStep = [6, 7, 8, 9].includes(currentStep);
-  const hideControls = currentStep === steps.length - 1;
+  const isExpandedStep = [0, 7, 8].includes(currentStep);
+  const hideControls = currentStep === 0;
 
   return (
     <div className="w-full h-full flex flex-col bg-background">
@@ -62,14 +63,16 @@ export default function OnboardingWizard({ onSwitchView, onRegisterSuccess }: On
                 <div className="text-center pt-2 pb-6">
                     <h2 className="text-3xl font-bold">{steps[currentStep].title}</h2>
                 </div>
-                <div className={isExpandedStep ? "flex-1" : ""}>
-                    <CurrentStepComponent />
+                <div className={`flex-1 ${isExpandedStep ? 'flex flex-col' : ''}`}>
+                    <ScrollArea className="flex-1 -mx-6 px-6">
+                      <CurrentStepComponent onRegisterSuccess={onRegisterSuccess} />
+                    </ScrollArea>
                 </div>
               </motion.div>
            </AnimatePresence>
         </div>
         <div className="p-4 space-y-3">
-          {!hideControls && <WizardControls totalSteps={steps.length} onRegisterSuccess={onRegisterSuccess} />}
+          {!hideControls && <WizardControls totalSteps={steps.length} />}
            <p className="text-sm text-muted-foreground text-center">
                 {t('onboarding.haveAccount')}{' '}
                 <button onClick={() => onSwitchView('login')} className="font-semibold text-primary hover:underline">
