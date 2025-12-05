@@ -16,7 +16,10 @@ export default function StepCredentials() {
 
   useEffect(() => {
     const isEmailValid = /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formData.email);
-    const isPasswordValid = formData.password.length >= 8;
+    const hasLetters = /[a-zA-Z]/.test(formData.password);
+    const hasNumbers = /\d/.test(formData.password);
+    const hasSymbols = /[!@#$%^&*(),.?":{}|<>]/.test(formData.password);
+    const isPasswordValid = formData.password.length >= 8 && hasLetters && hasNumbers && hasSymbols;
     const isPasswordMatch = formData.password === formData.confirmPassword;
     setStepValid(isEmailValid && isPasswordValid && isPasswordMatch);
   }, [formData.email, formData.password, formData.confirmPassword, setStepValid]);
@@ -43,6 +46,9 @@ export default function StepCredentials() {
       </div>
       <div className="space-y-2 relative">
           <Label htmlFor="password">{t('onboarding.credentials.password')}</Label>
+          <p className="text-xs text-muted-foreground -mt-1 mb-2">
+              Şifreniz en az 8 karakter uzunluğunda olmalı, harf, rakam ve sembol içermelidir.
+          </p>
           <Input 
           id="password" 
           name="password"
@@ -56,7 +62,7 @@ export default function StepCredentials() {
           type="button"
           variant="ghost"
           size="icon"
-          className="absolute right-2.5 top-8 h-7 w-7 text-muted-foreground"
+          className="absolute right-2.5 top-[42px] h-7 w-7 text-muted-foreground"
           onClick={() => setShowPassword(!showPassword)}
           >
           {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
