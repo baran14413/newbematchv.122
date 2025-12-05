@@ -7,25 +7,14 @@ import { useLanguage } from '@/context/language-context';
 interface WizardControlsProps {
   totalSteps: number;
   onRegisterSuccess: () => void;
-  isLastStep: boolean;
 }
 
-export default function WizardControls({ totalSteps, onRegisterSuccess, isLastStep }: WizardControlsProps) {
-  const { currentStep, prevStep, nextStep, isStepValid } = useOnboardingContext();
+export default function WizardControls({ totalSteps, onRegisterSuccess }: WizardControlsProps) {
+  const { currentStep, prevStep, nextStep, isStepValid, isLastStep } = useOnboardingContext();
   const { t } = useLanguage();
 
   if (isLastStep) {
-    // The final action button is now rendered inside StepCredentials
-    return currentStep > 0 ? (
-         <Button
-            variant="outline"
-            onClick={prevStep}
-            className="h-14 w-14 rounded-full flex-shrink-0"
-            aria-label={t('onboarding.back')}
-        >
-            <ArrowLeft className="h-6 w-6" />
-        </Button>
-    ) : <div></div>;
+    return null; // The final action button is now rendered inside StepCredentials
   }
 
   return (

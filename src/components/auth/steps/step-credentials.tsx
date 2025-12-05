@@ -15,18 +15,22 @@ import { doc, setDoc, serverTimestamp, Timestamp } from 'firebase/firestore';
 import { useToast } from '@/hooks/use-toast';
 import { ref, uploadString, getDownloadURL } from "firebase/storage";
 import { v4 as uuidv4 } from 'uuid';
+import { useRouter } from 'next/navigation';
+
 
 interface StepCredentialsProps {
     onRegisterSuccess: () => void;
 }
 
 export default function StepCredentials({ onRegisterSuccess }: StepCredentialsProps) {
-  const { formData, updateFormData, setStepValid, nextStep: handleRegister, isLastStep } = useOnboardingContext();
+  const { formData, updateFormData, setStepValid, isLastStep } = useOnboardingContext();
   const { t } = useLanguage();
   const auth = useAuth();
   const firestore = useFirestore();
   const storage = useStorage();
   const { toast } = useToast();
+  const router = useRouter();
+
 
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
@@ -111,7 +115,7 @@ export default function StepCredentials({ onRegisterSuccess }: StepCredentialsPr
         description: "BeMatch'e hoş geldiniz.",
       });
 
-      onRegisterSuccess(); 
+      router.push('/welcome');
 
     } catch (error: any) {
       console.error('Registration error:', error);
@@ -146,7 +150,7 @@ export default function StepCredentials({ onRegisterSuccess }: StepCredentialsPr
                  className="h-14 text-lg pr-12"
                  autoFocus
                  />
-                 <div className="absolute inset-y-0 right-0 flex items-center">
+                 <div className="absolute inset-y-0 right-0 flex items-center pr-2">
                    <Button
                    type="button"
                    variant="ghost"
@@ -173,7 +177,7 @@ export default function StepCredentials({ onRegisterSuccess }: StepCredentialsPr
                  onBlur={() => setIsConfirmTouched(true)}
                  className={cn('h-14 text-lg pr-12', passwordsDontMatch && 'border-destructive')}
                  />
-                 <div className="absolute inset-y-0 right-0 flex items-center">
+                 <div className="absolute inset-y-0 right-0 flex items-center pr-2">
                    <Button
                    type="button"
                    variant="ghost"
@@ -211,67 +215,5 @@ export default function StepCredentials({ onRegisterSuccess }: StepCredentialsPr
      );
    }
 
-  return (
-    <div className="space-y-6">
-      <div className="space-y-2">
-          <Label htmlFor="password">{t('onboarding.credentials.password')}</Label>
-          <p className="text-xs text-muted-foreground -mt-1 mb-2">
-              {t('onboarding.credentials.passwordPolicy')}
-          </p>
-          <div className="relative">
-            <Input 
-            id="password" 
-            name="password"
-            type={showPassword ? 'text' : 'password'}
-            placeholder={t('onboarding.credentials.passwordPlaceholder')}
-            value={formData.password}
-            onChange={handleChange}
-            className="h-14 text-lg pr-12"
-            autoFocus
-            />
-            <div className="absolute inset-y-0 right-0 flex items-center">
-              <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              className="h-9 w-9 text-muted-foreground"
-              onClick={() => setShowPassword(!showPassword)}
-              >
-              {showPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-              </Button>
-            </div>
-          </div>
-          <PasswordStrength password={formData.password} />
-      </div>
-      <div className="space-y-2">
-          <Label htmlFor="confirmPassword">{t('onboarding.credentials.confirmPassword')}</Label>
-          <div className="relative">
-            <Input 
-            id="confirmPassword" 
-            name="confirmPassword"
-            type={showConfirmPassword ? 'text' : 'password'}
-            placeholder={t('onboarding.credentials.confirmPasswordPlaceholder')}
-            value={formData.confirmPassword}
-            onChange={handleChange}
-            onBlur={() => setIsConfirmTouched(true)}
-            className={cn('h-14 text-lg pr-12', passwordsDontMatch && 'border-destructive')}
-            />
-            <div className="absolute inset-y-0 right-0 flex items-center">
-              <Button
-              type="button"
-              variant="ghost"
-              size="icon"
-              className="h-9 w-9 text-muted-foreground"
-              onClick={() => setShowConfirmPassword(!showConfirmPassword)}
-              >
-              {showConfirmPassword ? <EyeOff className="h-5 w-5" /> : <Eye className="h-5 w-5" />}
-              </Button>
-            </div>
-          </div>
-          {passwordsDontMatch && (
-              <p className="text-xs text-destructive">{t('onboarding.credentials.passwordMismatch')}</p>
-          )}
-      </div>
-    </div>
-  );
+  return null;
 }

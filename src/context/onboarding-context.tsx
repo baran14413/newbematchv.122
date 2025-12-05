@@ -49,8 +49,11 @@ const initialFormData: FormData = {
     confirmPassword: '',
 };
 
+const TOTAL_STEPS = 10;
+
 interface OnboardingContextType {
   currentStep: number;
+  isLastStep: boolean;
   formData: FormData;
   isStepValid: boolean;
   setStepValid: (isValid: boolean) => void;
@@ -94,6 +97,7 @@ export const OnboardingProvider = ({ children }: { children: ReactNode }) => {
     <OnboardingContext.Provider
       value={{
         currentStep,
+        isLastStep: currentStep === TOTAL_STEPS - 1,
         formData,
         isStepValid,
         setStepValid,

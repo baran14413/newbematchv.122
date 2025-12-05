@@ -23,7 +23,7 @@ interface OnboardingWizardProps {
 }
 
 export default function OnboardingWizard({ onSwitchView, onRegisterSuccess }: OnboardingWizardProps) {
-  const { currentStep } = useOnboardingContext();
+  const { currentStep, isLastStep } = useOnboardingContext();
   const { t } = useLanguage();
 
   const steps = [
@@ -39,8 +39,6 @@ export default function OnboardingWizard({ onSwitchView, onRegisterSuccess }: On
     { component: StepCredentials, title: t('onboarding.credentials.passwordTitle') },
   ];
   
-  const isLastStep = currentStep === steps.length - 1;
-
   const CurrentStepComponent = steps[currentStep]?.component;
 
   if (!CurrentStepComponent) {
@@ -72,13 +70,14 @@ export default function OnboardingWizard({ onSwitchView, onRegisterSuccess }: On
               </motion.div>
            </AnimatePresence>
         </div>
-        <div className="p-4 pt-0 space-y-3">
-            <WizardControls
-              isLastStep={isLastStep}
-              totalSteps={steps.length}
-              onRegisterSuccess={onRegisterSuccess} 
-            />
-        </div>
+        {!isLastStep && (
+          <div className="p-4 pt-0 space-y-3">
+              <WizardControls
+                totalSteps={steps.length}
+                onRegisterSuccess={onRegisterSuccess} 
+              />
+          </div>
+        )}
     </div>
   );
 }
