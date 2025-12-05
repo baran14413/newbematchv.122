@@ -1,39 +1,103 @@
 'use client';
-import { useState } from 'react';
-import { useRouter, useParams } from 'next/navigation';
+import { useState, useMemo } from 'react';
+import { useRouter, useParams, notFound } from 'next/navigation';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { ArrowLeft, Send } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useUser, useFirestore, useDoc, useCollection, useMemoFirebase } from '@/firebase';
+import { doc, collection, addDoc, serverTimestamp, query, orderBy, Timestamp } from 'firebase/firestore';
+import type { UserProfile, Message } from '@/lib/data';
+import { Skeleton } from '@/components/ui/skeleton';
 
-// Dummy data for demonstration purposes
-const dummyMessages = [
-    { id: 1, text: "Selam! Profilin gerçekten ilgimi çekti.", sender: 'them' },
-    { id: 2, text: "Merhaba! Teşekkür ederim, senin de öyle.", sender: 'me' },
-    { id: 3, text: "Hafta sonu ne yapıyorsun? Belki bir kahve içeriz?", sender: 'them' },
-    { id: 4, text: "Harika fikir! Cumartesi günü uygunum.", sender: 'me' },
-];
 
-const dummyUser = {
-    name: 'Elif',
-    avatarUrl: 'https://images.unsplash.com/photo-1494790108377-be9c29b29330?crop=entropy&cs=tinysrgb&fit=max&fm=jpg&ixid=M3w3NDE5ODJ8MHwxfHNlYXJjaHwzfHx3b21hbiUyMHNtaWxpbmd8ZW58MHx8fHwxNzY0NzA1ODUwfDA&ixlib=rb-4.1.0&q=80&w=1080',
-};
+function formatMessageTimestamp(timestamp: any) {
+    if (!timestamp) return '';
+    const date = timestamp instanceof Timestamp ? timestamp.toDate() : new Date(timestamp);
+    return date.toLocaleTimeString('tr-TR', { hour: '2-digit', minute: '2-digit' });
+}
+
 
 export default function ChatPage() {
     const router = useRouter();
     const params = useParams();
-    const userId = params.userId as string;
-    const [messages, setMessages] = useState(dummyMessages);
+    const otherUserId = params.userId as string;
+
+    const { user, isUserLoading: isCurrentUserLoading } = useUser();
+    const firestore = useFirestore();
+
     const [newMessage, setNewMessage] = useState('');
 
-    const handleSendMessage = (e: React.FormEvent) => {
+    const otherUserDocRef = useMemoFirebase(() => {
+        if (!firestore || !otherUserId) return null;
+        return doc(firestore, 'users', otherUserId);
+    }, [firestore, otherUserId]);
+    const { data: otherUser, isLoading: isOtherUserLoading } = useDoc<UserProfile>(otherUserDocRef);
+
+    const matchId = useMemo(() => {
+        if (!user || !otherUserId) return null;
+        return [user.uid, otherUserId].sort().join('_');
+    }, [user, otherUserId]);
+
+    const messagesQuery = useMemoFirebase(() => {
+        if (!firestore || !matchId) return null;
+        return query(collection(firestore, 'matches', matchId, 'messages'), orderBy('timestamp', 'asc'));
+    }, [firestore, matchId]);
+    
+    const { data: messages, isLoading: areMessagesLoading } = useCollection<Message>(messagesQuery);
+
+
+    const handleSendMessage = async (e: React.FormEvent) => {
         e.preventDefault();
-        if (newMessage.trim()) {
-            setMessages([...messages, { id: Date.now(), text: newMessage, sender: 'me' }]);
+        if (!newMessage.trim() || !user || !firestore || !matchId) return;
+
+        const messagesRef = collection(firestore, 'matches', matchId, 'messages');
+        
+        try {
+            await addDoc(messagesRef, {
+                senderId: user.uid,
+                text: newMessage,
+                timestamp: serverTimestamp(),
+                isAiGenerated: false,
+            });
             setNewMessage('');
+        } catch (error) {
+            console.error("Error sending message: ", error);
         }
     };
+    
+    const isLoading = isCurrentUserLoading || isOtherUserLoading || areMessagesLoading;
+
+    if (isLoading) {
+       return (
+        <div className="h-screen flex flex-col bg-black text-white">
+          <header className="flex items-center gap-4 p-3 border-b border-gray-800 sticky top-0 bg-black z-10">
+            <Skeleton className="h-10 w-10 rounded-full" />
+            <div className="flex-1 space-y-2">
+              <Skeleton className="h-4 w-32" />
+            </div>
+          </header>
+           <div className="flex-1 p-4 space-y-6">
+              <div className="flex justify-end gap-2">
+                  <Skeleton className="h-12 w-48 rounded-2xl" />
+              </div>
+               <div className="flex justify-start gap-2">
+                   <Skeleton className="h-8 w-8 rounded-full" />
+                   <Skeleton className="h-12 w-64 rounded-2xl" />
+               </div>
+           </div>
+           <div className="p-2 border-t border-gray-800 sticky bottom-0 bg-black">
+                <Skeleton className="h-12 w-full rounded-full" />
+           </div>
+        </div>
+      )
+    }
+
+    if (!otherUser) {
+        notFound();
+    }
+
 
     return (
         <div className="h-screen flex flex-col bg-black text-white">
@@ -43,33 +107,42 @@ export default function ChatPage() {
                     <ArrowLeft className="w-6 h-6" />
                 </Button>
                 <Avatar className="h-10 w-10">
-                    <AvatarImage src={dummyUser.avatarUrl} alt={dummyUser.name} />
-                    <AvatarFallback>{dummyUser.name.charAt(0)}</AvatarFallback>
+                    <AvatarImage src={otherUser.avatarUrl} alt={otherUser.name} />
+                    <AvatarFallback>{otherUser.name.charAt(0)}</AvatarFallback>
                 </Avatar>
                 <div className="flex-1">
-                    <h2 className="text-lg font-semibold">{dummyUser.name}</h2>
+                    <h2 className="text-lg font-semibold">{otherUser.name}</h2>
                 </div>
             </header>
 
             {/* Message List */}
             <div className="flex-1 overflow-y-auto p-4 space-y-6">
-                {messages.map((message) => (
+                {messages?.map((message) => (
                     <div
                         key={message.id}
                         className={cn(
                             "flex items-end gap-2",
-                            message.sender === 'me' ? 'justify-end' : 'justify-start'
+                            message.senderId === user?.uid ? 'justify-end' : 'justify-start'
                         )}
                     >
+                         {message.senderId !== user?.uid && (
+                            <Avatar className="h-8 w-8 self-end">
+                                <AvatarImage src={otherUser.avatarUrl} alt={otherUser.name} />
+                                <AvatarFallback>{otherUser.name.charAt(0)}</AvatarFallback>
+                            </Avatar>
+                        )}
                         <div
                             className={cn(
                                 "max-w-md p-3 rounded-2xl flex flex-col",
-                                message.sender === 'me'
+                                message.senderId === user?.uid
                                     ? 'bg-rose-600 text-white rounded-br-none'
                                     : 'bg-gray-800 text-white rounded-bl-none'
                             )}
                         >
                             <p>{message.text}</p>
+                             <div className="flex items-center justify-end gap-1.5 self-end mt-1">
+                                <span className={cn("text-xs", message.senderId === user?.uid ? "text-white/70" : "text-gray-400")}>{formatMessageTimestamp(message.timestamp)}</span>
+                             </div>
                         </div>
                     </div>
                 ))}
@@ -84,7 +157,7 @@ export default function ChatPage() {
                         value={newMessage}
                         onChange={(e) => setNewMessage(e.target.value)}
                     />
-                    <Button type="submit" size="icon" variant="ghost" className="text-rose-500 w-10 h-10 rounded-full">
+                    <Button type="submit" size="icon" variant="ghost" className="text-rose-500 w-10 h-10 rounded-full" disabled={!newMessage.trim()}>
                         <Send className="w-6 h-6" />
                     </Button>
                 </form>
