@@ -21,7 +21,7 @@ export default function LoungePage() {
           <ScrollArea className="flex-1">
               <div className="flex flex-col gap-2 p-2">
                 {conversations.length > 0 ? conversations.map((convo) => (
-                    <Link href={`/lounge/${convo.id}`} key={convo.id}>
+                    <Link href={`/chat/${convo.userId}`} key={convo.id}>
                         <div className={cn(
                             "px-3 py-2 flex items-center gap-3 cursor-pointer rounded-lg border-2 border-transparent",
                             "hover:bg-secondary/50 transition-colors duration-200"

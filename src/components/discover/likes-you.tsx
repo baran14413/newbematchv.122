@@ -96,33 +96,28 @@ export default function LikesGrid() {
         try {
             const batch = writeBatch(firestore);
 
-            // Create a match document with the correct 'users' array
             batch.set(matchRef, {
                 id: matchId,
-                users: [user.uid, profile.id], // THIS IS THE CRITICAL FIX
+                users: [user.uid, profile.id],
                 matchDate: serverTimestamp(),
                 lastMessage: null,
             });
 
-            // Also record that the current user "liked" back
             const currentUserSwipeRef = doc(firestore, 'users', user.uid, 'swipes', profile.id);
             batch.set(currentUserSwipeRef, {
                 type: 'like',
                 timestamp: serverTimestamp()
             });
 
-            // Remove the 'likedBy' notification from the current user
             const likedByRef = doc(firestore, 'users', user.uid, 'likedBy', profile.id);
             batch.delete(likedByRef);
 
             await batch.commit();
             
-            // Now navigate to the chat
-            router.push(`/lounge/${matchId}`);
+            router.push(`/chat/${profile.id}`);
 
         } catch (error) {
             console.error("Error creating match and starting chat: ", error);
-            // Optionally show an error toast
         }
     }
     
