@@ -1,7 +1,6 @@
 'use client';
-import { useState, useMemo, useEffect } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
-import type { PanInfo } from 'framer-motion';
+import { useState, useMemo } from 'react';
+import { motion, useMotionValue, useTransform, PanInfo } from 'framer-motion';
 import { Button } from '@/components/ui/button';
 import { X, Star, Heart, Undo2 } from 'lucide-react';
 import { profiles, type UserProfile } from '@/lib/data';
@@ -11,6 +10,58 @@ import ProfileCard from '@/components/discover/profile-card';
 import { ScrollArea } from '@/components/ui/scroll-area';
 
 type SwipeDirection = 'left' | 'right' | 'up';
+
+const SwipeableCard = ({ profile, onSwipe, isTop }: { profile: UserProfile, onSwipe: (direction: SwipeDirection) => void, isTop: boolean }) => {
+  const x = useMotionValue(0);
+
+  const rotate = useTransform(x, [-200, 200], [-25, 25]);
+  const likeOpacity = useTransform(x, [10, 100], [0, 1]);
+  const nopeOpacity = useTransform(x, [-100, -10], [1, 0]);
+
+  const handleDragEnd = (e: MouseEvent | TouchEvent | PointerEvent, info: PanInfo) => {
+    const { offset } = info;
+    if (offset.x > 100) {
+      onSwipe('right');
+    } else if (offset.x < -100) {
+      onSwipe('left');
+    } else if (offset.y < -100) {
+      onSwipe('up');
+    }
+  };
+
+  return (
+    <motion.div
+      drag={isTop}
+      dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
+      onDragEnd={handleDragEnd}
+      style={{
+        position: 'absolute',
+        width: '100%',
+        height: '100%',
+        x,
+        rotate
+      }}
+      className={isTop ? "cursor-grab active:cursor-grabbing" : ""}
+    >
+      <motion.div
+        style={{ opacity: likeOpacity }}
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10"
+      >
+        <Heart className="w-24 h-24 text-green-500 fill-green-500" style={{ transform: 'rotate(-20deg)' }} />
+      </motion.div>
+
+      <motion.div
+        style={{ opacity: nopeOpacity }}
+        className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 z-10"
+      >
+        <X className="w-24 h-24 text-red-500" style={{ transform: 'rotate(20deg)' }} />
+      </motion.div>
+
+      <ProfileCard profile={profile} />
+    </motion.div>
+  );
+};
+
 
 export default function DiscoverPage() {
   const [stack, setStack] = useState<UserProfile[]>(profiles);
@@ -56,58 +107,46 @@ export default function DiscoverPage() {
     <div className="h-full w-full flex flex-col bg-gray-50 dark:bg-black overflow-hidden">
       <div className="flex-1 flex flex-col items-center justify-center p-4">
         <div className="w-full max-w-sm h-[65vh] max-h-[550px] relative flex items-center justify-center">
-          <AnimatePresence>
-            {stack.length > 0 ? (
-              stack.map((profile, index) => {
-                const isTop = index === stack.length - 1;
-                
-                return (
-                  <motion.div
-                    key={profile.id}
-                    drag={isTop}
-                    dragConstraints={{ left: 0, right: 0, top: 0, bottom: 0 }}
-                    onDragEnd={(e, info: PanInfo) => {
-                      const { offset } = info;
-                      if (offset.x > 100) {
-                        handleSwipe('right');
-                      } else if (offset.x < -100) {
-                        handleSwipe('left');
-                      } else if (offset.y < -100) {
-                        handleSwipe('up');
-                      }
-                    }}
-                    initial={{
-                        y: 0,
-                        scale: 1 - (stack.length - 1 - index) * 0.05,
-                        opacity: index === stack.length - 1 ? 1 : 0
-                    }}
-                    animate={{
-                        y: (stack.length - 1 - index) * -10,
-                        scale: 1 - (stack.length - 1 - index) * 0.05,
-                        opacity: index >= stack.length - 2 ? 1 : 0
-                    }}
-                    exit={{
-                      x: info => (info.offset.x > 0 ? 300 : -300),
-                      opacity: 0,
-                      scale: 0.9,
-                      transition: { duration: 0.3 }
-                    }}
-                    style={{
-                      position: 'absolute',
-                      width: '100%',
-                      height: '100%',
-                      zIndex: index,
-                    }}
-                    className={isTop ? "cursor-grab active:cursor-grabbing" : ""}
-                  >
-                     <ProfileCard profile={profile} />
-                  </motion.div>
-                );
-              })
-            ) : (
-              <p className="text-center text-muted-foreground">{t('discover.noMoreProfiles')}</p>
-            )}
-          </AnimatePresence>
+          {stack.length > 0 ? (
+            stack.map((profile, index) => {
+              const isTop = index === stack.length - 1;
+              return (
+                <motion.div
+                  key={profile.id}
+                  initial={{
+                    y: 0,
+                    scale: 1 - (stack.length - 1 - index) * 0.05,
+                    opacity: index === stack.length - 1 ? 1 : 0
+                  }}
+                  animate={{
+                    y: (stack.length - 1 - index) * -10,
+                    scale: 1 - (stack.length - 1 - index) * 0.05,
+                    opacity: index >= stack.length - 2 ? 1 : 0
+                  }}
+                  exit={{
+                    x: (info) => (info.offset.x > 0 ? 300 : -300),
+                    opacity: 0,
+                    scale: 0.9,
+                    transition: { duration: 0.3 }
+                  }}
+                  style={{
+                    position: 'absolute',
+                    width: '100%',
+                    height: '100%',
+                    zIndex: index,
+                  }}
+                >
+                  <SwipeableCard
+                    profile={profile}
+                    onSwipe={handleSwipe}
+                    isTop={isTop}
+                  />
+                </motion.div>
+              );
+            })
+          ) : (
+            <p className="text-center text-muted-foreground">{t('discover.noMoreProfiles')}</p>
+          )}
         </div>
 
         <div className="flex justify-center items-center gap-2 mt-6">
@@ -115,7 +154,7 @@ export default function DiscoverPage() {
             <Undo2 className="w-6 h-6 text-yellow-500" />
           </Button>
           <Button variant="outline" className="p-5 rounded-full bg-white shadow" onClick={() => handleSwipe('left')}>
-            <X className="w-8 h-8 text-red-500" />
+            <X className="w-8 h-8 text-destructive" />
           </Button>
           <Button variant="outline" className="p-4 rounded-full bg-white shadow" onClick={() => handleSwipe('up')}>
             <Star className="w-6 h-6 text-blue-500" />
