@@ -44,6 +44,11 @@ export interface UserProfile {
   goal?: string;
   interests?: string[];
   distance?: number;
+  // User Preferences
+  interestedIn?: 'man' | 'woman' | 'everyone';
+  globalMode?: boolean;
+  maxDistance?: number;
+  ageRange?: [number, number];
 }
 
 export type Conversation = {
@@ -62,4 +67,5 @@ export const zodiacSigns = [
   "Terazi", "Akrep", "Yay", "Oğlak", "Kova", "Balık"
 ];
 
+    
     

@@ -120,10 +120,15 @@
     "preferencesPage": {
         "title": "Tercihler",
         "description": "Keşfet sayfasında kimleri görmek istediğini ayarla.",
-        "distance": "Mesafe Tercihi",
+        "locationTitle": "Konum Tercihleri",
+        "globalMode": "Global",
+        "globalModeDescription": "Tüm dünyadaki insanları mesafeye göre sıralanmış şekilde göster.",
         "maxDistance": "Maksimum Mesafe",
         "ageRange": "Yaş Aralığı",
-        "save": "Tercihleri Kaydet"
+        "save": "Tercihleri Kaydet",
+        "saveSuccessTitle": "Tercihler Kaydedildi",
+        "saveSuccessDescription": "Keşfet ayarların güncellendi.",
+        "saveErrorTitle": "Tercihler Kaydedilirken Hata Oluştu"
     },
     "applicationPage": {
         "title": "Uygulama Ayarları",
@@ -314,3 +319,5 @@
         "volunteering": "Gönüllülük"
     }
 }
+
+    

@@ -8,7 +8,7 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import ProfileCard from '@/components/discover/profile-card';
 import { useUser, useFirestore, useCollection, useMemoFirebase, useDoc } from '@/firebase';
 import { Skeleton } from '@/components/ui/skeleton';
-import { collection, query, where, doc, or } from 'firebase/firestore';
+import { collection, query, where, doc } from 'firebase/firestore';
 import type { UserProfile } from '@/lib/data';
 import { Sheet, SheetContent } from '@/components/ui/sheet';
 import ProfileDetails from '@/components/discover/profile-details';
@@ -115,7 +115,7 @@ export default function DiscoverPage() {
   const [history, setHistory] = useState<UserProfile[]>([]);
   const [showTutorial, setShowTutorial] = useState(false);
 
-  // Fetch current user's profile to get their coordinates
+  // Fetch current user's profile to get their coordinates and preferences
   const currentUserDocRef = useMemoFirebase(() => {
     if (!user) return null;
     return doc(firestore, 'users', user.uid);
@@ -126,14 +126,12 @@ export default function DiscoverPage() {
     if (!firestore || !currentUserProfile) return null;
 
     const baseQuery = collection(firestore, 'users');
-    const interestedIn = currentUserProfile.interestedIn; // e.g., 'woman', 'man', 'everyone'
+    const interestedIn = currentUserProfile.interestedIn;
     
     if (interestedIn === 'everyone') {
-      // No gender filter needed, just return all users
       return query(baseQuery);
     }
     
-    // Filter by the gender the user is interested in
     return query(baseQuery, where('gender', '==', interestedIn));
 
   }, [firestore, currentUserProfile]);
@@ -141,29 +139,58 @@ export default function DiscoverPage() {
 
   const { data: profiles, isLoading } = useCollection<UserProfile>(usersQuery);
 
-  const filteredProfiles = useMemo(() => {
+  const filteredAndSortedProfiles = useMemo(() => {
     if (!profiles || !currentUserProfile) return [];
+
+    const {
+        ageRange = [18, 55],
+        globalMode = true,
+        maxDistance = 150,
+        latitude: currentLat,
+        longitude: currentLon,
+    } = currentUserProfile;
+
+    const [minAge, maxAge] = ageRange;
     
     return profiles
-      .filter(p => p.id !== user?.uid) // Exclude current user
+      .filter(p => {
+        // Exclude self and apply age range filter
+        const isNotSelf = p.id !== user?.uid;
+        const isInAgeRange = p.age >= minAge && p.age <= maxAge;
+        return isNotSelf && isInAgeRange;
+      })
       .map(p => {
-        const hasCoords = currentUserProfile?.latitude && currentUserProfile?.longitude && p.latitude && p.longitude;
-        return {
-          ...p,
-          distance: hasCoords
-            ? getDistanceInKm(currentUserProfile.latitude!, currentUserProfile.longitude!, p.latitude!, p.longitude!)
-            : undefined,
-        };
+        const hasCoords = currentLat && currentLon && p.latitude && p.longitude;
+        const distance = hasCoords
+            ? getDistanceInKm(currentLat, currentLon, p.latitude!, p.longitude!)
+            : undefined;
+        return { ...p, distance };
+      })
+      .filter(p => {
+          // Apply distance filter only if global mode is off
+          if (globalMode || p.distance === undefined) {
+              return true;
+          }
+          return p.distance <= maxDistance;
+      })
+      .sort((a, b) => {
+        // Sort by distance if global mode is on
+        if (globalMode) {
+          if (a.distance === undefined) return 1;
+          if (b.distance === undefined) return -1;
+          return a.distance - b.distance;
+        }
+        return 0; // No specific sort if global mode is off
       });
   }, [profiles, currentUserProfile, user]);
 
   
   useEffect(() => {
-    if (filteredProfiles.length > 0) {
-      const initialStack = filteredProfiles.slice(profileIndex, profileIndex + MAX_VISIBLE_CARDS).reverse();
+    if (filteredAndSortedProfiles.length > 0) {
+      const initialStack = filteredAndSortedProfiles.slice(profileIndex, profileIndex + MAX_VISIBLE_CARDS).reverse();
       setVisibleStack(initialStack);
     }
-  }, [filteredProfiles, profileIndex]);
+  }, [filteredAndSortedProfiles, profileIndex]);
 
   useEffect(() => {
     // Show tutorial only on mobile, once, when profiles are loaded
@@ -195,7 +222,7 @@ export default function DiscoverPage() {
     // Update visible stack: remove swiped, add next one if available
     setVisibleStack(prev => {
         const newStack = prev.slice(0, prev.length - 1);
-        const nextProfile = filteredProfiles[nextIndex + MAX_VISIBLE_CARDS - 1];
+        const nextProfile = filteredAndSortedProfiles[nextIndex + MAX_VISIBLE_CARDS - 1];
         if (nextProfile) {
             // Add to the "bottom" of the stack (beginning of the array)
             return [nextProfile, ...newStack];
@@ -203,7 +230,7 @@ export default function DiscoverPage() {
         return newStack;
     });
 
-  }, [visibleStack, profileIndex, filteredProfiles]);
+  }, [visibleStack, profileIndex, filteredAndSortedProfiles]);
 
   const undoSwipe = () => {
     if (history.length > 0) {
@@ -256,7 +283,7 @@ export default function DiscoverPage() {
     return (
       <div className="w-full flex flex-col items-center p-4 md:p-8 space-y-8">
           <div className="w-full max-w-md space-y-8">
-          {filteredProfiles.length > 0 ? filteredProfiles.map((profile) => (
+          {filteredAndSortedProfiles.length > 0 ? filteredAndSortedProfiles.map((profile) => (
               <ProfileCard key={profile.id} profile={profile} onShowDetails={() => setDetailsProfile(profile)} isTopCard={false}/>
           )) : <p className="text-center text-muted-foreground">{t('discover.noMoreProfiles')}</p>}
            <Sheet open={!!detailsProfile} onOpenChange={(isOpen) => !isOpen && setDetailsProfile(null)}>
@@ -342,3 +369,5 @@ export default function DiscoverPage() {
     </div>
   );
 }
+
+    

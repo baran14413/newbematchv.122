@@ -81,6 +81,10 @@ export default function WizardControls({ totalSteps, onRegisterSuccess }: Wizard
           videoUrl: '',
           videoDescription: '',
           voiceNoteUrl: '',
+          // Default preferences
+          globalMode: true,
+          maxDistance: 50,
+          ageRange: [18, 55]
       };
       
       await setDoc(userDocRef, userProfileData);
@@ -136,3 +140,5 @@ export default function WizardControls({ totalSteps, onRegisterSuccess }: Wizard
     </div>
   );
 }
+
+    

@@ -120,10 +120,15 @@
     "preferencesPage": {
         "title": "Preferences",
         "description": "Set who you want to see on the discovery page.",
-        "distance": "Distance Preference",
+        "locationTitle": "Location Preferences",
+        "globalMode": "Global",
+        "globalModeDescription": "Show people from all over the world, sorted by distance.",
         "maxDistance": "Maximum Distance",
         "ageRange": "Age Range",
-        "save": "Save Preferences"
+        "save": "Save Preferences",
+        "saveSuccessTitle": "Preferences Saved",
+        "saveSuccessDescription": "Your discovery settings have been updated.",
+        "saveErrorTitle": "Error Saving Preferences"
     },
     "applicationPage": {
         "title": "Application Settings",
@@ -314,3 +319,5 @@
         "volunteering": "Volunteering"
     }
 }
+
+    
