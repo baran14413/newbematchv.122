@@ -14,10 +14,10 @@ export type Prompt = {
   answer: string;
 };
 
-export type Message = { 
+export type Message = {
   id: string;
   senderId: string;
-  text: string; 
+  text: string;
   timestamp: any; // Can be Date or Firestore Timestamp
   type?: 'text' | 'image' | 'voice';
   imageUrl?: string;
@@ -26,7 +26,7 @@ export type Message = {
 };
 
 export interface UserProfile {
-  id: string; 
+  id: string;
   name: string;
   firstName: string;
   lastName: string;
@@ -53,19 +53,9 @@ export interface UserProfile {
 }
 
 export type Conversation = {
-  id: string;
-  userId: string; 
-  userName: string;
-  avatarUrl: string;
-  lastMessage: string;
-  timestamp: string;
-  unreadCount: number;
+  id: string; // This is the Match ID
+  otherUser: UserProfile;
   messages: Message[];
 };
 
-export const zodiacSigns = [
-  "Koç", "Boğa", "İkizler", "Yengeç", "Aslan", "Başak",
-  "Terazi", "Akrep", "Yay", "Oğlak", "Kova", "Balık"
-];
-    
     
