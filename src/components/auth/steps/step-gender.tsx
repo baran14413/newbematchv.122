@@ -33,22 +33,17 @@ export default function StepGender() {
   };
 
   return (
-    <div className="space-y-8">
-      <div>
-        <p className="font-semibold mb-3 text-center text-muted-foreground">{t('onboarding.gender.yourGender')}</p>
-        <div className="flex flex-col space-y-3">
-          {genders.map((gender) => (
-            <Button
-              key={gender.id}
-              onClick={() => handleSelectGender(gender.id)}
-              variant={formData.gender === gender.id ? 'default' : 'outline'}
-              className={cn('w-full justify-center h-12 text-base')}
-            >
-              {gender.label}
-            </Button>
-          ))}
-        </div>
-      </div>
+    <div className="space-y-3">
+      {genders.map((gender) => (
+        <Button
+          key={gender.id}
+          onClick={() => handleSelectGender(gender.id)}
+          variant={formData.gender === gender.id ? 'default' : 'outline'}
+          className={cn('w-full justify-center h-12 text-base')}
+        >
+          {gender.label}
+        </Button>
+      ))}
     </div>
   );
 }

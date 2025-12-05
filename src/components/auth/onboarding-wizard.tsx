@@ -64,8 +64,10 @@ export default function OnboardingWizard({ onSwitchView, onRegisterSuccess }: On
                     <h2 className="text-3xl font-bold">{steps[currentStep].title}</h2>
                 </div>
                 <div className={`flex-1 ${isExpandedStep ? 'flex flex-col' : ''}`}>
-                    <ScrollArea className="flex-1 -mx-6 px-6">
-                      <CurrentStepComponent onRegisterSuccess={onRegisterSuccess} />
+                    <ScrollArea className="flex-1 -mx-6">
+                        <div className="px-6">
+                            <CurrentStepComponent onRegisterSuccess={onRegisterSuccess} />
+                        </div>
                     </ScrollArea>
                 </div>
               </motion.div>

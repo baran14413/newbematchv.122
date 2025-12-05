@@ -57,7 +57,7 @@ export default function StepAge() {
 
   return (
     <div className="flex flex-col items-center space-y-6">
-      <div className="grid grid-cols-3 gap-4 w-full max-w-sm">
+      <div className="grid grid-cols-3 gap-4 w-full">
         <div className="space-y-2">
           <Label htmlFor="day" className="text-muted-foreground">{t('common.day')}</Label>
           <Input
