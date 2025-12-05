@@ -97,10 +97,10 @@ export default function LikesGrid() {
             const batch = writeBatch(firestore);
 
             batch.set(matchRef, {
-                id: matchId,
-                users: [user.uid, profile.id],
-                matchDate: serverTimestamp(),
-                lastMessage: null,
+              id: matchId,
+              users: [user.uid, profile.id],
+              matchDate: serverTimestamp(),
+              lastMessage: null,
             });
 
             const currentUserSwipeRef = doc(firestore, 'users', user.uid, 'swipes', profile.id);

@@ -138,8 +138,8 @@ export default function ChatPage() {
                             className={cn(
                                 "max-w-md p-3 rounded-2xl flex flex-col",
                                 message.senderId === user?.uid
-                                    ? 'bg-primary text-primary-foreground rounded-br-none'
-                                    : 'bg-secondary text-secondary-foreground rounded-bl-none'
+                                    ? 'bg-rose-600 text-primary-foreground rounded-br-none'
+                                    : 'bg-gray-800 text-secondary-foreground rounded-bl-none'
                             )}
                         >
                             <p>{message.text}</p>
@@ -156,7 +156,7 @@ export default function ChatPage() {
                 <form onSubmit={handleSendMessage} className="flex items-center gap-2">
                     <Input
                         placeholder="Bir mesaj yaz..."
-                        className="flex-1 bg-secondary border-none focus-visible:ring-0 focus-visible:ring-offset-0 h-12 rounded-full px-5 text-base"
+                        className="flex-1 bg-gray-900 border-none focus-visible:ring-0 focus-visible:ring-offset-0 h-12 rounded-full px-5 text-base"
                         value={newMessage}
                         onChange={(e) => setNewMessage(e.target.value)}
                     />
