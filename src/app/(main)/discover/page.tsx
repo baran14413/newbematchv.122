@@ -31,8 +31,10 @@ export default function DiscoverPage() {
   }, [profiles]);
 
   useEffect(() => {
-    loadProfiles();
-  }, [loadProfiles]);
+    if (profiles && stack.length === 0 && history.length === 0) {
+      loadProfiles();
+    }
+  }, [profiles, stack.length, history.length, loadProfiles]);
 
   const activeProfile = useMemo(() => stack[stack.length - 1], [stack]);
 
@@ -206,7 +208,7 @@ export default function DiscoverPage() {
                     <p>{t('discover.noMoreProfiles')}</p>
                     <Button onClick={loadProfiles}>
                         <RefreshCw className="mr-2 h-4 w-4" />
-                        Tekrar Yükle
+                        {t('common.reload', { default: 'Tekrar Yükle' })}
                     </Button>
                 </div>
               )}

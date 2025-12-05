@@ -229,6 +229,7 @@
         "back": "Back",
         "next": "Next",
         "save": "Save",
+        "reload": "Reload",
         "daysAgo": "days ago",
         "nowActive": "Active now",
         "edit": "Edit"
