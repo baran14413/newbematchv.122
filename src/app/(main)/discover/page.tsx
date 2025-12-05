@@ -130,18 +130,19 @@ export default function DiscoverPage() {
   const { data: profiles, isLoading } = useCollection<UserProfile>(usersQuery);
 
   const filteredProfiles = useMemo(() => {
-    if (!profiles || !currentUserProfile?.latitude || !currentUserProfile?.longitude) return [];
+    if (!profiles) return [];
     
-    const profilesWithDistance = profiles
+    return profiles
       .filter(p => p.id !== user?.uid) // Exclude current user
-      .map(p => ({
-        ...p,
-        distance: p.latitude && p.longitude
-          ? getDistanceInKm(currentUserProfile.latitude, currentUserProfile.longitude, p.latitude, p.longitude)
-          : undefined,
-      }));
-      
-    return profilesWithDistance;
+      .map(p => {
+        const hasCoords = currentUserProfile?.latitude && currentUserProfile?.longitude && p.latitude && p.longitude;
+        return {
+          ...p,
+          distance: hasCoords
+            ? getDistanceInKm(currentUserProfile.latitude!, currentUserProfile.longitude!, p.latitude!, p.longitude!)
+            : undefined,
+        };
+      });
   }, [profiles, currentUserProfile, user]);
 
   
@@ -329,5 +330,3 @@ export default function DiscoverPage() {
     </div>
   );
 }
-
-    
