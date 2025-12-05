@@ -1,3 +1,5 @@
+'use client';
+
 import MainHeader from '@/components/main-header';
 import { usePathname } from 'next/navigation';
 
