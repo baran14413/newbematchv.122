@@ -1,7 +1,6 @@
 'use client';
 import { useOnboardingContext } from '@/context/onboarding-context';
 import { Textarea } from '@/components/ui/textarea';
-import { Label } from '@/components/ui/label';
 import { useLanguage } from '@/context/language-context';
 
 const MAX_BIO_LENGTH = 250;
