@@ -22,9 +22,6 @@ export type Message = {
   timestamp: any; // Can be Date or Firestore Timestamp
   updatedAt?: any;
   isEdited?: boolean;
-  type?: 'text' | 'image' | 'voice';
-  imageUrl?: string;
-  audioUrl?: string;
   isAiGenerated: boolean;
   reactions?: { [emoji: string]: string[] }; // Map of emoji to user IDs
   isRead?: boolean;

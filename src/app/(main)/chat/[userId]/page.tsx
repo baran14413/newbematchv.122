@@ -2,23 +2,22 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'next/navigation';
 import { useUser, useFirestore, useDoc, useCollection, useMemoFirebase } from '@/firebase';
-import { doc, collection, addDoc, updateDoc, deleteDoc, serverTimestamp, orderBy, query, Timestamp, onSnapshot, arrayUnion, arrayRemove, runTransaction } from 'firebase/firestore';
+import { doc, collection, addDoc, updateDoc, deleteDoc, serverTimestamp, orderBy, query, Timestamp, onSnapshot, runTransaction } from 'firebase/firestore';
 import type { UserProfile, Message } from '@/lib/data';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { ArrowLeft, CheckCheck, Mic, Phone, Plus, Send, Video, MoreHorizontal, Smile, Trash2, Pencil } from 'lucide-react';
+import { ArrowLeft, CheckCheck, Mic, Phone, Plus, Send, Video, MoreHorizontal, Pencil, Trash2 } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';
-import Image from 'next/image';
 import Link from 'next/link';
 import { formatDistanceToNow, isToday, isYesterday, format } from 'date-fns';
 import { tr, enUS } from 'date-fns/locale';
 import { useLanguage } from '@/context/language-context';
-import EmojiPicker, { Emoji } from 'emoji-picker-react';
+import EmojiPicker from 'emoji-picker-react';
 
 function formatMessageTimestamp(timestamp: any) {
   if (!timestamp) return '';
@@ -249,7 +248,8 @@ export default function ChatPage() {
             senderId: user.uid,
             text: newMessage,
             timestamp: serverTimestamp(),
-            isAiGenerated: false
+            isAiGenerated: false,
+            isRead: false,
         });
     }
       
@@ -274,14 +274,10 @@ export default function ChatPage() {
   
   const viewportRef = useRef<HTMLDivElement>(null);
 
-  const scrollToBottom = () => {
+  useEffect(() => {
     if (viewportRef.current) {
       viewportRef.current.scrollTo({ top: viewportRef.current.scrollHeight, behavior: 'smooth' });
     }
-  };
-
-  useEffect(() => {
-    scrollToBottom();
   }, [messages]);
 
   const isLoading = isUserLoading || isMatchLoading || areMessagesLoading || (matchData && !otherUser);
@@ -357,7 +353,7 @@ export default function ChatPage() {
                                         : 'bg-zinc-800 text-white rounded-bl-sm'
                                     )}
                                 >
-                                    {message.text && <p className='break-words pr-12'>{message.text}</p>}
+                                    <p className='break-words pr-12'>{message.text}</p>
                                     <div className="flex items-center justify-end gap-1.5 self-end mt-1 -mb-1">
                                         {message.isEdited && (
                                              <span className="text-xs text-primary-foreground/70 dark:text-zinc-400 italic mr-1">(düzenlendi)</span>
@@ -365,8 +361,8 @@ export default function ChatPage() {
                                         <span className={cn("text-xs", message.senderId === user?.uid ? "text-primary-foreground/70" : "text-zinc-400")}>
                                             {formatMessageTimestamp(message.timestamp)}
                                         </span>
-                                        {message.senderId === user?.uid && message.isRead && (
-                                            <CheckCheck className="w-4 h-4 text-blue-300" />
+                                        {message.senderId === user?.uid && (
+                                            <CheckCheck className={cn("w-4 h-4", message.isRead ? "text-blue-300" : "text-primary-foreground/70")} />
                                         )}
                                     </div>
                                     {message.reactions && Object.keys(message.reactions).length > 0 && (
