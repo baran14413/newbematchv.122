@@ -6,7 +6,6 @@ import { doc, collection, addDoc, updateDoc, deleteDoc, serverTimestamp, orderBy
 import type { UserProfile, Message } from '@/lib/data';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
 import { ArrowLeft, Check, CheckCheck, Mic, Phone, Plus, Send, Video, MoreHorizontal, Pencil, Trash2 } from 'lucide-react';
@@ -360,29 +359,31 @@ export default function ChatPage() {
                 </div>
             </header>
 
-            <ScrollArea className="flex-1" ref={viewportRef}>
+            <ScrollArea className="flex-1" viewportRef={viewportRef}>
                 <div className="p-4 space-y-1">
                 {messages?.map((message) => (
                     <div
                         key={message.id}
-                        className={cn("flex w-full group", message.senderId === user?.uid ? 'justify-end' : 'justify-start')}
+                        className={cn("flex w-full group mb-4", message.senderId === user?.uid ? 'justify-end' : 'justify-start')}
                     >
-                        <div className={cn("flex items-end gap-2 max-w-[70%]", message.senderId === user?.uid ? 'flex-row-reverse' : 'flex-row')}>
+                        <div className={cn("flex items-end gap-2", message.senderId === user?.uid ? 'flex-row-reverse' : 'flex-row')}>
                             <ReactionTooltip onReaction={(emoji) => handleReaction(message.id, emoji)}>
                                 <div
                                     className={cn(
-                                        "relative p-3 rounded-2xl flex flex-col shadow-md",
+                                        "relative flex flex-col w-fit max-w-[85%] md:max-w-[75%]",
+                                        "px-4 py-2 rounded-2xl shadow-md",
+                                        "break-words",
                                         message.senderId === user?.uid
-                                        ? 'bg-primary text-primary-foreground rounded-br-sm'
-                                        : 'bg-zinc-800 text-white rounded-bl-sm'
+                                        ? 'bg-primary text-primary-foreground rounded-br-none'
+                                        : 'bg-zinc-800 text-white rounded-bl-none'
                                     )}
                                 >
-                                    <p className='break-all whitespace-pre-wrap'>{message.text}</p>
+                                    <p className='whitespace-pre-wrap leading-relaxed'>{message.text}</p>
                                     <div className="flex items-center justify-end gap-1.5 self-end mt-1 -mb-1">
                                         {message.isEdited && (
                                              <span className="text-xs text-primary-foreground/70 dark:text-zinc-400 italic mr-1">(düzenlendi)</span>
                                         )}
-                                        <span className={cn("text-xs", message.senderId === user?.uid ? "text-primary-foreground/70" : "text-zinc-400")}>
+                                        <span className={cn("text-[10px]", message.senderId === user?.uid ? "text-primary-foreground/70" : "text-zinc-400")}>
                                             {formatMessageTimestamp(message.timestamp)}
                                         </span>
                                         {message.senderId === user?.uid && (
