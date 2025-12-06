@@ -370,7 +370,7 @@ export default function ChatPage() {
                             <ReactionTooltip onReaction={(emoji) => handleReaction(message.id, emoji)}>
                                 <div
                                     className={cn(
-                                        "relative flex flex-col w-fit max-w-[85%] md:max-w-[75%]",
+                                        "relative flex flex-col w-fit max-w-[80%]",
                                         "px-4 py-2 rounded-2xl shadow-md",
                                         "break-words",
                                         message.senderId === user?.uid
