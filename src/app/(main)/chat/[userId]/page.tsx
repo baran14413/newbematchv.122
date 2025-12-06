@@ -360,24 +360,24 @@ export default function ChatPage() {
                 </div>
             </header>
 
-            <ScrollArea className="flex-1 p-4" viewportRef={viewportRef}>
-                <div className="space-y-1">
+            <ScrollArea className="flex-1" viewportRef={viewportRef}>
+                <div className="p-4 space-y-1">
                 {messages?.map((message) => (
                     <div
                         key={message.id}
-                        className={cn("flex items-center w-full group py-1", message.senderId === user?.uid ? 'justify-end' : 'justify-start')}
+                        className={cn("flex w-full group", message.senderId === user?.uid ? 'justify-end' : 'justify-start')}
                     >
-                        <div className={cn("flex items-end gap-2", message.senderId === user?.uid ? 'flex-row-reverse' : 'flex-row')}>
+                        <div className={cn("flex items-end gap-2 max-w-[70%]", message.senderId === user?.uid ? 'flex-row-reverse' : 'flex-row')}>
                             <ReactionTooltip onReaction={(emoji) => handleReaction(message.id, emoji)}>
                                 <div
                                     className={cn(
-                                        "max-w-[70%] p-3 rounded-2xl flex flex-col relative",
+                                        "p-3 rounded-2xl flex flex-col shadow-md",
                                         message.senderId === user?.uid
                                         ? 'bg-primary text-primary-foreground rounded-br-sm'
                                         : 'bg-zinc-800 text-white rounded-bl-sm'
                                     )}
                                 >
-                                    <p className='break-words pr-12'>{message.text}</p>
+                                    <p className='break-words whitespace-pre-wrap'>{message.text}</p>
                                     <div className="flex items-center justify-end gap-1.5 self-end mt-1 -mb-1">
                                         {message.isEdited && (
                                              <span className="text-xs text-primary-foreground/70 dark:text-zinc-400 italic mr-1">(düzenlendi)</span>
@@ -404,7 +404,9 @@ export default function ChatPage() {
                                 </div>
                             </ReactionTooltip>
                              {message.senderId === user?.uid && (
-                                <MessageOptions onEdit={() => handleEditMessage(message)} onDelete={() => handleDeleteMessage(message.id)} />
+                                <div className="self-center">
+                                    <MessageOptions onEdit={() => handleEditMessage(message)} onDelete={() => handleDeleteMessage(message.id)} />
+                                 </div>
                              )}
                         </div>
                     </div>
