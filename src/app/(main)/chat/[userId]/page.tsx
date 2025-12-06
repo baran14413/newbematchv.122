@@ -9,7 +9,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/components/ui/tooltip';
-import { ArrowLeft, CheckCheck, Mic, Phone, Plus, Send, Video, MoreHorizontal, Pencil, Trash2 } from 'lucide-react';
+import { ArrowLeft, Check, CheckCheck, Mic, Phone, Plus, Send, Video, MoreHorizontal, Pencil, Trash2 } from 'lucide-react';
 import { ScrollArea } from '@/components/ui/scroll-area';
 import { cn } from '@/lib/utils';
 import { Skeleton } from '@/components/ui/skeleton';

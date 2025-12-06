@@ -1,7 +1,10 @@
 'use client';
 
 import MainHeader from '@/components/main-header';
+import { useUser, useFirestore } from '@/firebase';
+import { doc, updateDoc, serverTimestamp } from 'firebase/firestore';
 import { usePathname } from 'next/navigation';
+import { useEffect } from 'react';
 
 export default function MainLayout({
   children,
@@ -9,8 +12,29 @@ export default function MainLayout({
   children: React.ReactNode;
 }) {
   const pathname = usePathname();
-  // Chat page is now full-screen and won't have the main header.
-  // We determine this by checking if the path starts with /chat
+  const { user } = useUser();
+  const firestore = useFirestore();
+
+  // Update user's lastSeen timestamp on activity
+  useEffect(() => {
+    if (user && firestore) {
+      const userRef = doc(firestore, 'users', user.uid);
+      const updateLastSeen = () => {
+        updateDoc(userRef, { lastSeen: serverTimestamp() });
+      };
+
+      // Update on initial load
+      updateLastSeen();
+
+      // Update when window gains focus
+      window.addEventListener('focus', updateLastSeen);
+
+      return () => {
+        window.removeEventListener('focus', updateLastSeen);
+      };
+    }
+  }, [user, firestore]);
+
   const isChatPage = pathname.startsWith('/chat');
 
   return (
