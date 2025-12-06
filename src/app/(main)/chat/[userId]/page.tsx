@@ -360,7 +360,7 @@ export default function ChatPage() {
                 </div>
             </header>
 
-            <ScrollArea className="flex-1" viewportRef={viewportRef}>
+            <ScrollArea className="flex-1" ref={viewportRef}>
                 <div className="p-4 space-y-1">
                 {messages?.map((message) => (
                     <div
@@ -371,13 +371,13 @@ export default function ChatPage() {
                             <ReactionTooltip onReaction={(emoji) => handleReaction(message.id, emoji)}>
                                 <div
                                     className={cn(
-                                        "p-3 rounded-2xl flex flex-col shadow-md",
+                                        "relative p-3 rounded-2xl flex flex-col shadow-md",
                                         message.senderId === user?.uid
                                         ? 'bg-primary text-primary-foreground rounded-br-sm'
                                         : 'bg-zinc-800 text-white rounded-bl-sm'
                                     )}
                                 >
-                                    <p className='break-words whitespace-pre-wrap'>{message.text}</p>
+                                    <p className='break-all whitespace-pre-wrap'>{message.text}</p>
                                     <div className="flex items-center justify-end gap-1.5 self-end mt-1 -mb-1">
                                         {message.isEdited && (
                                              <span className="text-xs text-primary-foreground/70 dark:text-zinc-400 italic mr-1">(düzenlendi)</span>
