@@ -28,10 +28,25 @@ const interestIcons: { [key: string]: React.ElementType } = {
   // Add other interests with their icons here
 };
 
+const getCountryFlag = (location: string | undefined): string => {
+    if (!location) return '';
+    const parts = location.split(',');
+    const countryCode = parts[parts.length - 1]?.trim().toUpperCase();
+    if (countryCode && countryCode.length === 2) {
+        try {
+            return String.fromCodePoint(...[...countryCode].map(c => c.charCodeAt(0) + 127397));
+        } catch (e) {
+            return '';
+        }
+    }
+    return '';
+}
+
 export default function ProfileCard({ profile, onShowDetails, isTopCard }: ProfileCardProps) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const { t } = useLanguage();
   const totalImages = profile.imageUrls?.length || 1;
+  const flag = getCountryFlag(profile.location);
 
   const navigateImages = (e: React.MouseEvent, direction: 'next' | 'prev') => {
     // Prevent swipe gesture from triggering when changing images
@@ -120,6 +135,11 @@ export default function ProfileCard({ profile, onShowDetails, isTopCard }: Profi
         >
             <Info className="w-6 h-6" />
         </Button>
+        {flag && (
+            <div className="absolute top-4 left-4 bg-black/30 text-2xl rounded-md px-2 py-0.5 backdrop-blur-sm z-20">
+                {flag}
+            </div>
+        )}
       </div>
     </div>
   );

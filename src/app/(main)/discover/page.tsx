@@ -369,7 +369,7 @@ export default function DiscoverPage() {
             )}
         </AnimatePresence>
 
-      <div className="flex-1 flex flex-col items-center justify-center px-4">
+      <div className="flex-1 flex flex-col items-center justify-center px-1.5">
         <div className="w-full max-w-sm h-[70vh] max-h-[600px] relative flex items-center justify-center">
           {visibleStack.length > 0 ? (
             <>
