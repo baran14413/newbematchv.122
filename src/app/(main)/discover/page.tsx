@@ -10,7 +10,7 @@ import { useUser, useFirestore, useCollection, useMemoFirebase, useDoc } from '@
 import { Skeleton } from '@/components/ui/skeleton';
 import { collection, query, where, doc, writeBatch, getDoc, serverTimestamp } from 'firebase/firestore';
 import type { UserProfile } from '@/lib/data';
-import { Sheet, SheetContent } from '@/components/ui/sheet';
+import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import ProfileDetails from '@/components/discover/profile-details';
 import TutorialOverlay from '@/components/discover/tutorial-overlay';
 import ItIsAMatch from '@/components/discover/it-is-a-match';
@@ -345,6 +345,9 @@ export default function DiscoverPage() {
           )) : <p className="text-center text-muted-foreground">{t('discover.noMoreProfiles')}</p>}
            <Sheet open={!!detailsProfile} onOpenChange={(isOpen) => !isOpen && setDetailsProfile(null)}>
                 <SheetContent side="bottom" className="h-[85vh] rounded-t-2xl">
+                    <SheetHeader>
+                        <SheetTitle className="sr-only">Profil Detayları</SheetTitle>
+                    </SheetHeader>
                    {detailsProfile && <ProfileDetails profile={detailsProfile} />}
                 </SheetContent>
             </Sheet>
@@ -420,6 +423,9 @@ export default function DiscoverPage() {
       </div>
       <Sheet open={!!detailsProfile} onOpenChange={(isOpen) => !isOpen && setDetailsProfile(null)}>
         <SheetContent side="bottom" className="h-[85vh] rounded-t-2xl flex flex-col">
+            <SheetHeader>
+                <SheetTitle className="sr-only">Profil Detayları</SheetTitle>
+            </SheetHeader>
             {detailsProfile && <ProfileDetails profile={detailsProfile} />}
         </SheetContent>
       </Sheet>
