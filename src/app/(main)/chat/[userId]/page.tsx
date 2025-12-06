@@ -2,7 +2,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'next/navigation';
 import { useUser, useFirestore, useDoc, useCollection, useMemoFirebase } from '@/firebase';
-import { doc, collection, addDoc, updateDoc, deleteDoc, serverTimestamp, orderBy, query, Timestamp, onSnapshot, runTransaction } from 'firebase/firestore';
+import { doc, collection, addDoc, updateDoc, deleteDoc, serverTimestamp, orderBy, query, Timestamp, onSnapshot, runTransaction, writeBatch } from 'firebase/firestore';
 import type { UserProfile, Message } from '@/lib/data';
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from '@/components/ui/button';
@@ -188,6 +188,21 @@ export default function ChatPage() {
       }
     }
   }, [matchData, user, firestore]);
+
+  // Mark messages as read
+  useEffect(() => {
+    if (messages && user && firestore && chatId) {
+        const unreadMessages = messages.filter(msg => msg.senderId !== user.uid && !msg.isRead);
+        if (unreadMessages.length > 0) {
+            const batch = writeBatch(firestore);
+            unreadMessages.forEach(msg => {
+                const msgRef = doc(firestore, 'matches', chatId, 'messages', msg.id);
+                batch.update(msgRef, { isRead: true });
+            });
+            batch.commit();
+        }
+    }
+  }, [messages, user, firestore, chatId]);
     
    const handleReaction = async (messageId: string, emoji: string) => {
     if (!firestore || !chatId || !user) return;
@@ -298,7 +313,7 @@ export default function ChatPage() {
   if (!user) {
      return (
         <div className="flex items-center justify-center h-full bg-zinc-900 text-white">
-            <p>Yükleniyor... ID: {chatId}</p>
+            <p>DEBUG: ERROR LOADING CHAT</p>
         </div>
     );
   }
