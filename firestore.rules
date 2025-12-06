@@ -74,25 +74,16 @@ service cloud.firestore {
     // -------------------------------------------------------------------------
     
     /**
-     * @description Allows listing of user profiles for discovery purposes.
-     * @path /users
-     * @allow (list) Any signed-in user.
-     */
-    match /users {
-      allow list: if isSignedIn();
-    }
-
-    /**
-     * @description Manages user profile data.
+     * @description Manages user profile data. `read` allows both `get` and `list` operations
+     * for any signed-in user, which is necessary for the discovery feature. `write` operations
+     * (create, update, delete) are restricted to the document owner.
      * @path /users/{userId}
-     * @allow (get) Any signed-in user for profile discovery.
-     * @allow (create, update, delete) Only the user themselves.
+     * @allow (read) Any signed-in user for profile discovery and listing.
+     * @allow (write) Only the user themselves.
      */
     match /users/{userId} {
-      allow get: if isSignedIn();
-      allow create: if isOwner(userId) && request.resource.data.id == userId;
-      allow update: if isOwner(userId) && isExistingDocument() && request.resource.data.id == resource.data.id;
-      allow delete: if isOwner(userId) && isExistingDocument();
+      allow read: if isSignedIn();
+      allow write: if isOwner(userId);
 
       /**
        * @description Manages a user's swipe history (likes, nopes).

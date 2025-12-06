@@ -130,22 +130,17 @@ export default function DiscoverPage() {
   const { data: currentUserProfile } = useDoc<UserProfile>(currentUserDocRef);
 
   const usersQuery = useMemoFirebase(() => {
-    if (!firestore || !currentUserProfile || currentUserProfile.interestedIn === undefined) {
-      return null;
-    }
-  
-    const baseQuery = collection(firestore, 'users');
-    const interestedIn = currentUserProfile.interestedIn;
-  
-    // If user is interested in 'everyone', don't filter by gender.
-    if (interestedIn === 'everyone') {
-      // Exclude self by filtering on a field that is not the document ID
-      return query(baseQuery, where('id', '!=', user?.uid));
+    if (!firestore || !currentUserProfile || !user) {
+        return null;
     }
     
-    // Otherwise, filter by gender and exclude self.
-    return query(baseQuery, where('gender', '==', interestedIn), where('id', '!=', user?.uid));
-  
+    let q = query(collection(firestore, 'users'), where('id', '!=', user.uid));
+    
+    if (currentUserProfile.interestedIn && currentUserProfile.interestedIn !== 'everyone') {
+        q = query(q, where('gender', '==', currentUserProfile.interestedIn));
+    }
+    
+    return q;
   }, [firestore, currentUserProfile, user]);
 
 
