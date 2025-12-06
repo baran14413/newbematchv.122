@@ -134,8 +134,7 @@ export default function DiscoverPage() {
         return null;
     }
     // A basic query to get all users except the current one.
-    // Filtering by 'interestedIn' will be done client-side after fetching.
-    return query(collection(firestore, 'users'), where('id', '!=', user.uid));
+    return query(collection(firestore, 'users'));
   }, [firestore, user]);
 
 
@@ -320,9 +319,9 @@ export default function DiscoverPage() {
 
   if (isLoading) {
      return (
-         <div className="h-full w-full flex justify-center bg-gray-50 dark:bg-black p-4 md:p-8">
+         <div className="h-full w-full flex justify-center bg-gray-50 dark:bg-black md:p-8">
             {isMobile ? 
-                <div className="w-full max-w-sm h-[65vh] max-h-[550px] relative flex items-center justify-center">
+                <div className="w-full max-w-sm h-full relative flex items-center justify-center">
                      <Skeleton className="w-full h-full rounded-2xl" />
                 </div>
                 : 
@@ -366,7 +365,7 @@ export default function DiscoverPage() {
             )}
         </AnimatePresence>
 
-      <div className="flex-1 flex flex-col items-center justify-center px-1.5">
+      <div className="flex-1 flex flex-col items-center justify-start pt-2 px-1.5">
         <div className="w-full max-w-sm h-[70vh] max-h-[600px] relative flex items-center justify-center">
           {visibleStack.length > 0 ? (
             <>
@@ -440,5 +439,3 @@ export default function DiscoverPage() {
     </div>
   );
 }
-
-    

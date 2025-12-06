@@ -2,7 +2,7 @@
 import { useState } from 'react';
 import type { UserProfile } from '@/lib/data';
 import Image from 'next/image';
-import { MapPin, Info, Music, Dumbbell, Plane, Clapperboard, Gamepad2, BookOpen, Utensils, Camera, Mountain, PartyPopper } from 'lucide-react';
+import { MapPin, Info, Music, Dumbbell, Plane, Clapperboard, Gamepad2, BookOpen, Utensils, Camera, Mountain, PartyPopper, Mars, Venus } from 'lucide-react';
 import { Button } from '../ui/button';
 import { Badge } from '../ui/badge';
 import { cn } from '@/lib/utils';
@@ -135,11 +135,13 @@ export default function ProfileCard({ profile, onShowDetails, isTopCard }: Profi
         >
             <Info className="w-6 h-6" />
         </Button>
-        {flag && (
-            <div className="absolute top-4 left-4 bg-black/30 text-2xl rounded-md px-2 py-0.5 backdrop-blur-sm z-20">
-                {flag}
-            </div>
-        )}
+        <div className="absolute top-4 left-4 flex items-center gap-2 bg-black/40 text-2xl rounded-full px-3 py-1 backdrop-blur-sm z-20">
+            {flag && (
+                <span className="text-xl">{flag}</span>
+            )}
+            {profile.gender === 'man' && <Mars className="w-5 h-5 text-blue-400" />}
+            {profile.gender === 'woman' && <Venus className="w-5 h-5 text-pink-400" />}
+        </div>
       </div>
     </div>
   );
