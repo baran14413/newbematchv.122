@@ -76,11 +76,11 @@ service cloud.firestore {
     /**
      * @description Manages user profile data.
      * @path /users/{userId}
-     * @allow (get, list) Any signed-in user for profile discovery.
+     * @allow (read) Any signed-in user for profile discovery.
      * @allow (create, update, delete) Only the user themselves.
      */
     match /users/{userId} {
-      allow get, list: if isSignedIn();
+      allow read: if isSignedIn();
       allow create: if isOwner(userId) && request.resource.data.id == userId;
       allow update: if isOwner(userId) && isExistingDocument() && request.resource.data.id == resource.data.id;
       allow delete: if isOwner(userId) && isExistingDocument();
