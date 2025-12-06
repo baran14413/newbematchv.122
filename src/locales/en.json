@@ -10,16 +10,7 @@
         "title": "Lounge",
         "newMatches": "New Matches",
         "conversations": "Conversations",
-        "chatInputPlaceholder": "Send a message...",
-        "noConversations": "You have no conversations yet.",
-        "aiIcebreaker": {
-            "title": "AI Icebreaker",
-            "description": "Get help from AI to start the conversation.",
-            "generate": "Generate new idea",
-            "generating": "Generating...",
-            "errorTitle": "Error",
-            "errorDescription": "Could not generate AI icebreaker. Please try again."
-        }
+        "chatInputPlaceholder": "Send a message..."
     },
     "profile": {
         "title": "Profile",
@@ -207,7 +198,8 @@
         "interestedIn": {
             "showMe": "Show me",
             "men": "Men",
-            "women": "Women"
+            "women": "Women",
+            "everyone": "Everyone"
         },
         "stepGoalsTitle": "What are you looking for here?",
         "goals": {
@@ -287,25 +279,5 @@
         "dayPlaceholder": "DD",
         "monthPlaceholder": "MM",
         "yearPlaceholder": "YYYY"
-    },
-    "interests": {
-        "music": "Music",
-        "travel": "Travel",
-        "gaming": "Gaming",
-        "movies": "Movies",
-        "reading": "Reading",
-        "cooking": "Cooking",
-        "sports": "Sports",
-        "fitness": "Fitness",
-        "art": "Art",
-        "photography": "Photography",
-        "hiking": "Hiking",
-        "dancing": "Dancing",
-        "technology": "Technology",
-        "fashion": "Fashion",
-        "yoga": "Yoga",
-        "camping": "Camping",
-        "theater": "Theater",
-        "volunteering": "Volunteering"
     }
 }

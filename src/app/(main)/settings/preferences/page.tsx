@@ -14,6 +14,7 @@ import { Switch } from '@/components/ui/switch';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Separator } from '@/components/ui/separator';
 import { cn } from '@/lib/utils';
+import type { UserProfile } from '@/lib/data';
 
 export default function PreferencesPage() {
     const { t } = useLanguage();
@@ -26,17 +27,18 @@ export default function PreferencesPage() {
         return doc(firestore, 'users', user.uid);
     }, [firestore, user]);
 
-    const { data: userProfile, isLoading: isProfileLoading } = useDoc(userDocRef);
+    const { data: userProfile, isLoading: isProfileLoading } = useDoc<UserProfile>(userDocRef);
 
     const [distance, setDistance] = useState(50);
     const [ageRange, setAgeRange] = useState([18, 55]);
     const [globalMode, setGlobalMode] = useState(true);
-    const [interestedIn, setInterestedIn] = useState<'man' | 'woman'>();
+    const [interestedIn, setInterestedIn] = useState<UserProfile['interestedIn']>('everyone');
     const [isSaving, setIsSaving] = useState(false);
 
      const interestOptions = [
         { id: 'man', label: t('onboarding.interestedIn.men') },
         { id: 'woman', label: t('onboarding.interestedIn.women') },
+        { id: 'everyone', label: t('onboarding.interestedIn.everyone') },
     ];
 
     useEffect(() => {
@@ -44,7 +46,7 @@ export default function PreferencesPage() {
             setDistance(userProfile.maxDistance || 50);
             setAgeRange(userProfile.ageRange || [18, 55]);
             setGlobalMode(userProfile.globalMode === undefined ? true : userProfile.globalMode);
-            setInterestedIn(userProfile.interestedIn as 'man' | 'woman' | undefined);
+            setInterestedIn(userProfile.interestedIn || 'everyone');
         }
     }, [userProfile]);
 
@@ -126,7 +128,7 @@ export default function PreferencesPage() {
                          {interestOptions.map((option) => (
                             <Button
                                 key={option.id}
-                                onClick={() => setInterestedIn(option.id as 'man' | 'woman')}
+                                onClick={() => setInterestedIn(option.id as UserProfile['interestedIn'])}
                                 variant={interestedIn === option.id ? 'default' : 'outline'}
                                 className={cn('w-full justify-center h-12 text-base')}
                             >

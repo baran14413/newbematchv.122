@@ -11,15 +11,7 @@
         "newMatches": "Yeni Eşleşmeler",
         "conversations": "Sohbetler",
         "chatInputPlaceholder": "Bir mesaj gönder...",
-        "noConversations": "Henüz hiç sohbetin yok.",
-        "aiIcebreaker": {
-            "title": "Yapay Zeka Buzkıran",
-            "description": "Sohbeti başlatmak için yapay zekadan yardım al.",
-            "generate": "Yeni fikir üret",
-            "generating": "Oluşturuluyor...",
-            "errorTitle": "Hata",
-            "errorDescription": "Yapay zeka buzkıranı oluşturulamadı. Lütfen tekrar deneyin."
-        }
+        "noConversations": "Henüz hiç sohbetin yok."
     },
     "profile": {
         "title": "Profil",
@@ -207,7 +199,8 @@
         "interestedIn": {
             "showMe": "Bana şunları göster",
             "men": "Erkekler",
-            "women": "Kadınlar"
+            "women": "Kadınlar",
+            "everyone": "Herkes"
         },
         "stepGoalsTitle": "Burada ne arıyorsunuz?",
         "goals": {
@@ -287,25 +280,5 @@
         "dayPlaceholder": "GG",
         "monthPlaceholder": "AA",
         "yearPlaceholder": "YYYY"
-    },
-    "interests": {
-        "music": "Müzik",
-        "travel": "Seyahat",
-        "gaming": "Oyun",
-        "movies": "Filmler",
-        "reading": "Okuma",
-        "cooking": "Yemek yapmak",
-        "sports": "Spor",
-        "fitness": "Fitness",
-        "art": "Sanat",
-        "photography": "Fotoğrafçılık",
-        "hiking": "Yürüyüş",
-        "dancing": "Dans",
-        "technology": "Teknoloji",
-        "fashion": "Moda",
-        "yoga": "Yoga",
-        "camping": "Kamp",
-        "theater": "Tiyatro",
-        "volunteering": "Gönüllülük"
     }
 }

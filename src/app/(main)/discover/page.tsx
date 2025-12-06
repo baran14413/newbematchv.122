@@ -8,12 +8,13 @@ import { useIsMobile } from '@/hooks/use-mobile';
 import ProfileCard from '@/components/discover/profile-card';
 import { useUser, useFirestore, useCollection, useMemoFirebase, useDoc } from '@/firebase';
 import { Skeleton } from '@/components/ui/skeleton';
-import { collection, query, where, doc, writeBatch, getDoc, serverTimestamp } from 'firebase/firestore';
+import { collection, query, where, doc, writeBatch, getDoc, serverTimestamp, getDocs } from 'firebase/firestore';
 import type { UserProfile } from '@/lib/data';
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from '@/components/ui/sheet';
 import ProfileDetails from '@/components/discover/profile-details';
 import TutorialOverlay from '@/components/discover/tutorial-overlay';
 import ItIsAMatch from '@/components/discover/it-is-a-match';
+import { AnimatePresence } from 'framer-motion';
 
 type SwipeDirection = 'left' | 'right' | 'up';
 type SwipeType = 'like' | 'nope' | 'superlike';
@@ -22,6 +23,9 @@ const MAX_VISIBLE_CARDS = 3;
 
 // Haversine formula to calculate distance between two lat/lon points
 const getDistanceInKm = (lat1: number, lon1: number, lat2: number, lon2: number) => {
+  if (lat1 === undefined || lon1 === undefined || lat2 === undefined || lon2 === undefined) {
+    return undefined;
+  }
   const R = 6371; // Radius of the Earth in km
   const dLat = (lat2 - lat1) * (Math.PI / 180);
   const dLon = (lon2 - lon1) * (Math.PI / 180);
@@ -111,6 +115,7 @@ export default function DiscoverPage() {
   const isMobile = useIsMobile();
   
   const [detailsProfile, setDetailsProfile] = useState<UserProfile | null>(null);
+  const [isMatch, setIsMatch] = useState<{ currentUser: UserProfile; matchedUser: UserProfile } | null>(null);
 
   const [profileIndex, setProfileIndex] = useState(0);
   const [visibleStack, setVisibleStack] = useState<UserProfile[]>([]);
@@ -125,21 +130,23 @@ export default function DiscoverPage() {
   const { data: currentUserProfile } = useDoc<UserProfile>(currentUserDocRef);
 
   const usersQuery = useMemoFirebase(() => {
-    // Wait until firestore, the user profile, and the preference are loaded
-    if (!firestore || !currentUserProfile || !currentUserProfile.interestedIn) {
+    if (!firestore || !currentUserProfile || currentUserProfile.interestedIn === undefined) {
       return null;
     }
-
+  
     const baseQuery = collection(firestore, 'users');
     const interestedIn = currentUserProfile.interestedIn;
-    
+  
+    // If user is interested in 'everyone', don't filter by gender.
     if (interestedIn === 'everyone') {
-      return query(baseQuery);
+      // Exclude self by filtering on a field that is not the document ID
+      return query(baseQuery, where('id', '!=', user?.uid));
     }
     
-    return query(baseQuery, where('gender', '==', interestedIn));
-
-  }, [firestore, currentUserProfile]);
+    // Otherwise, filter by gender and exclude self.
+    return query(baseQuery, where('gender', '==', interestedIn), where('id', '!=', user?.uid));
+  
+  }, [firestore, currentUserProfile, user]);
 
 
   const { data: profiles, isLoading } = useCollection<UserProfile>(usersQuery);
@@ -149,7 +156,7 @@ export default function DiscoverPage() {
 
     const {
         ageRange = [18, 55],
-        globalMode = true,
+        globalMode = false,
         maxDistance = 150,
         latitude: currentLat,
         longitude: currentLon,
@@ -160,15 +167,12 @@ export default function DiscoverPage() {
     return profiles
       .filter(p => {
         // Exclude self and apply age range filter
-        const isNotSelf = p.id !== user?.uid;
+        const isNotSelf = p.id !== user?.uid; // This is a bit redundant due to the query, but safe
         const isInAgeRange = p.age >= minAge && p.age <= maxAge;
         return isNotSelf && isInAgeRange;
       })
       .map(p => {
-        const hasCoords = currentLat && currentLon && p.latitude && p.longitude;
-        const distance = hasCoords
-            ? getDistanceInKm(currentLat, currentLon, p.latitude!, p.longitude!)
-            : undefined;
+        const distance = getDistanceInKm(currentLat!, currentLon!, p.latitude!, p.longitude!);
         return { ...p, distance };
       })
       .filter(p => {
@@ -179,13 +183,11 @@ export default function DiscoverPage() {
           return p.distance <= maxDistance;
       })
       .sort((a, b) => {
-        // Sort by distance if global mode is on
-        if (globalMode) {
-          if (a.distance === undefined) return 1;
-          if (b.distance === undefined) return -1;
-          return a.distance - b.distance;
-        }
-        return 0; // No specific sort if global mode is off
+        // Sort by distance if distance is available, otherwise no specific sort
+        if (a.distance === undefined && b.distance === undefined) return 0;
+        if (a.distance === undefined) return 1;
+        if (b.distance === undefined) return -1;
+        return a.distance - b.distance;
       });
   }, [profiles, currentUserProfile, user]);
 
@@ -237,14 +239,14 @@ export default function DiscoverPage() {
     try {
       const batch = writeBatch(firestore);
 
-      // Record swipe for current user
+      // Record swipe for current user (their action on another user)
       const currentUserSwipeRef = doc(firestore, 'users', user.uid, 'swipes', swipedProfile.id);
       batch.set(currentUserSwipeRef, {
         type: swipeType,
         timestamp: serverTimestamp()
       });
 
-      // If it's a like or superlike, record it for the other user too
+      // If it's a like or superlike, record it in the TARGET user's 'likedBy' subcollection
       if (swipeType === 'like' || swipeType === 'superlike') {
         const targetUserLikedByRef = doc(firestore, 'users', swipedProfile.id, 'likedBy', user.uid);
         batch.set(targetUserLikedByRef, {
@@ -257,26 +259,25 @@ export default function DiscoverPage() {
 
       // 3. Check for a match if it was a 'like' or 'superlike'
       if (swipeType === 'like' || swipeType === 'superlike') {
-        const targetUserSwipeRef = doc(firestore, 'users', swipedProfile.id, 'swipes', user.uid);
-        const targetUserSwipeDoc = await getDoc(targetUserSwipeRef);
+        // Check if the swiped user has ALREADY liked the current user.
+        const swipedUserLikeRef = doc(firestore, 'users', user.uid, 'likedBy', swipedProfile.id);
+        const swipedUserLikeDoc = await getDoc(swipedUserLikeRef);
+        
+        if (swipedUserLikeDoc.exists()) {
+           // It's a MATCH!
+           const matchBatch = writeBatch(firestore);
+           const matchId = [user.uid, swipedProfile.id].sort().join('_');
+           const matchRef = doc(firestore, 'matches', matchId);
+           
+           matchBatch.set(matchRef, {
+             id: matchId,
+             users: [user.uid, swipedProfile.id],
+             timestamp: serverTimestamp(),
+             lastMessage: 'Yeni bir eşleşme!',
+           });
 
-        if (targetUserSwipeDoc.exists()) {
-          const swipeData = targetUserSwipeDoc.data();
-          if (swipeData.type === 'like' || swipeData.type === 'superlike') {
-            // It's a MATCH! Create the match doc in the background.
-            const matchBatch = writeBatch(firestore);
-            const matchId = [user.uid, swipedProfile.id].sort().join('_');
-            const matchRef = doc(firestore, 'matches', matchId);
-            
-            matchBatch.set(matchRef, {
-              id: matchId,
-              users: [user.uid, swipedProfile.id],
-              matchDate: serverTimestamp(),
-              lastMessage: null,
-            });
-
-            await matchBatch.commit();
-          }
+           await matchBatch.commit();
+           setIsMatch({ currentUser: currentUserProfile, matchedUser: swipedProfile });
         }
       }
 
@@ -358,6 +359,16 @@ export default function DiscoverPage() {
 
   return (
     <div className="h-full w-full flex flex-col bg-gray-50 dark:bg-black overflow-hidden">
+        <AnimatePresence>
+            {isMatch && (
+            <ItIsAMatch
+                currentUser={isMatch.currentUser}
+                matchedUser={isMatch.matchedUser}
+                onContinue={() => setIsMatch(null)}
+            />
+            )}
+        </AnimatePresence>
+
       <div className="flex-1 flex flex-col items-center justify-center px-4">
         <div className="w-full max-w-sm h-[70vh] max-h-[600px] relative flex items-center justify-center">
           {visibleStack.length > 0 ? (
