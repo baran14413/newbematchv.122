@@ -130,18 +130,13 @@ export default function DiscoverPage() {
   const { data: currentUserProfile } = useDoc<UserProfile>(currentUserDocRef);
 
   const usersQuery = useMemoFirebase(() => {
-    if (!firestore || !currentUserProfile || !user) {
+    if (!firestore || !user) {
         return null;
     }
-    
-    let q = query(collection(firestore, 'users'), where('id', '!=', user.uid));
-    
-    if (currentUserProfile.interestedIn && currentUserProfile.interestedIn !== 'everyone') {
-        q = query(q, where('gender', '==', currentUserProfile.interestedIn));
-    }
-    
-    return q;
-  }, [firestore, currentUserProfile, user]);
+    // A basic query to get all users except the current one.
+    // Filtering by 'interestedIn' will be done client-side after fetching.
+    return query(collection(firestore, 'users'), where('id', '!=', user.uid));
+  }, [firestore, user]);
 
 
   const { data: profiles, isLoading } = useCollection<UserProfile>(usersQuery);
@@ -153,6 +148,7 @@ export default function DiscoverPage() {
         ageRange = [18, 55],
         globalMode = false,
         maxDistance = 150,
+        interestedIn,
         latitude: currentLat,
         longitude: currentLon,
     } = currentUserProfile;
@@ -161,10 +157,16 @@ export default function DiscoverPage() {
     
     return profiles
       .filter(p => {
-        // Exclude self and apply age range filter
-        const isNotSelf = p.id !== user?.uid; // This is a bit redundant due to the query, but safe
+        // Exclude self, apply age range, and gender preference filter
+        const isNotSelf = p.id !== user?.uid;
         const isInAgeRange = p.age >= minAge && p.age <= maxAge;
-        return isNotSelf && isInAgeRange;
+        
+        let interestMatch = true;
+        if (interestedIn && interestedIn !== 'everyone') {
+            interestMatch = p.gender === interestedIn;
+        }
+
+        return isNotSelf && isInAgeRange && interestMatch;
       })
       .map(p => {
         const distance = getDistanceInKm(currentLat!, currentLon!, p.latitude!, p.longitude!);
@@ -438,3 +440,5 @@ export default function DiscoverPage() {
     </div>
   );
 }
+
+    
